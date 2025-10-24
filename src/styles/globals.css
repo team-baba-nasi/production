@@ -1,0 +1,29 @@
+@import "tailwindcss";
+@import "modern-normalize";
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: system-ui, sans-serif;
+  line-height: 1.6;
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #111111;
+  --primary: ;
+  --secondary: ;
+  --radius: 8px;
+}
+
+a {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
