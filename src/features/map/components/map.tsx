@@ -138,10 +138,7 @@ const GoogleMap = () => {
                                 <button className={styles.add_btn}>
                                     <span className={styles.addIcon}>○</span>追加
                                 </button>
-                                <button
-                                    className={styles.close_btn}
-                                    onClick={() => setSelectedPlace(null)}
-                                >
+                                <button className={styles.close_btn} onClick={handleClose}>
                                     ×
                                 </button>
                             </div>
