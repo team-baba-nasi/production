@@ -7,7 +7,15 @@ const GoogleMap = () => {
     const mapRef = useRef<HTMLDivElement>(null);
     const mapInstanceRef = useRef<google.maps.Map | null>(null);
     const [selectedPlace, setSelectedPlace] = useState<google.maps.places.PlaceResult | null>(null);
+    const [isClosing, setIsClosing] = useState(false);
 
+    const handleClose = () => {
+        setIsClosing(true);
+        setTimeout(() => {
+            setSelectedPlace(null);
+            setIsClosing(false);
+        }, 300);
+    };
     useEffect(() => {
         const initMap = async () => {
             if (!mapRef.current || mapInstanceRef.current) return;
@@ -18,9 +26,6 @@ const GoogleMap = () => {
             const { PlacesService } = (await google.maps.importLibrary(
                 "places"
             )) as google.maps.PlacesLibrary;
-            // const { AdvancedMarkerElement } = (await google.maps.importLibrary(
-            //     "marker"
-            // )) as google.maps.MarkerLibrary;
 
             const map = new Map(mapRef.current, {
                 zoom: 13,
@@ -30,60 +35,63 @@ const GoogleMap = () => {
 
             const service = new PlacesService(map);
 
+            // 地図上のクリックイベント（店舗をクリックした時）
             map.addListener("click", (e: google.maps.MapMouseEvent) => {
-                const latLng = e.latLng;
-                if (!latLng || !mapRef.current) return;
+                const placeId = e.placeId;
 
-                /* ピン追加処理
+                if (!placeId) {
+                    if (selectedPlace) {
+                        handleClose();
+                    }
+                    return;
+                }
 
-                // 新しいマーカーを作成
-                const marker = new AdvancedMarkerElement({
-                    position: e.latLng,
-                    map,
-                });
+                e.stop();
 
-                markersRef.current.push(marker);
-                */
+                // クリックした店舗の詳細情報を取得
+                service.getDetails(
+                    {
+                        placeId: placeId,
+                        fields: [
+                            "name",
+                            "vicinity",
+                            "rating",
+                            "user_ratings_total",
+                            "opening_hours",
+                            "photos",
+                            "reviews",
+                            "types",
+                        ],
+                    },
+                    (placeDetails, detailStatus) => {
+                        if (
+                            detailStatus === google.maps.places.PlacesServiceStatus.OK &&
+                            placeDetails
+                        ) {
+                            // 飲食店かどうかをチェック
+                            const isRestaurant = placeDetails.types?.some((type) =>
+                                [
+                                    "restaurant",
+                                    "cafe",
+                                    "food",
+                                    "bar",
+                                    "meal_takeaway",
+                                    "meal_delivery",
+                                ].includes(type)
+                            );
 
-                // 📍 クリックした地点の近くの飲食店を検索
-                const request: google.maps.places.PlaceSearchRequest = {
-                    location: latLng,
-                    radius: 500, // 半径500m以内
-                    type: "restaurant",
-                    rankBy: undefined, // radius指定時はrankByは使わない
-                };
-
-                service.nearbySearch(request, (results, status) => {
-                    if (status !== google.maps.places.PlacesServiceStatus.OK || !results) return;
-
-                    // 最も近い店（results[0]）を取得
-                    const nearest = results[0];
-                    if (!nearest?.place_id) return;
-
-                    // 📘 詳細情報を取得
-                    service.getDetails(
-                        {
-                            placeId: nearest.place_id,
-                            fields: [
-                                "name",
-                                "vicinity",
-                                "rating",
-                                "user_ratings_total",
-                                "opening_hours",
-                                "photos",
-                                "reviews",
-                            ],
-                        },
-                        (placeDetails, detailStatus) => {
-                            if (
-                                detailStatus === google.maps.places.PlacesServiceStatus.OK &&
-                                placeDetails
-                            ) {
+                            if (isRestaurant) {
                                 setSelectedPlace(placeDetails);
+                                setIsClosing(false);
+                            } else {
+                                // 飲食店以外の場合は表示しない
+                                if (selectedPlace) {
+                                    handleClose();
+                                }
                             }
                         }
-                    );
-                });
+                    }
+                );
             });
 
             mapInstanceRef.current = map;
@@ -109,13 +117,20 @@ const GoogleMap = () => {
             {/* 地図 */}
             <div ref={mapRef} className={styles.map} />
 
-            {/* 店舗詳細表示エリア */}
-            <div className={styles.shop}>
-                {!selectedPlace ? (
-                    <p className="text-gray-500 text-sm">
-                        地図をクリックすると最寄りの飲食店が表示されます。
-                    </p>
-                ) : (
+            {/* オーバーレイ - 店舗詳細ウィンドウ外をクリックで閉じる */}
+            {selectedPlace && (
+                <div
+                    className={`${styles.overlay} ${isClosing ? styles.overlayClosing : ""}`}
+                    onClick={handleClose}
+                />
+            )}
+
+            {/* 店舗詳細表示エリア - 下からスライドイン */}
+            {selectedPlace && (
+                <div
+                    className={`${styles.shop} ${isClosing ? styles.shopClosing : ""}`}
+                    onClick={(e) => e.stopPropagation()}
+                >
                     <div className={styles.content}>
                         <div className={styles.shop_header}>
                             <h3>{selectedPlace.name}</h3>
@@ -123,7 +138,12 @@ const GoogleMap = () => {
                                 <button className={styles.add_btn}>
                                     <span className={styles.addIcon}>○</span>追加
                                 </button>
-                                <button className={styles.close_btn}>×</button>
+                                <button
+                                    className={styles.close_btn}
+                                    onClick={() => setSelectedPlace(null)}
+                                >
+                                    ×
+                                </button>
                             </div>
                         </div>
                         <div className={styles.info}>
@@ -139,9 +159,6 @@ const GoogleMap = () => {
                                         <li>
                                             営業時間：{selectedPlace.opening_hours.weekday_text[0]}
                                         </li>
-                                        {/* {selectedPlace.opening_hours.weekday_text.map((t, i) => (
-                                            <li key={i}>{t}</li>
-                                            ))} */}
                                     </ul>
                                 </div>
                             )}
@@ -189,8 +206,8 @@ const GoogleMap = () => {
                             );
                         })}
                     </div>
-                )}
-            </div>
+                </div>
+            )}
         </div>
     );
 };

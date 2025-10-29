@@ -6,13 +6,39 @@
         width: 100%;
         height: 100%;
     }
-    .shop {
-        position: absolute;
+
+    // オーバーレイを追加
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
         bottom: 0;
+        background: rgba(0, 0, 0, 0.3);
+        z-index: 999;
+        animation: fadeIn 0.3s ease-out;
+    }
+
+    .overlayClosing {
+        animation: fadeOut 0.3s ease-out;
+    }
+
+    .shop {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
         height: 300px;
         width: 100%;
         background: #fff;
         padding: 16px;
+        animation: slideUp 0.3s ease-out;
+        z-index: 1000; // オーバーレイより上に表示
+        border-radius: 16px 16px 0 0; // 上部を角丸に
+        box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15); // 影を追加
+        max-height: 60vh; // 最大高さを設定
+        overflow-y: auto; // スクロール可能に
+
         .content {
             margin: 13px 0;
             .shop_header {
@@ -35,6 +61,9 @@
                         align-items: center;
                         justify-content: center;
                         font-size: 14px;
+                        border: none; // ボーダーを削除
+                        cursor: pointer; // カーソルをポインターに
+
                         &.add_btn {
                             width: 80px;
                             height: 32px;
@@ -91,5 +120,45 @@
         .review {
             padding: 16px 0 16px 8px;
         }
+    }
+    .shopClosing {
+        animation: slideDown 0.3s ease-out;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(0);
+    }
+    to {
+        transform: translateY(100%);
+    }
+}
+
+// フェードイン・アウトアニメーションを追加
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
     }
 }
