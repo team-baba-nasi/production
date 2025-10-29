@@ -7,7 +7,6 @@
         height: 100%;
     }
 
-    // オーバーレイを追加
     .overlay {
         position: fixed;
         top: 0;
@@ -33,11 +32,11 @@
         background: #fff;
         padding: 16px;
         animation: slideUp 0.3s ease-out;
-        z-index: 1000; // オーバーレイより上に表示
-        border-radius: 16px 16px 0 0; // 上部を角丸に
-        box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15); // 影を追加
-        max-height: 60vh; // 最大高さを設定
-        overflow-y: auto; // スクロール可能に
+        z-index: 1000;
+        border-radius: 16px 16px 0 0;
+        box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15);
+        max-height: 60vh;
+        overflow-y: auto;
 
         .content {
             margin: 13px 0;
@@ -61,8 +60,8 @@
                         align-items: center;
                         justify-content: center;
                         font-size: 14px;
-                        border: none; // ボーダーを削除
-                        cursor: pointer; // カーソルをポインターに
+                        border: none;
+                        cursor: pointer;
 
                         &.add_btn {
                             width: 80px;
@@ -144,7 +143,6 @@
     }
 }
 
-// フェードイン・アウトアニメーションを追加
 @keyframes fadeIn {
     from {
         opacity: 0;
