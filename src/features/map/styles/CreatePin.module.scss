@@ -1,0 +1,14 @@
+.comment_wrap {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 18px;
+    input {
+        width: 265px;
+        height: 65px;
+        border-radius: 32.5px;
+        padding: 10px;
+        text-align: center;
+        box-shadow: 0 0 9px rgba($color: #000000, $alpha: 0.25);
+    }
+}
