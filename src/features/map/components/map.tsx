@@ -11,14 +11,6 @@ const GoogleMap = () => {
     const markersRef = useRef<google.maps.marker.AdvancedMarkerElement[]>([]);
     const [selectedPlace, setSelectedPlace] = useState<google.maps.places.PlaceResult | null>(null);
     const [isClosing, setIsClosing] = useState(false);
-    const [pins, setPins] = useState<
-        {
-            lat: number;
-            lng: number;
-            comment: string;
-            place?: google.maps.places.PlaceResult;
-        }[]
-    >([]);
 
     // ピンをマーカーとして地図に表示する関数
     const displayPinOnMap = async (pin: {
@@ -46,6 +38,14 @@ const GoogleMap = () => {
             content: pinContent,
         });
 
+        // ピンをクリックしたら店舗詳細を表示
+        marker.addListener("click", () => {
+            if (pin.place) {
+                setSelectedPlace(pin.place);
+                setIsClosing(false);
+            }
+        });
+
         markersRef.current.push(marker);
     };
 
@@ -65,15 +65,8 @@ const GoogleMap = () => {
             place: selectedPlace,
         };
 
-        const storedPins = JSON.parse(localStorage.getItem("pins") || "[]");
-        const updatedPins = [...storedPins, newPin];
-        localStorage.setItem("pins", JSON.stringify(updatedPins));
-
-        setPins(updatedPins);
-
         displayPinOnMap(newPin);
 
-        console.log("ピンを登録:", newPin);
         handleClose();
     };
 
@@ -84,23 +77,6 @@ const GoogleMap = () => {
             setIsClosing(false);
         }, 300);
     };
-
-    // 保存されているピンを読み込んで表示
-    useEffect(() => {
-        if (!mapInstanceRef.current) return;
-
-        const storedPins = JSON.parse(localStorage.getItem("pins") || "[]");
-        setPins(storedPins);
-
-        markersRef.current.forEach((marker) => {
-            marker.map = null;
-        });
-        markersRef.current = [];
-
-        storedPins.forEach((pin: { lat: number; lng: number; comment: string }) => {
-            displayPinOnMap(pin);
-        });
-    }, [mapInstanceRef.current]);
 
     useEffect(() => {
         const initMap = async () => {
@@ -160,12 +136,6 @@ const GoogleMap = () => {
                                 ].includes(type)
                             );
                             if (isRestaurant) {
-                                console.log("選択された店舗:", placeDetails);
-                                console.log(
-                                    "位置情報:",
-                                    placeDetails.geometry?.location?.lat(),
-                                    placeDetails.geometry?.location?.lng()
-                                );
                                 setSelectedPlace(placeDetails);
                                 setIsClosing(false);
                             } else if (selectedPlace) {
@@ -177,12 +147,6 @@ const GoogleMap = () => {
             });
 
             mapInstanceRef.current = map;
-
-            const storedPins = JSON.parse(localStorage.getItem("pins") || "[]");
-            setPins(storedPins);
-            storedPins.forEach((pin: { lat: number; lng: number; comment: string }) => {
-                displayPinOnMap(pin);
-            });
         };
 
         if (!document.getElementById("googleMapsScript")) {
