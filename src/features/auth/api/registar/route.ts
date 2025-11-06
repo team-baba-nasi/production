@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { hash } from "bcrypt";
 import { z } from "zod";
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/lib/prisma"; // Prismaを使う場合はそのままでOK
 
+// 登録データのバリデーション
 const registerSchema = z.object({
     username: z
         .string()
@@ -26,13 +27,13 @@ export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
 
-        // バリデーション
-        const validationResult = registerSchema.safeParse(body);
-        if (!validationResult.success) {
+        // 入力バリデーション
+        const validation = registerSchema.safeParse(body);
+        if (!validation.success) {
             return NextResponse.json(
                 {
                     error: "バリデーションエラー",
-                    details: validationResult.error.issues.map((issue) => ({
+                    details: validation.error.issues.map((issue) => ({
                         field: issue.path[0],
                         message: issue.message,
                     })),
@@ -41,56 +42,43 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const { username, email, password } = validationResult.data;
+        const { username, email, password } = validation.data;
 
-        // ユーザー名の重複チェック
-        const existingUsername = await prisma.user.findUnique({
-            where: { username },
+        // 既存ユーザー確認
+        const existingUser = await prisma.user.findFirst({
+            where: { OR: [{ username }, { email }] },
         });
 
-        if (existingUsername) {
+        if (existingUser) {
             return NextResponse.json(
-                { error: "このユーザー名は既に使用されています" },
+                { error: "既に同じユーザー名またはメールアドレスが存在します" },
                 { status: 409 }
             );
         }
 
-        // メールアドレスの重複チェック
-        const existingEmail = await prisma.user.findUnique({
-            where: { email },
-        });
-
-        if (existingEmail) {
-            return NextResponse.json(
-                { error: "このメールアドレスは既に登録されています" },
-                { status: 409 }
-            );
-        }
-
-        // パスワードのハッシュ化
+        // パスワードハッシュ化
         const hashedPassword = await hash(password, 12);
 
-        // ユーザーの作成（NextAuth互換）
-        const user = await prisma.user.create({
+        // ユーザー作成
+        const newUser = await prisma.user.create({
             data: {
                 username,
                 email,
                 password: hashedPassword,
-                role: "user",
+                role: "user", // 任意。NextAuthを使わないなら削除もOK
             },
             select: {
                 id: true,
                 username: true,
                 email: true,
-                role: true,
                 created_at: true,
             },
         });
 
         return NextResponse.json(
             {
-                message: "ユーザー登録が完了しました",
-                user,
+                message: "登録が完了しました",
+                user: newUser,
             },
             { status: 201 }
         );
