@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
 import { hash } from "bcrypt";
 import { z } from "zod";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
 
 const registerSchema = z.object({
     username: z
@@ -72,7 +70,7 @@ export async function POST(request: NextRequest) {
         // パスワードのハッシュ化
         const hashedPassword = await hash(password, 12);
 
-        // ユーザーの作成
+        // ユーザーの作成（NextAuth互換）
         const user = await prisma.user.create({
             data: {
                 username,
@@ -99,7 +97,5 @@ export async function POST(request: NextRequest) {
     } catch (error) {
         console.error("Registration error:", error);
         return NextResponse.json({ error: "サーバーエラーが発生しました" }, { status: 500 });
-    } finally {
-        await prisma.$disconnect();
     }
 }
