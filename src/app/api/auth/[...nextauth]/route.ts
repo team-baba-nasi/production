@@ -2,10 +2,8 @@ import NextAuth, { NextAuthOptions } from "next-auth";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { PrismaClient } from "@prisma/client";
 import { compare } from "bcrypt";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
 
 export const authOptions: NextAuthOptions = {
     adapter: PrismaAdapter(prisma),
@@ -48,13 +46,14 @@ export const authOptions: NextAuthOptions = {
                     email: user.email,
                     name: user.username,
                     image: user.profile_image_url,
+                    role: user.role,
                 };
             },
         }),
     ],
     session: {
         strategy: "jwt",
-        maxAge: 30 * 24 * 60 * 60, // 30日
+        maxAge: 30 * 24 * 60 * 60,
     },
     pages: {
         signIn: "/auth/signin",
@@ -62,16 +61,23 @@ export const authOptions: NextAuthOptions = {
         error: "/auth/error",
     },
     callbacks: {
-        async jwt({ token, user, account }) {
+        async jwt({ token, user, account, trigger, session }) {
             // 初回ログイン時
             if (user) {
                 token.id = user.id;
                 token.role = user.role || "user";
+                token.username = user.name ?? "";
             }
 
             // プロバイダー情報を保存
             if (account) {
                 token.provider = account.provider;
+            }
+
+            // セッション更新時
+            if (trigger === "update" && session) {
+                if (session.username) token.username = session.username;
+                if (session.image) token.image = session.image;
             }
 
             return token;
@@ -80,23 +86,26 @@ export const authOptions: NextAuthOptions = {
             if (session.user) {
                 session.user.id = token.id as string;
                 session.user.role = token.role as string;
+                session.user.name = token.username as string;
             }
             return session;
         },
         async signIn({ user, account }) {
             // Google認証の場合、ユーザー情報を更新または作成
-            if (account?.provider === "google") {
+            if (account?.provider === "google" && user.email) {
                 const existingUser = await prisma.user.findUnique({
-                    where: { email: user.email! },
+                    where: { email: user.email },
                 });
 
                 if (!existingUser) {
                     // 新規ユーザーの場合、usernameを設定
+                    const username = user.email.split("@")[0] + "_" + Date.now();
+
                     await prisma.user.create({
                         data: {
-                            email: user.email!,
-                            username: user.email!.split("@")[0] + "_" + Date.now(),
-                            profile_image_url: user.image,
+                            email: user.email,
+                            username,
+                            profile_image_url: user.image ?? undefined,
                             role: "user",
                         },
                     });
