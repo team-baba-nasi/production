@@ -71,11 +71,17 @@ export default function RegisterPage() {
 
                     {/* エラー or 成功メッセージ */}
                     {isError && error?.response?.data && (
-                        <p className="text-red-600 text-sm">
-                            {error.response.data.details
-                                ?.map((d) => `${d.field}: ${d.message}`)
-                                .join("\n") || error.response.data.error}
-                        </p>
+                        <div className="text-red-600 text-sm space-y-1">
+                            {error.response.data.details ? (
+                                error.response.data.details.map((d, index) => (
+                                    <p key={index}>
+                                        {d.field}: {d.message}
+                                    </p>
+                                ))
+                            ) : (
+                                <p>{error.response.data.error}</p>
+                            )}
+                        </div>
                     )}
                     {isSuccess && data && <p className="text-green-600 text-sm">{data.message}</p>}
 
