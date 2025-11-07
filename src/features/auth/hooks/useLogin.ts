@@ -23,6 +23,7 @@ export function useLogin() {
     return useMutation<LoginResponse, AxiosError<LoginError>, LoginForm>({
         mutationFn: async (form) => {
             const res = await axios.post<LoginResponse>("/auth/login", form);
+
             router.push("/");
             return res.data;
         },
