@@ -75,7 +75,6 @@ export async function POST(request: NextRequest) {
             },
         });
 
-        // 成功時は message フィールドを返す
         return NextResponse.json(
             {
                 message: "登録が完了しました",
