@@ -1,5 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
-import axios, { AxiosError } from "axios";
+import axios from "@/lib/axios";
+import { AxiosError } from "axios";
 
 type RegisterForm = {
     username: string;

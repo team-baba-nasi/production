@@ -1,17 +1,8 @@
 import axios from "axios";
 
 const api = axios.create({
-    baseURL: "/api",
+    baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api",
     headers: { "Content-Type": "application/json" },
 });
-
-api.interceptors.response.use(
-    (res) => res,
-    (error) => {
-        const message = error.response?.data?.error || "サーバーエラー";
-        alert(message);
-        return Promise.reject(error);
-    }
-);
 
 export default api;
