@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { hash } from "bcrypt";
 import { z } from "zod";
-import { prisma } from "@/lib/prisma"; // Prismaを使う場合はそのままでOK
+import { prisma } from "@/lib/prisma";
 
-// 登録データのバリデーション
+// バリデーションスキーマ
 const registerSchema = z.object({
     username: z
         .string()
@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
                 username,
                 email,
                 password: hashedPassword,
-                role: "user", // 任意。NextAuthを使わないなら削除もOK
+                role: "user",
             },
             select: {
                 id: true,
@@ -75,6 +75,7 @@ export async function POST(request: NextRequest) {
             },
         });
 
+        // 成功時は message フィールドを返す
         return NextResponse.json(
             {
                 message: "登録が完了しました",
