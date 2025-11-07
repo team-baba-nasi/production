@@ -7,7 +7,7 @@ import { prisma } from "@/lib/prisma";
 const registerSchema = z.object({
     username: z
         .string()
-        .min(3, "ユーザー名は3文字以上である必要があります")
+        .min(2, "ユーザー名は2文字以上である必要があります")
         .max(20, "ユーザー名は20文字以下である必要があります")
         .regex(
             /^[a-zA-Z0-9_\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF]+$/,
