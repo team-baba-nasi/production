@@ -1,0 +1,248 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+//////////////////////////////////////////////////////////
+// ユーザー関連
+//////////////////////////////////////////////////////////
+
+model User {
+  id               Int       @id @default(autoincrement())
+  username         String    @unique
+  email            String    @unique
+  password         String
+  role             String    @default("user") // user, admin など
+  profile_image_url String?
+  created_at       DateTime  @default(now())
+  updated_at       DateTime  @updatedAt
+
+  // relations
+  following        Follow[]  @relation("FollowingRelation")
+  followed         Follow[]  @relation("FollowedRelation")
+  groups_owned     Group[]   @relation("OwnerRelation")
+  group_members    GroupMember[]
+  pins             Pin[]
+  pin_reactions    PinReaction[]
+  schedules        Schedule[]        @relation("OrganizerRelation")
+  schedule_responses ScheduleResponse[]
+  user_calendars   UserCalendar[]
+  chat_participants ChatParticipant[]
+  messages         Message[] @relation("MessageSender")
+  notifications    Notification[]
+}
+
+model Follow {
+  following_user_id Int
+  followed_user_id  Int
+  created_at        DateTime @default(now())
+
+  following_user User @relation("FollowingRelation", fields: [following_user_id], references: [id])
+  followed_user  User @relation("FollowedRelation", fields: [followed_user_id], references: [id])
+
+  @@id([following_user_id, followed_user_id])
+}
+
+//////////////////////////////////////////////////////////
+// グループ関連
+//////////////////////////////////////////////////////////
+
+model Group {
+  id          Int           @id @default(autoincrement())
+  name        String
+  owner_id    Int
+  description String?
+  status      String        @default("active") // active, archived など
+  is_private  Boolean       @default(false)
+  created_at  DateTime      @default(now())
+  updated_at  DateTime      @updatedAt
+
+  owner        User          @relation("OwnerRelation", fields: [owner_id], references: [id])
+  members      GroupMember[]
+  pins         Pin[]
+}
+
+model GroupMember {
+  id         Int       @id @default(autoincrement())
+  group_id   Int
+  user_id    Int
+  role       String    @default("member") // admin, member など
+  joined_at  DateTime  @default(now())
+
+  group Group @relation(fields: [group_id], references: [id])
+  user  User  @relation(fields: [user_id], references: [id])
+
+  @@unique([group_id, user_id])
+}
+
+//////////////////////////////////////////////////////////
+// ピン関連
+//////////////////////////////////////////////////////////
+
+model Pin {
+  id            Int        @id @default(autoincrement())
+  user_id       Int
+  group_id      Int?
+  place_id      String?
+  place_name    String
+  place_address String?
+  latitude      Decimal?   @db.Decimal(10, 8)
+  longitude     Decimal?   @db.Decimal(11, 8)
+  comment       String?
+  status        String     @default("open") // open, scheduled, closed, cancelled
+  created_at    DateTime   @default(now())
+  updated_at    DateTime   @updatedAt
+
+  user    User   @relation(fields: [user_id], references: [id])
+  group   Group? @relation(fields: [group_id], references: [id])
+  reactions PinReaction[]
+  schedules Schedule[]
+  chat_rooms ChatRoom[]
+
+  @@index([user_id, created_at])
+  @@index([group_id, created_at])
+  @@index([status])
+}
+
+model PinReaction {
+  id            Int       @id @default(autoincrement())
+  pin_id        Int
+  user_id       Int
+  reaction_type String
+  created_at    DateTime  @default(now())
+
+  pin  Pin  @relation(fields: [pin_id], references: [id])
+  user User @relation(fields: [user_id], references: [id])
+
+  @@unique([pin_id, user_id])
+}
+
+//////////////////////////////////////////////////////////
+// スケジュール関連
+//////////////////////////////////////////////////////////
+
+model Schedule {
+  id                 Int       @id @default(autoincrement())
+  pin_id             Int
+  organizer_id       Int
+  proposed_date_start DateTime
+  proposed_date_end   DateTime
+  final_date          DateTime?
+  status              String    @default("proposed") // proposed, confirmed, cancelled
+  description         String?
+  created_at          DateTime  @default(now())
+  updated_at          DateTime  @updatedAt
+
+  pin       Pin  @relation(fields: [pin_id], references: [id])
+  organizer User @relation("OrganizerRelation", fields: [organizer_id], references: [id])
+  responses ScheduleResponse[]
+
+  @@index([pin_id])
+  @@index([organizer_id])
+}
+
+model ScheduleResponse {
+  id             Int      @id @default(autoincrement())
+  schedule_id    Int
+  user_id        Int
+  response_type  String
+  available_dates Json?
+  comment        String?
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  schedule Schedule @relation(fields: [schedule_id], references: [id])
+  user     User     @relation(fields: [user_id], references: [id])
+
+  @@unique([schedule_id, user_id])
+}
+
+model UserCalendar {
+  id                     Int      @id @default(autoincrement())
+  user_id                Int
+  calendar_provider      String?
+  calendar_id            String?
+  access_token_encrypted String?
+  refresh_token_encrypted String?
+  is_active              Boolean  @default(true)
+  last_synced_at         DateTime?
+  created_at             DateTime @default(now())
+  updated_at             DateTime @updatedAt
+
+  user User @relation(fields: [user_id], references: [id])
+
+  @@index([user_id])
+}
+
+//////////////////////////////////////////////////////////
+// チャット関連
+//////////////////////////////////////////////////////////
+
+model ChatRoom {
+  id         Int        @id @default(autoincrement())
+  pin_id     Int?
+  room_type  String     @default("pin") // pin, group, direct など
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
+
+  pin            Pin?              @relation(fields: [pin_id], references: [id])
+  participants   ChatParticipant[]
+  messages       Message[]
+}
+
+model ChatParticipant {
+  id            Int       @id @default(autoincrement())
+  chat_room_id  Int
+  user_id       Int
+  is_active     Boolean   @default(true)
+  last_read_at  DateTime?
+  joined_at     DateTime  @default(now())
+  left_at       DateTime?
+
+  chat_room ChatRoom @relation(fields: [chat_room_id], references: [id])
+  user      User     @relation(fields: [user_id], references: [id])
+
+  @@unique([chat_room_id, user_id])
+}
+
+model Message {
+  id            Int       @id @default(autoincrement())
+  chat_room_id  Int
+  sender_id     Int?
+  content       String?
+  message_type  String    @default("text")
+  metadata      Json?
+  is_deleted    Boolean   @default(false)
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+
+  chat_room ChatRoom @relation(fields: [chat_room_id], references: [id])
+  sender    User?     @relation("MessageSender", fields: [sender_id], references: [id])
+
+  @@index([chat_room_id, created_at])
+  @@index([sender_id])
+}
+
+//////////////////////////////////////////////////////////
+// 通知関連
+//////////////////////////////////////////////////////////
+
+model Notification {
+  id              Int       @id @default(autoincrement())
+  user_id         Int
+  type            String
+  reference_type  String?
+  reference_id    Int?
+  title           String
+  message         String?
+  is_read         Boolean   @default(false)
+  created_at      DateTime  @default(now())
+
+  user User @relation(fields: [user_id], references: [id])
+
+  @@index([user_id, is_read, created_at])
+}
