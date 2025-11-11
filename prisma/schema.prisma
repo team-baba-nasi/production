@@ -57,7 +57,7 @@ model Group {
   owner_id    Int
   description String?
   status      String        @default("active") // active, archived など
-  is_private  Boolean       @default(false)
+  icon_image_url String?
   created_at  DateTime      @default(now())
   updated_at  DateTime      @updatedAt
 
