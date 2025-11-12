@@ -1,5 +1,6 @@
 import styles from "@/components/ui/InputField/InputField.module.scss";
 import Image from "next/image";
+import Label from "@/components/ui/Label/Label";
 
 type InputFieldProps = {
     label?: string;
@@ -20,7 +21,7 @@ const InputField: React.FC<InputFieldProps> = ({
 }) => {
     return (
         <div className={styles.wrap}>
-            {label && <label className={styles.label}>{label}</label>}
+            {label && <Label label={label} />}
             <div className={styles.fieldWrap}>
                 {search && (
                     <Image src="/images/ui/search.svg" alt="search" width={18} height={18} />
