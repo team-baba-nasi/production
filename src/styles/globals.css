@@ -40,3 +40,12 @@ input:focus {
     border: 1px solid #ccc;
     box-shadow: none;
 }
+.page_wrap {
+    padding: 56px 16px 0;
+}
+
+.text_xl {
+    font-weight: bold;
+    font-size: 1.6rem;
+    line-height: 150%;
+}
