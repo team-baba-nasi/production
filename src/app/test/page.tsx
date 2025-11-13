@@ -1,6 +1,7 @@
 "use client";
 
 import GroupHeader from "@/features/groups/components/GroupHeader";
+import Group from "@/features/groups/components/Group";
 import InputField from "@/components/ui/InputField/InputField";
 import { useState } from "react";
 
@@ -18,6 +19,7 @@ const test = () => {
             <GroupHeader text="グループ管理" add addToPage="/" />
             <GroupHeader text="グループ編集" back backToPage="/" />
             <GroupHeader text="グループ作成" />
+            <Group icon="test_icon" name="テストグループ" membersCount={5} />
         </>
     );
 };
