@@ -17,7 +17,7 @@ const InputField: React.FC<InputFieldProps> = ({
     onChange,
     type = "text",
     placeholder = "",
-    search = false,
+    search,
 }) => {
     return (
         <div className={styles.wrap}>
