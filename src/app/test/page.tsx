@@ -1,6 +1,6 @@
 "use client";
 
-import WeekDayBtn from "@/features/map/components/WeekDayBtn";
+import GroupHeader from "@/features/groups/components/GroupHeader";
 import InputField from "@/components/ui/InputField/InputField";
 import { useState } from "react";
 
@@ -9,14 +9,15 @@ const test = () => {
 
     return (
         <>
-            <WeekDayBtn active={true} week="月" day={22} />
-            <WeekDayBtn active={false} week="火" day={23} />
             <InputField
                 value={gorupname}
                 onChange={setGroupname}
                 placeholder="グループ名を入力"
                 search={true}
             />
+            <GroupHeader text="グループ管理" add addToPage="/" />
+            <GroupHeader text="グループ編集" back backToPage="/" />
+            <GroupHeader text="グループ作成" />
         </>
     );
 };
