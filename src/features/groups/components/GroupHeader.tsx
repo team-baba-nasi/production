@@ -1,4 +1,4 @@
-import styles from "@/features/groups/styles/header.module.scss";
+import styles from "@/features/groups/styles/GroupHeader.module.scss";
 import Image from "next/image";
 
 interface headerProps {
