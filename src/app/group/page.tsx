@@ -5,10 +5,15 @@ import styles from "@/features/groups/styles/pages/GroupListPage.module.scss";
 import InputField from "@/components/ui/InputField/InputField";
 import clsx from "clsx";
 import Group from "@/features/groups/components/Group";
+import { useGroups } from "@/features/groups/hooks/useGroups";
 import { useState } from "react";
 
 const GroupList = () => {
     const [search, setSearchText] = useState<string>("");
+    const { data, error, isLoading } = useGroups();
+
+    if (isLoading) return <p>読み込み中...</p>;
+    if (error) return <p>エラー: {error.response?.data.error}</p>;
 
     return (
         <div className={clsx("page_wrap", styles.pageWrap)}>
@@ -19,8 +24,17 @@ const GroupList = () => {
                 placeholder="グループ名を検索"
                 search
             />
-            <Group icon="test_icon" name="テストグループ" membersCount={5} />
-            <Group icon="test_icon" name="テストグループ" membersCount={5} />
+            {data ? (
+                <ul>
+                    {data?.groups.map((g) => (
+                        <li key={g.group.id}>
+                            <Group name={g.group.name} membersCount={5} />
+                        </li>
+                    ))}
+                </ul>
+            ) : (
+                <p>グループがありません</p>
+            )}
         </div>
     );
 };
