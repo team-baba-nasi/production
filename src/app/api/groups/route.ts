@@ -16,11 +16,47 @@ const createGroupSchema = z.object({
     icon_image_url: z.string().url("有効なURLを指定してください").optional(),
 });
 
+export async function GET(request: NextRequest) {
+    try {
+        const user = await getUserFromToken(request);
+        if (!user) {
+            return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
+        }
+
+        const groups = await prisma.groupMember.findMany({
+            where: { user_id: user.id },
+            select: {
+                role: true,
+                group: {
+                    select: {
+                        id: true,
+                        name: true,
+                        description: true,
+                        icon_image_url: true,
+                        status: true,
+                        created_at: true,
+                        owner: {
+                            select: { id: true, username: true },
+                        },
+                    },
+                },
+            },
+        });
+
+        return NextResponse.json({ groups }, { status: 200 });
+    } catch (error) {
+        console.error("グループ一覧取得エラー:", error);
+        return NextResponse.json(
+            { error: "グループ一覧取得中にエラーが発生しました" },
+            { status: 500 }
+        );
+    }
+}
+
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
 
-        // 入力バリデーション
         const validation = createGroupSchema.safeParse(body);
         if (!validation.success) {
             return NextResponse.json(
@@ -54,6 +90,7 @@ export async function POST(request: NextRequest) {
                 name: true,
                 description: true,
                 icon_image_url: true,
+                status: true,
                 created_at: true,
                 owner: {
                     select: { id: true, username: true },
