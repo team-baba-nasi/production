@@ -4,7 +4,7 @@ import GroupHeader from "@/features/groups/components/GroupHeader";
 import Label from "@/components/ui/Label/Label";
 import GroupIcon from "@/features/groups/components/GroupIcon";
 import GroupDialog from "@/features/groups/components/GroupDialog";
-import styles from "@/features/groups/styles/GroupPage.module.scss";
+import styles from "@/features/groups/styles/pages/GroupEditPage.module.scss";
 import clsx from "clsx";
 import { useState } from "react";
 
