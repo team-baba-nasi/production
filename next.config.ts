@@ -9,7 +9,12 @@ const nextConfig: NextConfig = {
                 hostname: "picsum.photos",
             },
         ],
-        domains: ["maps.googleapis.com", "lh3.googleusercontent.com", "maps.gstatic.com"],
+        domains: [
+            "maps.googleapis.com",
+            "lh3.googleusercontent.com",
+            "maps.gstatic.com",
+            "i.pravatar.cc",
+        ],
     },
 };
 
