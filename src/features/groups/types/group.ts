@@ -40,3 +40,15 @@ export type GroupsResponse = {
 export type GroupsError = {
     error: string;
 };
+
+export interface GroupResponse {
+    group: {
+        id: number;
+        name: string;
+        description?: string | null;
+        icon_image_url?: string | null;
+        status: string;
+        created_at: string;
+        updated_at: string;
+    };
+}
