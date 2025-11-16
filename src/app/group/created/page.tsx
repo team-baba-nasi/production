@@ -11,7 +11,7 @@ const GroupCreate = () => {
         console.log("リンクをコピー");
     };
     const contents = {
-        img: "/images/groups/test_icon.png",
+        img: "/images/groups/test_icon.webp",
         name: "ババ抜きババ無し",
         members: ["a", "b", "c", "d"],
     };

@@ -11,7 +11,7 @@ const Group: React.FC<GroupProps> = ({ icon, name, membersCount }) => {
     return (
         <div className={styles.groupWrap}>
             <Image
-                src={icon ? `/images/groups/${icon}.png` : "/images/groups/test_icon.png"}
+                src={icon ? `/images/groups/${icon}.webp` : "/images/groups/test_icon.webp"}
                 alt="groupIcon"
                 width={56}
                 height={56}
