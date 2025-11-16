@@ -3,6 +3,7 @@
 import GroupHeader from "@/features/groups/components/GroupHeader";
 import styles from "@/features/groups/styles/pages/GroupListPage.module.scss";
 import InputField from "@/components/ui/InputField/InputField";
+import Link from "next/link";
 import clsx from "clsx";
 import Group from "@/features/groups/components/Group";
 import { useGroups } from "@/features/groups/hooks/useGroups";
@@ -28,7 +29,9 @@ const GroupList = () => {
                 <ul>
                     {data?.groups.map((g) => (
                         <li key={g.group.id}>
-                            <Group name={g.group.name} membersCount={5} />
+                            <Link href={`/group/${g.group.id}`}>
+                                <Group name={g.group.name} membersCount={5} />
+                            </Link>
                         </li>
                     ))}
                 </ul>
