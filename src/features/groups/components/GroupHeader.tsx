@@ -7,9 +7,21 @@ interface headerProps {
     back?: boolean;
     addToPage?: string;
     backToPage?: string;
+    btn?: boolean;
+    btnText?: string;
+    onClick?: () => void;
 }
 
-const GroupHeader: React.FC<headerProps> = ({ text, add, back, addToPage, backToPage }) => {
+const GroupHeader: React.FC<headerProps> = ({
+    text,
+    add,
+    back,
+    addToPage,
+    backToPage,
+    btn,
+    btnText,
+    onClick,
+}) => {
     return (
         <div className={styles.headerWrap}>
             <div className={styles.iconBox}>
@@ -37,6 +49,10 @@ const GroupHeader: React.FC<headerProps> = ({ text, add, back, addToPage, backTo
                             height={24}
                         />
                     </a>
+                ) : btn && btnText ? (
+                    <button onClick={onClick} className={styles.headerButton}>
+                        {btnText}
+                    </button>
                 ) : (
                     <div style={{ width: 24, height: 24 }} />
                 )}
