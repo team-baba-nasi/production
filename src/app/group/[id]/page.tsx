@@ -116,7 +116,6 @@ const GroupEdit = () => {
             {openDeleteDialog && (
                 <GroupDialog
                     type="delete"
-                    role={`${data?.myRole}`}
                     onClick={handleDeleteGroup}
                     onCancel={() => setOpenDeleteDialog(false)}
                     img={`${data?.group.icon_image_url}`}
@@ -127,7 +126,6 @@ const GroupEdit = () => {
             {openLeaveDialog && (
                 <GroupDialog
                     type="leave"
-                    role={`${data?.myRole}`}
                     onClick={handleLeaveGroup}
                     onCancel={() => setOpenLeaveDialog(false)}
                     img={`${data?.group.icon_image_url}`}

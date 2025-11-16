@@ -6,7 +6,7 @@ interface GroupDialogProps {
     type: "delete" | "leave";
     name: string;
     onClick: () => void;
-    onCancel: () => void; // ← 追加
+    onCancel: () => void;
 }
 
 const GroupDialog: React.FC<GroupDialogProps> = ({ img, type, name, onClick, onCancel }) => {
