@@ -43,12 +43,17 @@ export type GroupsError = {
 
 export interface GroupResponse {
     group: {
-        id: number;
         name: string;
-        description?: string | null;
-        icon_image_url?: string | null;
-        status: string;
-        created_at: string;
-        updated_at: string;
+        description: string | null;
+        icon_image_url: string | null;
+        owner_id: number;
+        members: {
+            user_id: number;
+            role: string;
+            user: {
+                profile_image_url: string | null;
+            };
+        }[];
     };
+    myRole: string;
 }

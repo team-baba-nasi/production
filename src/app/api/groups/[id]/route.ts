@@ -120,31 +120,46 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
         if (!user) {
             return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
         }
-
         const groupId = parseInt(params.id, 10);
         if (isNaN(groupId)) {
             return NextResponse.json({ error: "不正なグループIDです" }, { status: 400 });
         }
-
         const group = await prisma.group.findUnique({
             where: { id: groupId },
             select: {
-                id: true,
                 name: true,
                 description: true,
                 icon_image_url: true,
                 owner_id: true,
-                status: true,
-                created_at: true,
-                updated_at: true,
+                members: {
+                    select: {
+                        user_id: true,
+                        role: true,
+                        user: {
+                            select: {
+                                profile_image_url: true,
+                            },
+                        },
+                    },
+                    orderBy: {
+                        joined_at: "asc",
+                    },
+                },
             },
         });
-
         if (!group) {
             return NextResponse.json({ error: "グループが見つかりません" }, { status: 404 });
         }
+        const myMembership = group.members.find((member) => member.user_id === user.id);
+        const myRole = myMembership?.role || null;
 
-        return NextResponse.json({ group }, { status: 200 });
+        return NextResponse.json(
+            {
+                group,
+                myRole,
+            },
+            { status: 200 }
+        );
     } catch (error) {
         console.error("グループ取得エラー:", error);
         return NextResponse.json(
