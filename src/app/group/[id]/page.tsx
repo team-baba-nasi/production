@@ -7,9 +7,10 @@ import GroupDialog from "@/features/groups/components/GroupDialog";
 import styles from "@/features/groups/styles/pages/GroupEditPage.module.scss";
 import clsx from "clsx";
 import Image from "next/image";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useGroupFromId } from "@/features/groups/hooks/useGroupFromId";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 const GroupEdit = () => {
     const params = useParams();
@@ -17,6 +18,7 @@ const GroupEdit = () => {
 
     const { data, error, isLoading } = useGroupFromId(groupId);
 
+    const groupNameInput = useRef<HTMLInputElement>(null);
     const [name, setName] = useState<string>("");
     const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
     const [openLeaveDialog, setOpenLeaveDialog] = useState<boolean>(false);
@@ -24,6 +26,11 @@ const GroupEdit = () => {
     useEffect(() => {
         setName(`${data?.group.name}`);
     }, [data]);
+
+    const handleResetInput = () => {
+        setName("");
+        groupNameInput.current?.focus();
+    };
 
     const handleDeleteGroup = () => {
         setOpenDeleteDialog(false);
@@ -44,15 +51,33 @@ const GroupEdit = () => {
                     <GroupIcon img={`${data?.group.icon_image_url}`} label edit />
                     <div className={clsx(styles.content, styles.groupName)}>
                         <Label label="グループ名" />
-                        <input
-                            type="text"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            className="text_xl"
-                        />
+                        <div className={styles.inputWrap}>
+                            <input
+                                ref={groupNameInput}
+                                type="text"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                className="text_xl"
+                            />
+                            {name !== "" && (
+                                <button onClick={handleResetInput} className={styles.close_btn}>
+                                    <Image
+                                        src="/images/ui/close_small.svg"
+                                        alt="入力リセットボタン"
+                                        width={20}
+                                        height={20}
+                                    />
+                                </button>
+                            )}
+                        </div>
                     </div>
                     <div className={styles.content}>
-                        <Label label={`メンバー(${data?.group.members.length})`} />
+                        <div className={styles.labelWrap}>
+                            <Label label={`メンバー(${data?.group.members.length})`} />
+                            <Link href={`/group/${groupId}/members`}>
+                                <p>詳細</p>
+                            </Link>
+                        </div>
                         <div className={styles.memberWrap}>
                             {data?.group.members.slice(0, 5).map((member) => {
                                 return (
@@ -102,6 +127,7 @@ const GroupEdit = () => {
             {openLeaveDialog && (
                 <GroupDialog
                     type="leave"
+                    role={`${data?.myRole}`}
                     onClick={handleLeaveGroup}
                     onCancel={() => setOpenLeaveDialog(false)}
                     img={`${data?.group.icon_image_url}`}

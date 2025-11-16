@@ -12,6 +12,16 @@
             display: inline-block;
             margin-top: 40px;
             padding: 0 16px;
+            .labelWrap {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                p {
+                    color: #0054d1;
+                    font-weight: 500;
+                    font-size: 1.2rem;
+                }
+            }
             .memberWrap {
                 margin-top: 16px;
                 display: flex;
@@ -35,12 +45,35 @@
         .groupName {
             display: flex;
             flex-direction: column;
-            input {
+            .inputWrap {
+                position: relative;
                 padding: 8px;
-                &:focus {
-                    outline: none;
-                    border: none;
-                    box-shadow: none;
+                width: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                border: rgba(35, 35, 35, 0.25) solid 1px;
+                border-radius: 8px;
+                .close_btn {
+                    position: absolute;
+                    top: 50%;
+                    right: 8px;
+                    transform: translateY(-50%);
+                    width: 20px;
+                    height: 20px;
+                    cursor: pointer;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    background: #d1d1d1;
+                    border-radius: 50%;
+                }
+                input {
+                    width: 100%;
+                    padding-right: 32px;
+                    &:focus {
+                        border: none;
+                    }
                 }
             }
         }
@@ -55,7 +88,6 @@
         gap: 16px;
         .settingText {
             color: red;
-            text-align: left;
         }
     }
 }
