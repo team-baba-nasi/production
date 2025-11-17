@@ -9,7 +9,7 @@ interface SubmitBtnWrap {
 
 const SubmitBtn: React.FC<SubmitBtnWrap> = ({ text, link, onClick }) => {
     return (
-        <button onClick={onClick} className={clsx(styles.btn_wrap, "text_xl")}>
+        <button onClick={onClick} className={clsx(styles.btn_wrap, "text_normal bold")}>
             {link && (
                 <Image
                     src="/images/ui/link.svg"

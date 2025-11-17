@@ -21,7 +21,7 @@ const GroupCreate = () => {
             <GroupHeader text="グループ作成完了！" />
             <div className={styles.groupInfoWrap}>
                 <GroupIcon img={contents.img} />
-                <p className={clsx(styles.groupText, "text_xl")}>ババ抜きババ無し</p>
+                <p className={clsx(styles.groupText, "normal")}>ババ抜きババ無し</p>
             </div>
             <SubmitBtn text="リンクをコピー" onClick={handleCreate} link />
         </div>

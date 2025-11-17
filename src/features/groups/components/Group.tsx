@@ -16,7 +16,7 @@ const Group: React.FC<GroupProps> = ({ icon, name, membersCount }) => {
                 width={56}
                 height={56}
             />
-            <p className="text_xl">
+            <p className="text_normal bold">
                 {name}({membersCount})
             </p>
         </div>
