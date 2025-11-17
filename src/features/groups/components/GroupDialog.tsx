@@ -1,5 +1,6 @@
 import styles from "@/features/groups/styles/GroupDialog.module.scss";
 import Image from "next/image";
+import clsx from "clsx";
 
 interface GroupDialogProps {
     img: string;
@@ -13,7 +14,13 @@ const GroupDialog: React.FC<GroupDialogProps> = ({ img, type, name, onClick, onC
     return (
         <div className={styles.overlay}>
             <div className={styles.dialog}>
-                <Image src={img} alt="グループアイコン" width={100} height={100} />
+                <Image
+                    src={img}
+                    alt="グループアイコン"
+                    width={100}
+                    height={100}
+                    className="rounded-full"
+                />
                 <p className={styles.dialogText}>
                     <span>{name}</span>
                     {type === "delete" ? (
@@ -30,10 +37,10 @@ const GroupDialog: React.FC<GroupDialogProps> = ({ img, type, name, onClick, onC
                     )}
                 </p>
                 <div className={styles.btnWrap}>
-                    <button className={styles.cancelBtn} onClick={onCancel}>
+                    <button className={clsx(styles.cancelBtn, styles.btns)} onClick={onCancel}>
                         <p>キャンセル</p>
                     </button>
-                    <button className={styles.submitBtn} onClick={onClick}>
+                    <button className={clsx(styles.submitBtn, styles.btns)} onClick={onClick}>
                         <p>{type === "delete" ? "削除" : "退会"}</p>
                     </button>
                 </div>

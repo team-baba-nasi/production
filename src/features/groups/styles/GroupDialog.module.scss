@@ -10,19 +10,18 @@
     align-items: center;
     .dialog {
         width: 345px;
-        height: 334px;
         background: white;
         border-radius: 24px;
-        padding: 43px 0 0;
+        padding: 17px 0 0;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        gap: 20px;
         box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
         img {
             margin: 0 auto;
         }
         .dialogText {
+            margin-top: 8px;
             font-size: 1.6rem;
             line-height: 150%;
             font-weight: 500;
@@ -34,10 +33,15 @@
         .btnWrap {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            height: 80px;
             border-top: rgba($color: #232323, $alpha: 0.25) 1px solid;
             font-size: 2rem;
             line-height: 150%;
+            margin-top: 16px;
+            .btns {
+                p {
+                    padding: 13px 0;
+                }
+            }
             .submitBtn {
                 font-weight: bold;
                 color: #d10000;
