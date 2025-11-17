@@ -15,6 +15,10 @@ export type Group = {
     role?: string;
 };
 
+//////////////////////////////////////////////////////////
+// グループ作成
+//////////////////////////////////////////////////////////
+
 export type CreateGroupForm = {
     name: string;
     description?: string;
@@ -30,12 +34,20 @@ export type CreateGroupError = {
     details?: { field: string; message: string }[];
 };
 
+//////////////////////////////////////////////////////////
+// グループ一覧
+//////////////////////////////////////////////////////////
+
 export type GroupsResponse = {
     groups: {
         role: string;
         group: Group;
     }[];
 };
+
+//////////////////////////////////////////////////////////
+// グループ詳細
+//////////////////////////////////////////////////////////
 
 export type GroupsError = {
     error: string;
@@ -56,4 +68,29 @@ export interface GroupResponse {
         }[];
     };
     myRole: string;
+}
+
+//////////////////////////////////////////////////////////
+// グループ情報アップデート
+//////////////////////////////////////////////////////////
+
+export interface UpdateGroupForm {
+    name?: string;
+    description?: string;
+    icon_image_url?: string;
+}
+
+export interface UpdateGroupResponse {
+    message: string;
+    group: {
+        id: number;
+        name: string;
+        description: string | null;
+        icon_image_url: string | null;
+        updated_at: string;
+    };
+}
+
+export interface UpdateGroupError {
+    error: string;
 }
