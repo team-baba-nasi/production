@@ -24,6 +24,7 @@ const GroupList = () => {
                 onChange={setSearchText}
                 placeholder="グループ名を検索"
                 search
+                edit
             />
             {data ? (
                 <ul>
