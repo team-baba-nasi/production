@@ -1,22 +1,37 @@
 "use client";
 
+import { useState } from "react";
 import styles from "@/features/groups/styles/GroupSettings.module.scss";
 import clsx from "clsx";
 import GroupDialog from "./GroupDialog";
-import { useState } from "react";
+import { useArchiveGroup } from "../hooks/useDeleateGroup";
+import { useRouter } from "next/navigation";
 
 interface GroupSettingsProps {
     role: string;
     icon_image_url: string;
     name: string;
+    groupId: number;
 }
 
-const GroupSettings: React.FC<GroupSettingsProps> = ({ role, icon_image_url, name }) => {
+const GroupSettings: React.FC<GroupSettingsProps> = ({ role, icon_image_url, name, groupId }) => {
+    const router = useRouter();
+
     const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
     const [openLeaveDialog, setOpenLeaveDialog] = useState<boolean>(false);
+    const { mutate: archiveGroup } = useArchiveGroup(groupId);
 
     const handleDeleteGroup = () => {
-        setOpenDeleteDialog(false);
+        archiveGroup(undefined, {
+            onSuccess: (data) => {
+                console.log("アーカイブ成功:", data);
+                setOpenDeleteDialog(false);
+                router.push("/group");
+            },
+            onError: (err) => {
+                console.error("エラー:", err.response?.data.error);
+            },
+        });
     };
 
     const handleLeaveGroup = () => {

@@ -105,6 +105,7 @@ const GroupEdit = () => {
                         </div>
                     </div>
                     <GroupSettings
+                        groupId={groupId}
                         role={`${data?.myRole}`}
                         name={`${data?.group.name}`}
                         icon_image_url={`${data?.group.icon_image_url}`}
