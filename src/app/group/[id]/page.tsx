@@ -5,12 +5,13 @@ import Label from "@/components/ui/Label/Label";
 import GroupIcon from "@/features/groups/components/GroupIcon";
 import GroupDialog from "@/features/groups/components/GroupDialog";
 import styles from "@/features/groups/styles/pages/GroupEditPage.module.scss";
+import InputField from "@/components/ui/InputField/InputField";
 import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useGroupFromId } from "@/features/groups/hooks/useGroupFromId";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 
 const GroupEdit = () => {
     const params = useParams();
@@ -18,7 +19,6 @@ const GroupEdit = () => {
 
     const { data, error, isLoading } = useGroupFromId(groupId);
 
-    const groupNameInput = useRef<HTMLInputElement>(null);
     const [name, setName] = useState<string>("");
     const [originalName, setOriginalName] = useState<string>("");
     const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
@@ -30,11 +30,6 @@ const GroupEdit = () => {
             setOriginalName(data.group.name);
         }
     }, [data]);
-
-    const handleResetInput = () => {
-        setName("");
-        groupNameInput.current?.focus();
-    };
 
     const handleDeleteGroup = () => {
         setOpenDeleteDialog(false);
@@ -63,29 +58,20 @@ const GroupEdit = () => {
                     onClick={handleEdited}
                 />
                 <div className={styles.contentWrap}>
-                    <GroupIcon img={`${data?.group.icon_image_url}`} label edit />
-                    <div className={clsx(styles.content, styles.groupName)}>
-                        <Label label="グループ名" />
-                        <div className={styles.inputWrap}>
-                            <input
-                                ref={groupNameInput}
-                                type="text"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                className="text_xl"
-                            />
-                            {name !== "" && (
-                                <button onClick={handleResetInput} className={styles.close_btn}>
-                                    <Image
-                                        src="/images/ui/close_small.svg"
-                                        alt="入力リセットボタン"
-                                        width={20}
-                                        height={20}
-                                    />
-                                </button>
-                            )}
-                        </div>
-                    </div>
+                    <GroupIcon
+                        img={`${data?.group.icon_image_url}`}
+                        label
+                        edit={data?.myRole === "admin"}
+                    />
+                    <InputField
+                        label="グループ名"
+                        value={name}
+                        onChange={setName}
+                        reset={true}
+                        edit={data?.myRole === "admin"}
+                        space
+                        className={styles.content}
+                    />
                     <div className={styles.content}>
                         <div className={styles.labelWrap}>
                             <Label label={`メンバー(${data?.group.members.length})`} />
@@ -113,14 +99,14 @@ const GroupEdit = () => {
                 </div>
                 <div className={styles.groupSettings}>
                     <button
-                        className={clsx(styles.settingText, "text_xl")}
+                        className={clsx(styles.settingText, "text_normal bold")}
                         onClick={() => setOpenLeaveDialog(true)}
                     >
                         <p>グループを退会</p>
                     </button>
                     {data?.myRole === "admin" && (
                         <button
-                            className={clsx(styles.settingText, "text_xl")}
+                            className={clsx(styles.settingText, "text_normal bold")}
                             onClick={() => setOpenDeleteDialog(true)}
                         >
                             <p>グループを削除</p>
