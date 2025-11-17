@@ -6,18 +6,23 @@ import GroupIcon from "@/features/groups/components/GroupIcon";
 import GroupDialog from "@/features/groups/components/GroupDialog";
 import styles from "@/features/groups/styles/pages/GroupEditPage.module.scss";
 import InputField from "@/components/ui/InputField/InputField";
+import { useUpdateGroup } from "@/features/groups/hooks/useUpdateGroup";
 import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useGroupFromId } from "@/features/groups/hooks/useGroupFromId";
 import { useEffect, useState } from "react";
 
 const GroupEdit = () => {
     const params = useParams();
+    const router = useRouter();
+
     const groupId = Number(params.id);
 
     const { data, error, isLoading } = useGroupFromId(groupId);
+    const { mutate: updateGroup } = useUpdateGroup(groupId);
 
     const [name, setName] = useState<string>("");
     const [originalName, setOriginalName] = useState<string>("");
@@ -40,7 +45,20 @@ const GroupEdit = () => {
     };
 
     const handleEdited = () => {
-        console.log("object");
+        updateGroup(
+            {
+                name,
+            },
+            {
+                onSuccess: () => {
+                    console.log("グループ名を更新しました");
+                    router.push("/group");
+                },
+                onError: (err) => {
+                    alert(err.response?.data.error ?? "更新に失敗しました");
+                },
+            }
+        );
     };
 
     if (isLoading) return <p>読み込み中...</p>;
