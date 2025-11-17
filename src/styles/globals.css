@@ -44,8 +44,23 @@ input:focus {
     padding: 56px 16px 0;
 }
 
-.text_xl {
-    font-weight: bold;
+.text_title {
+    font-size: 2.4rem;
+    line-height: normal;
+    font-weight: 700;
+}
+
+.text_normal {
     font-size: 1.6rem;
     line-height: 150%;
+    font-weight: 500;
+}
+.text_sub {
+    font-size: 1.2rem;
+    line-height: 150%;
+    font-weight: 500;
+}
+
+.bold {
+    font-weight: bold;
 }
