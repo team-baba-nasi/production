@@ -3,9 +3,9 @@
 import GroupHeader from "@/features/groups/components/GroupHeader";
 import Label from "@/components/ui/Label/Label";
 import GroupIcon from "@/features/groups/components/GroupIcon";
-import GroupDialog from "@/features/groups/components/GroupDialog";
 import styles from "@/features/groups/styles/pages/GroupEditPage.module.scss";
 import InputField from "@/components/ui/InputField/InputField";
+import GroupSettings from "@/features/groups/components/GroupSettings";
 import { useUpdateGroup } from "@/features/groups/hooks/useUpdateGroup";
 import clsx from "clsx";
 import Image from "next/image";
@@ -26,8 +26,6 @@ const GroupEdit = () => {
 
     const [name, setName] = useState<string>("");
     const [originalName, setOriginalName] = useState<string>("");
-    const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
-    const [openLeaveDialog, setOpenLeaveDialog] = useState<boolean>(false);
 
     useEffect(() => {
         if (data?.group.name) {
@@ -35,14 +33,6 @@ const GroupEdit = () => {
             setOriginalName(data.group.name);
         }
     }, [data]);
-
-    const handleDeleteGroup = () => {
-        setOpenDeleteDialog(false);
-    };
-
-    const handleLeaveGroup = () => {
-        setOpenLeaveDialog(false);
-    };
 
     const handleEdited = () => {
         updateGroup(
@@ -114,43 +104,13 @@ const GroupEdit = () => {
                             })}
                         </div>
                     </div>
-                </div>
-                <div className={styles.groupSettings}>
-                    <button
-                        className={clsx(styles.settingText, "text_normal bold")}
-                        onClick={() => setOpenLeaveDialog(true)}
-                    >
-                        <p>グループを退会</p>
-                    </button>
-                    {data?.myRole === "admin" && (
-                        <button
-                            className={clsx(styles.settingText, "text_normal bold")}
-                            onClick={() => setOpenDeleteDialog(true)}
-                        >
-                            <p>グループを削除</p>
-                        </button>
-                    )}
+                    <GroupSettings
+                        role={`${data?.myRole}`}
+                        name={`${data?.group.name}`}
+                        icon_image_url={`${data?.group.icon_image_url}`}
+                    />
                 </div>
             </div>
-            {openDeleteDialog && (
-                <GroupDialog
-                    type="delete"
-                    onClick={handleDeleteGroup}
-                    onCancel={() => setOpenDeleteDialog(false)}
-                    img={`${data?.group.icon_image_url}`}
-                    name={`${data?.group.name}`}
-                />
-            )}
-
-            {openLeaveDialog && (
-                <GroupDialog
-                    type="leave"
-                    onClick={handleLeaveGroup}
-                    onCancel={() => setOpenLeaveDialog(false)}
-                    img={`${data?.group.icon_image_url}`}
-                    name={`${data?.group.name}`}
-                />
-            )}
         </>
     );
 };
