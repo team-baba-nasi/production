@@ -94,3 +94,21 @@ export interface UpdateGroupResponse {
 export interface UpdateGroupError {
     error: string;
 }
+
+//////////////////////////////////////////////////////////
+// グループ削除(アーカイブ)
+//////////////////////////////////////////////////////////
+
+export interface ArchiveGroupResponse {
+    message: string;
+    group: {
+        id: number;
+        name: string;
+        status: string;
+        updated_at: string;
+    };
+}
+
+export interface ArchiveGroupError {
+    error: string;
+}
