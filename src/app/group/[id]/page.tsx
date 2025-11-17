@@ -20,11 +20,15 @@ const GroupEdit = () => {
 
     const groupNameInput = useRef<HTMLInputElement>(null);
     const [name, setName] = useState<string>("");
+    const [originalName, setOriginalName] = useState<string>("");
     const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
     const [openLeaveDialog, setOpenLeaveDialog] = useState<boolean>(false);
 
     useEffect(() => {
-        setName(`${data?.group.name}`);
+        if (data?.group.name) {
+            setName(data.group.name);
+            setOriginalName(data.group.name);
+        }
     }, [data]);
 
     const handleResetInput = () => {
@@ -40,13 +44,24 @@ const GroupEdit = () => {
         setOpenLeaveDialog(false);
     };
 
+    const handleEdited = () => {
+        console.log("object");
+    };
+
     if (isLoading) return <p>読み込み中...</p>;
     if (error) return <p>エラー: {error.response?.data.error}</p>;
 
     return (
         <>
             <div className={clsx("page_wrap", styles.pageWrap)}>
-                <GroupHeader text="グループ編集" back backToPage="/group" />
+                <GroupHeader
+                    text="グループ編集"
+                    back
+                    backToPage="/group"
+                    btn={name !== originalName}
+                    btnText="完了"
+                    onClick={handleEdited}
+                />
                 <div className={styles.contentWrap}>
                     <GroupIcon img={`${data?.group.icon_image_url}`} label edit />
                     <div className={clsx(styles.content, styles.groupName)}>
