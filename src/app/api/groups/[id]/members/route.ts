@@ -1,0 +1,45 @@
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+    try {
+        const groupId = parseInt(params.id, 10);
+        if (isNaN(groupId)) {
+            return NextResponse.json({ error: "不正なグループIDです" }, { status: 400 });
+        }
+        const groupMembers = await prisma.groupMember.findMany({
+            where: { group_id: groupId },
+            select: {
+                id: true,
+                role: true,
+                joined_at: true,
+
+                user: {
+                    select: {
+                        id: true,
+                        username: true,
+                        email: true,
+                        profile_image_url: true,
+                    },
+                },
+            },
+        });
+
+        if (!groupMembers) {
+            return NextResponse.json({ error: "グループが見つかりません" }, { status: 404 });
+        }
+
+        return NextResponse.json(
+            {
+                groupMembers,
+            },
+            { status: 400 }
+        );
+    } catch (error) {
+        console.error("メンバー取得エラー:", error);
+        return NextResponse.json(
+            { error: "グループ取得中にエラーが発生しました" },
+            { status: 500 }
+        );
+    }
+}
