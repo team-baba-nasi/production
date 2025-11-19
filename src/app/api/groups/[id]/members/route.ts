@@ -7,11 +7,10 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
         if (isNaN(groupId)) {
             return NextResponse.json({ error: "不正なグループIDです" }, { status: 400 });
         }
-        const groupMembers = await prisma.groupMember.findMany({
+        const members = await prisma.groupMember.findMany({
             where: { group_id: groupId },
             select: {
                 role: true,
-
                 user: {
                     select: {
                         username: true,
@@ -21,16 +20,13 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
             },
         });
 
-        if (!groupMembers) {
-            return NextResponse.json({ error: "グループが見つかりません" }, { status: 404 });
-        }
+        const groupMembers = members.map((m) => ({
+            role: m.role,
+            name: m.user.username,
+            iconUrl: m.user.profile_image_url,
+        }));
 
-        return NextResponse.json(
-            {
-                groupMembers,
-            },
-            { status: 200 }
-        );
+        return NextResponse.json({ groupMembers }, { status: 200 });
     } catch (error) {
         console.error("メンバー取得エラー:", error);
         return NextResponse.json(

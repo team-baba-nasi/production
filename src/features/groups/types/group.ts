@@ -79,9 +79,9 @@ export type GroupMembersError = {
 };
 
 export interface GroupMembersResponse {
-    role: string;
-    user: {
-        username: string;
+    groupmembers: {
+        role: string;
+        name: string;
         profile_image_url: string;
     }[];
 }
