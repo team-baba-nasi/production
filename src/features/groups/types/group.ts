@@ -79,11 +79,14 @@ export type GroupMembersError = {
 };
 
 export interface GroupMembersResponse {
-    groupMembers: {
+    group_name: string;
+    group_icon: string;
+    members: {
         role: string;
         username: string;
-        profile_image_url: string;
+        profile_image_url: string | null;
     }[];
+    MyRole: string;
 }
 
 //////////////////////////////////////////////////////////
