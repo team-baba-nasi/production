@@ -10,15 +10,11 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
         const groupMembers = await prisma.groupMember.findMany({
             where: { group_id: groupId },
             select: {
-                id: true,
                 role: true,
-                joined_at: true,
 
                 user: {
                     select: {
-                        id: true,
                         username: true,
-                        email: true,
                         profile_image_url: true,
                     },
                 },
@@ -33,7 +29,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
             {
                 groupMembers,
             },
-            { status: 400 }
+            { status: 200 }
         );
     } catch (error) {
         console.error("メンバー取得エラー:", error);
