@@ -13,10 +13,11 @@ body {
 }
 
 :root {
-    --background: #ffffff;
-    --foreground: #111111;
-    --primary: ;
-    --secondary: ;
+    --background: #fafaf8;
+    /* --foreground: #111111; */
+    --base: #fafaf8;
+    --main: #d10000;
+    --black: #232323;
     --radius: 8px;
 }
 
