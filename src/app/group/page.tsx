@@ -5,7 +5,7 @@ import styles from "@/features/groups/styles/pages/GroupListPage.module.scss";
 import InputField from "@/components/ui/InputField/InputField";
 import Link from "next/link";
 import clsx from "clsx";
-import Group from "@/features/groups/components/Group";
+import List from "@/features/groups/components/List";
 import { useGroups } from "@/features/groups/hooks/useGroups";
 import { useState } from "react";
 
@@ -31,7 +31,7 @@ const GroupList = () => {
                     {data?.groups.map((g) => (
                         <li key={g.group.id}>
                             <Link href={`/group/${g.group.id}`}>
-                                <Group name={g.group.name} membersCount={5} />
+                                <List name={g.group.name} membersCount={5} />
                             </Link>
                         </li>
                     ))}

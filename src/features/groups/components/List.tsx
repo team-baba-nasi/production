@@ -1,13 +1,13 @@
 import Image from "next/image";
 import styles from "@/features/groups/styles/Group.module.scss";
 
-interface GroupProps {
+interface ListProps {
     icon?: string;
     name: string;
     membersCount: number;
 }
 
-const Group: React.FC<GroupProps> = ({ icon, name, membersCount }) => {
+const List: React.FC<ListProps> = ({ icon, name, membersCount }) => {
     return (
         <div className={styles.groupWrap}>
             <Image
@@ -23,4 +23,4 @@ const Group: React.FC<GroupProps> = ({ icon, name, membersCount }) => {
     );
 };
 
-export default Group;
+export default List;
