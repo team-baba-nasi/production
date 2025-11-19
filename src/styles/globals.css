@@ -3,27 +3,65 @@
 
 html,
 body {
-  margin: 0;
-  padding: 0;
-  background-color: var(--background);
-  color: var(--foreground);
-  font-family: system-ui, sans-serif;
-  line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: system-ui, sans-serif;
+    line-height: 1.6;
+    font-size: 62.5%;
 }
 
 :root {
-  --background: #ffffff;
-  --foreground: #111111;
-  --primary: ;
-  --secondary: ;
-  --radius: 8px;
+    --background: #fafaf8;
+    /* --foreground: #111111; */
+    --base: #fafaf8;
+    --main: #d10000;
+    --black: #232323;
+    --radius: 8px;
+}
+
+h2 {
+    font-weight: bold;
+    font-size: 2.4rem;
+    line-height: 150%;
 }
 
 a {
-  color: var(--primary);
-  text-decoration: none;
+    color: var(--primary);
+    text-decoration: none;
 }
 
 a:hover {
-  text-decoration: underline;
+    text-decoration: underline;
+}
+
+input:focus {
+    outline: none;
+    border: 1px solid #ccc;
+    box-shadow: none;
+}
+.page_wrap {
+    padding: 56px 16px 0;
+}
+
+.text_title {
+    font-size: 2.4rem;
+    line-height: normal;
+    font-weight: 700;
+}
+
+.text_normal {
+    font-size: 1.6rem;
+    line-height: 150%;
+    font-weight: 500;
+}
+.text_sub {
+    font-size: 1.2rem;
+    line-height: 150%;
+    font-weight: 500;
+}
+
+.bold {
+    font-weight: bold;
 }

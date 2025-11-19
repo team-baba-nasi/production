@@ -1,0 +1,64 @@
+.overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(6px);
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    .dialog {
+        width: 345px;
+        background: white;
+        border-radius: 24px;
+        padding: 17px 0 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        img {
+            margin: 0 auto;
+        }
+        .dialogText {
+            margin-top: 8px;
+            font-size: 1.6rem;
+            line-height: 150%;
+            font-weight: 500;
+            text-align: center;
+            span {
+                font-size: 2.4rem;
+            }
+        }
+        .btnWrap {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            border-top: rgba($color: #232323, $alpha: 0.25) 1px solid;
+            font-size: 2rem;
+            line-height: 150%;
+            margin-top: 16px;
+            .btns {
+                p {
+                    padding: 13px 0;
+                }
+            }
+            .submitBtn {
+                font-weight: bold;
+                color: #d10000;
+            }
+            .cancelBtn {
+                position: relative;
+
+                &::after {
+                    content: "";
+                    position: absolute;
+                    right: 0;
+                    top: 0;
+                    height: 100%;
+                    width: 1px;
+                    background-color: rgba($color: #232323, $alpha: 0.25);
+                }
+            }
+        }
+    }
+}
