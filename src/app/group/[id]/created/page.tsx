@@ -5,25 +5,30 @@ import GroupIcon from "@/features/groups/components/GroupIcon";
 import SubmitBtn from "@/components/ui/SubmitBtn/SubmitBtn";
 import clsx from "clsx";
 import styles from "@/features/groups/styles/pages/GroupCreatedPage.module.scss";
+import { useGroupFromId } from "@/features/groups/hooks/useGroupFromId";
+import { useParams } from "next/navigation";
 
 const GroupCreate = () => {
-    const handleCreate = () => {
+    const params = useParams();
+    const groupId = Number(params.id);
+
+    const { data, isLoading, error } = useGroupFromId(groupId);
+
+    if (isLoading) return <p>読み込み中...</p>;
+    if (error) return <p>エラー: {error.response?.data.error}</p>;
+
+    const handleCopyURL = () => {
         console.log("リンクをコピー");
-    };
-    const contents = {
-        img: "/images/groups/test_icon.webp",
-        name: "ババ抜きババ無し",
-        members: ["a", "b", "c", "d"],
     };
 
     return (
         <div className={clsx("page_wrap", styles.pageWrap)}>
             <GroupHeader text="グループ作成完了！" />
             <div className={styles.groupInfoWrap}>
-                <GroupIcon img={contents.img} />
+                <GroupIcon img={`${data?.group.icon_image_url}`} />
                 <p className={clsx(styles.groupText, "normal")}>ババ抜きババ無し</p>
             </div>
-            <SubmitBtn text="リンクをコピー" onClick={handleCreate} link />
+            <SubmitBtn text="リンクをコピー" onClick={handleCopyURL} link />
         </div>
     );
 };
