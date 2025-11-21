@@ -131,3 +131,18 @@ export interface ArchiveGroupResponse {
 export interface ArchiveGroupError {
     error: string;
 }
+
+//////////////////////////////////////////////////////////
+// 招待グループ
+//////////////////////////////////////////////////////////
+
+export interface InviteGroupResponse {
+    id: number;
+    name: string;
+    icon: string;
+    description: string;
+}
+
+export interface InviteGroupError {
+    error: string;
+}
