@@ -4,7 +4,7 @@ import clsx from "clsx";
 
 interface GroupDialogProps {
     img: string;
-    type: "delete" | "leave";
+    type: "delete" | "leave" | "invite";
     name: string;
     onClick: () => void;
     onCancel: () => void;
@@ -28,11 +28,17 @@ const GroupDialog: React.FC<GroupDialogProps> = ({ img, type, name, onClick, onC
                             を<br />
                             本当に削除しますか？
                         </>
-                    ) : (
+                    ) : type === "leave" ? (
                         <>
                             から
                             <br />
                             本当に退会しますか？
+                        </>
+                    ) : (
+                        <>
+                            から
+                            <br />
+                            招待が来ています
                         </>
                     )}
                 </p>
@@ -41,7 +47,7 @@ const GroupDialog: React.FC<GroupDialogProps> = ({ img, type, name, onClick, onC
                         <p>キャンセル</p>
                     </button>
                     <button className={clsx(styles.submitBtn, styles.btns)} onClick={onClick}>
-                        <p>{type === "delete" ? "削除" : "退会"}</p>
+                        <p>{type === "delete" ? "削除" : type === "leave" ? "退会" : "参加"}</p>
                     </button>
                 </div>
             </div>
