@@ -18,11 +18,9 @@ export async function GET(request: NextRequest, { params }: { params: { token: s
     }
 
     return NextResponse.json({
-        group: {
-            id: invite.group.id,
-            name: invite.group.name,
-            icon: invite.group.icon_image_url,
-            description: invite.group.description,
-        },
+        id: invite.group.id,
+        name: invite.group.name,
+        icon: invite.group.icon_image_url,
+        description: invite.group.description,
     });
 }
