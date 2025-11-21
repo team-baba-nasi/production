@@ -1,14 +1,28 @@
 import GroupDialog from "@/features/groups/components/GroupDialog";
 import { useInviteGroup } from "@/features/groups/hooks/useInviteGroup";
-import { useParams } from "next/navigation";
+import { useJoinGroup } from "@/features/groups/hooks/useJoinGroup";
+import { useParams, useRouter } from "next/navigation";
 
 const GroupInvite = () => {
     const params = useParams();
-    const token = params?.token as string | undefined;
+    const router = useRouter();
+    const joinGroup = useJoinGroup();
+    const token = params?.token as string;
     const { data, isLoading, error } = useInviteGroup(token);
 
-    const handleJoin = () => {
-        console.log("参加");
+    const handleJoin = async () => {
+        joinGroup.mutate(
+            { token },
+            {
+                onSuccess: (res) => {
+                    alert("参加しました！");
+                    router.push(`/groups/${res.groupId}`);
+                },
+                onError: () => {
+                    alert("参加に失敗しました。");
+                },
+            }
+        );
     };
 
     const cancelJoin = () => {
