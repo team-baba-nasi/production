@@ -37,7 +37,7 @@ const GroupCreate = () => {
     return (
         <div className={clsx("page_wrap", styles.pageWrap)}>
             <GroupHeader text="グループ作成" />
-            <GroupIcon img={groupIcon} label edit />
+            <GroupIcon img={groupIcon} label edit size={100} />
             <div className={styles.fieldWrap}>
                 <Label label="グループ名" />
                 <InputField

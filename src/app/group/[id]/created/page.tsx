@@ -45,8 +45,8 @@ const GroupCreate = () => {
         <div className={clsx("page_wrap", styles.pageWrap)}>
             <GroupHeader text="グループ作成完了！" />
             <div className={styles.groupInfoWrap}>
-                <GroupIcon img={`${data?.group.icon_image_url}`} />
-                <p className={clsx(styles.groupText, "normal")}>ババ抜きババ無し</p>
+                <GroupIcon img={`${data?.group.icon_image_url}`} size={100} />
+                <p className={clsx(styles.groupText, "text_normal bold")}>ババ抜きババ無し</p>
             </div>
             <SubmitBtn text="リンクをコピー" onClick={handleCopyURL} link />
         </div>

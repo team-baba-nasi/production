@@ -6,9 +6,10 @@ interface GroupIconProps {
     img: string;
     edit?: boolean;
     label?: boolean;
+    size: number;
 }
 
-const GroupIcon: React.FC<GroupIconProps> = ({ img, edit, label }) => {
+const GroupIcon: React.FC<GroupIconProps> = ({ img, edit, label, size }) => {
     return (
         <div className={styles.contentWrap}>
             {label && <Label label="グループ画像" />}
@@ -16,8 +17,8 @@ const GroupIcon: React.FC<GroupIconProps> = ({ img, edit, label }) => {
                 <Image
                     src={img}
                     alt="グループアイコン"
-                    width={80}
-                    height={80}
+                    width={size}
+                    height={size}
                     className={styles.groupIcon}
                 />
                 {edit && (

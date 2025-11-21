@@ -67,6 +67,7 @@ const GroupEdit = () => {
                 />
                 <div className={styles.contentWrap}>
                     <GroupIcon
+                        size={80}
                         img={`${data?.group.icon_image_url}`}
                         label
                         edit={data?.myRole === "admin"}
