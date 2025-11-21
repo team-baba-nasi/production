@@ -8,11 +8,12 @@
     height: 100vh;
     justify-content: center;
     align-items: center;
+    padding: 56px;
     .dialog {
-        width: 345px;
+        width: 100%;
         background: white;
         border-radius: 24px;
-        padding: 17px 0 0;
+        padding: 24px 0 0;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -21,13 +22,13 @@
             margin: 0 auto;
         }
         .dialogText {
-            margin-top: 8px;
+            margin-top: 12px;
             font-size: 1.6rem;
             line-height: 150%;
             font-weight: 500;
             text-align: center;
             span {
-                font-size: 2.4rem;
+                font-size: 2rem;
             }
         }
         .btnWrap {
@@ -39,7 +40,7 @@
             margin-top: 16px;
             .btns {
                 p {
-                    padding: 13px 0;
+                    padding: 19px 0;
                 }
             }
             .submitBtn {

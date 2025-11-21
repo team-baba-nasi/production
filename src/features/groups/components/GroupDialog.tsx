@@ -43,10 +43,16 @@ const GroupDialog: React.FC<GroupDialogProps> = ({ img, type, name, onClick, onC
                     )}
                 </p>
                 <div className={styles.btnWrap}>
-                    <button className={clsx(styles.cancelBtn, styles.btns)} onClick={onCancel}>
+                    <button
+                        className={clsx(styles.cancelBtn, styles.btns, "text_normal")}
+                        onClick={onCancel}
+                    >
                         <p>キャンセル</p>
                     </button>
-                    <button className={clsx(styles.submitBtn, styles.btns)} onClick={onClick}>
+                    <button
+                        className={clsx(styles.submitBtn, styles.btns, "text_normal")}
+                        onClick={onClick}
+                    >
                         <p>{type === "delete" ? "削除" : type === "leave" ? "退会" : "参加"}</p>
                     </button>
                 </div>
