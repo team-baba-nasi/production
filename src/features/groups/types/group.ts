@@ -131,6 +131,23 @@ export interface ArchiveGroupResponse {
 export interface ArchiveGroupError {
     error: string;
 }
+//////////////////////////////////////////////////////////
+// 招待URL生成
+//////////////////////////////////////////////////////////
+
+export interface CreateInviteTokenForm {
+    groupId: number;
+}
+
+export interface CreateInviteTokenResponse {
+    inviteUrl: string;
+    token: string;
+    expires_at: string;
+}
+
+export interface CreateInviteTokenError {
+    error: string;
+}
 
 //////////////////////////////////////////////////////////
 // 招待グループ
