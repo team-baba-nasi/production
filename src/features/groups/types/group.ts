@@ -146,3 +146,16 @@ export interface InviteGroupResponse {
 export interface InviteGroupError {
     error: string;
 }
+
+//////////////////////////////////////////////////////////
+// 招待グループ参加
+//////////////////////////////////////////////////////////
+
+export interface JoinGroupResponse {
+    success: boolean;
+    groupId: number;
+}
+
+export interface JoinGroupError {
+    message: string;
+}
