@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Label from "@/components/ui/Label/Label";
 import styles from "@/features/groups/styles/GroupIcon.module.scss";
-
 interface GroupIconProps {
     img: string;
     edit?: boolean;
@@ -10,12 +9,14 @@ interface GroupIconProps {
 }
 
 const GroupIcon: React.FC<GroupIconProps> = ({ img, edit, label, size }) => {
+    const imageSrc = img && img !== "undefined" ? img : "/images/groups/test_icon.webp";
+    console.log(img);
     return (
         <div className={styles.contentWrap}>
             {label && <Label label="グループ画像" />}
-            <div className={styles.iconWrap}>
+            <div className={styles.iconWrap} style={{ width: size, height: size }}>
                 <Image
-                    src={img}
+                    src={imageSrc}
                     alt="グループアイコン"
                     width={size}
                     height={size}
