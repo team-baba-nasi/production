@@ -2,14 +2,18 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUserFromToken } from "@/features/auth/libs/getUserFromToken";
 
-export async function POST(request: NextRequest, { params }: { params: { id: number } }) {
+export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
     try {
         const user = await getUserFromToken(request);
         if (!user) {
             return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
         }
 
-        const groupId = params.id;
+        const groupId = Number(params.id);
+
+        if (isNaN(groupId)) {
+            return NextResponse.json({ error: "無効なグループIDです" }, { status: 400 });
+        }
 
         // トークン生成（適当なUUID）
         const token = crypto.randomUUID();
