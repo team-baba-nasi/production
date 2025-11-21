@@ -1,15 +1,13 @@
 "use client";
 
 import GroupHeader from "@/features/groups/components/GroupHeader";
-import Label from "@/components/ui/Label/Label";
+import GroupMembers from "@/features/groups/components/GroupMembers";
 import GroupIcon from "@/features/groups/components/GroupIcon";
 import styles from "@/features/groups/styles/pages/GroupEditPage.module.scss";
 import InputField from "@/components/ui/InputField/InputField";
 import GroupSettings from "@/features/groups/components/GroupSettings";
 import { useUpdateGroup } from "@/features/groups/hooks/useUpdateGroup";
 import clsx from "clsx";
-import Image from "next/image";
-import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useGroupFromId } from "@/features/groups/hooks/useGroupFromId";
@@ -81,30 +79,8 @@ const GroupEdit = () => {
                         space
                         className={styles.content}
                     />
-                    <div className={styles.content}>
-                        <div className={styles.labelWrap}>
-                            <Label label={`メンバー(${data?.group.members.length})`} />
-                            <Link href={`/group/${groupId}/members`}>
-                                <p>詳細</p>
-                            </Link>
-                        </div>
-                        <div className={styles.memberWrap}>
-                            {data?.group.members.slice(0, 5).map((member) => {
-                                return (
-                                    <div key={member.user_id} className={styles.member}>
-                                        <Image
-                                            src={`${member.user.profile_image_url}`}
-                                            alt="ユーザーアイコン"
-                                            width={58}
-                                            height={58}
-                                            className={styles.memberIcon}
-                                        />
-                                        {member.role === "admin" && <p>ホスト</p>}
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </div>
+                    <GroupMembers groupId={groupId} data={data} />
+
                     <GroupSettings
                         groupId={groupId}
                         role={`${data?.myRole}`}

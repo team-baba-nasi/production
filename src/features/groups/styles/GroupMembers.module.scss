@@ -1,0 +1,35 @@
+.content {
+    width: 100%;
+    display: inline-block;
+    margin-top: 40px;
+    padding: 0 16px;
+    .labelWrap {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        p {
+            color: #0054d1;
+            font-weight: 500;
+            font-size: 1.2rem;
+        }
+    }
+    .memberWrap {
+        margin-top: 16px;
+        display: flex;
+        gap: 8px;
+        .member {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            p {
+                font-size: 1rem;
+                font-weight: bold;
+                line-height: 150%;
+            }
+            .memberIcon {
+                border-radius: 50%;
+            }
+        }
+    }
+}
