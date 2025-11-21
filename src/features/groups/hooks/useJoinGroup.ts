@@ -6,7 +6,7 @@ import { JoinGroupResponse, JoinGroupError } from "@/features/groups/types/group
 export function useJoinGroup() {
     return useMutation<JoinGroupResponse, AxiosError<JoinGroupError>, { token: string }>({
         mutationFn: async ({ token }) => {
-            const res = await axios.post(`/groups/invite/${token}/join`);
+            const res = await axios.post(`/invite/${token}/join`);
             return res.data;
         },
     });

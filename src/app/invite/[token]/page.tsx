@@ -1,3 +1,5 @@
+"use client";
+
 import GroupDialog from "@/features/groups/components/GroupDialog";
 import { useInviteGroup } from "@/features/groups/hooks/useInviteGroup";
 import { useJoinGroup } from "@/features/groups/hooks/useJoinGroup";
@@ -15,8 +17,7 @@ const GroupInvite = () => {
             { token },
             {
                 onSuccess: (res) => {
-                    alert("参加しました！");
-                    router.push(`/groups/${res.groupId}`);
+                    router.push(`/group/${res.groupId}`);
                 },
                 onError: () => {
                     alert("参加に失敗しました。");
@@ -26,7 +27,7 @@ const GroupInvite = () => {
     };
 
     const cancelJoin = () => {
-        console.log("閉じる");
+        router.push(`/groups`);
     };
 
     if (isLoading) return <p>読み込み中...</p>;
