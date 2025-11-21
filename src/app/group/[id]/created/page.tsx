@@ -6,11 +6,13 @@ import SubmitBtn from "@/components/ui/SubmitBtn/SubmitBtn";
 import clsx from "clsx";
 import styles from "@/features/groups/styles/pages/GroupCreatedPage.module.scss";
 import { useGroupFromId } from "@/features/groups/hooks/useGroupFromId";
+import { useCreateInviteToken } from "@/features/groups/hooks/useCreateInviteToken";
 import { useParams } from "next/navigation";
 
 const GroupCreate = () => {
     const params = useParams();
     const groupId = Number(params.id);
+    const createInvite = useCreateInviteToken();
 
     const { data, isLoading, error } = useGroupFromId(groupId);
 
@@ -18,7 +20,25 @@ const GroupCreate = () => {
     if (error) return <p>エラー: {error.response?.data.error}</p>;
 
     const handleCopyURL = () => {
-        console.log("リンクをコピー");
+        createInvite.mutate(
+            { groupId },
+            {
+                onSuccess: async (data) => {
+                    try {
+                        await navigator.clipboard.writeText(data.inviteUrl);
+                        alert("招待URLをコピーしました！");
+                    } catch {
+                        alert(
+                            "URLのコピーに失敗しました…手動でコピーしてください。\n" +
+                                data.inviteUrl
+                        );
+                    }
+                },
+                onError: (err) => {
+                    alert(err.response?.data?.error ?? "エラーが発生しました");
+                },
+            }
+        );
     };
 
     return (
