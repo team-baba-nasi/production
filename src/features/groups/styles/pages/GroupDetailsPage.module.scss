@@ -1,0 +1,29 @@
+.pageWrap {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    height: 100vh;
+    padding: 62px 16px 0;
+    .admin {
+        padding-bottom: 120px;
+    }
+    .member {
+        padding-bottom: 40px;
+    }
+    .contentWrap {
+        h3 {
+            font-size: 2rem;
+            margin-top: 16px;
+            text-align: center;
+        }
+
+        .membersWrap {
+            margin-top: 32px;
+        }
+    }
+    .groupSettings {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+    }
+}
