@@ -2,7 +2,7 @@ import styles from "@/features/groups/styles/GroupHeader.module.scss";
 import Image from "next/image";
 
 interface headerProps {
-    text: string;
+    text?: string;
     add?: boolean;
     back?: boolean;
     addToPage?: string;
@@ -38,7 +38,8 @@ const GroupHeader: React.FC<headerProps> = ({
                     <div style={{ width: 24, height: 24 }} />
                 )}
             </div>
-            <h2>{text}</h2>
+
+            <h2>{text ? text : ""}</h2>
             <div className={styles.iconBox}>
                 {add && addToPage ? (
                     <a href={addToPage}>
