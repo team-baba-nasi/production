@@ -14,8 +14,9 @@ const GroupMembers: React.FC<GroupMembersProps> = ({ data, groupId }) => {
         <div className={styles.content}>
             <div className={styles.labelWrap}>
                 <Label label={`メンバー(${data?.group.members.length})`} />
-                <Link href={`/group/${groupId}/members`}>
-                    <p>詳細</p>
+                <Link href={`/group/${groupId}/members`} className={styles.link}>
+                    <p className="text_sub">一覧</p>
+                    <Image src="/images/ui/arrow_right.svg" width={5} height={8} alt="右矢印" />
                 </Link>
             </div>
             <div className={styles.memberWrap}>

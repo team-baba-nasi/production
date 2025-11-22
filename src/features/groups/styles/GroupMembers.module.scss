@@ -7,10 +7,19 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+        .link {
+            width: 48px;
+            height: 26px;
+            border-radius: 12px;
+            padding: 6px;
+            background-color: #d9d9d9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+        }
         p {
-            color: #0054d1;
             font-weight: 500;
-            font-size: 1.2rem;
         }
     }
     .memberWrap {
