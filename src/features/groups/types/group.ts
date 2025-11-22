@@ -1,4 +1,3 @@
-// グループのオーナー
 export type GroupOwner = {
     id: string | number;
     username: string;
@@ -41,7 +40,27 @@ export type CreateGroupError = {
 export type GroupsResponse = {
     groups: {
         role: string;
-        group: Group;
+        group: {
+            id: number;
+            name: string;
+            description: string | null;
+            icon_image_url: string | null;
+            status: string;
+            created_at: Date;
+            owner: {
+                id: number;
+                username: string;
+            };
+            members: {
+                id: number;
+                role: string;
+                joined_at: Date;
+                user: {
+                    id: number;
+                    username: string;
+                };
+            }[];
+        };
     }[];
 };
 

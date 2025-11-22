@@ -31,7 +31,7 @@ const GroupList = () => {
                     {data?.groups.map((g) => (
                         <li key={g.group.id}>
                             <Link href={`/group/${g.group.id}`}>
-                                <List name={g.group.name} membersCount={5} />
+                                <List name={g.group.name} membersCount={g.group.members.length} />
                             </Link>
                         </li>
                     ))}

@@ -38,6 +38,18 @@ export async function GET(request: NextRequest) {
                         owner: {
                             select: { id: true, username: true },
                         },
+                        members: {
+                            select: {
+                                id: true,
+                                role: true,
+                                user: {
+                                    select: {
+                                        id: true,
+                                        username: true,
+                                    },
+                                },
+                            },
+                        },
                     },
                 },
             },
