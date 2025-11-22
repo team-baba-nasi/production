@@ -1,18 +1,17 @@
 "use client";
 
 import { useGroupFromId } from "@/features/groups/hooks/useGroupFromId";
-import { useParams } from "next/navigation";
 import GroupHeader from "@/features/groups/components/GroupHeader";
 import clsx from "clsx";
 import GroupIcon from "@/features/groups/components/GroupIcon";
+import { useGroupId } from "@/features/groups/hooks/useGroupId";
 import { useRouter } from "next/navigation";
 import GroupMembers from "@/features/groups/components/GroupMembers";
 import styles from "@/features/groups/styles/pages/GroupDetailsPage.module.scss";
 
 const GroupDetails = () => {
-    const params = useParams();
     const router = useRouter();
-    const groupId = Number(params.id);
+    const groupId = useGroupId();
     const { data, error, isLoading } = useGroupFromId(groupId);
 
     if (isLoading) return <p>読み込み中...</p>;

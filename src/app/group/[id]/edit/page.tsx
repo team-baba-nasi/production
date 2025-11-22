@@ -8,16 +8,15 @@ import InputField from "@/components/ui/InputField/InputField";
 import GroupSettings from "@/features/groups/components/GroupSettings";
 import { useUpdateGroup } from "@/features/groups/hooks/useUpdateGroup";
 import clsx from "clsx";
-import { useParams } from "next/navigation";
+import { useGroupId } from "@/features/groups/hooks/useGroupId";
 import { useRouter } from "next/navigation";
 import { useGroupFromId } from "@/features/groups/hooks/useGroupFromId";
 import { useEffect, useState } from "react";
 
 const GroupEdit = () => {
-    const params = useParams();
     const router = useRouter();
 
-    const groupId = Number(params.id);
+    const groupId = useGroupId();
 
     const { data, error, isLoading } = useGroupFromId(groupId);
     const { mutate: updateGroup } = useUpdateGroup(groupId);

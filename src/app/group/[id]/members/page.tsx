@@ -6,12 +6,11 @@ import List from "@/features/groups/components/List";
 import styles from "@/features/groups/styles/pages/GroupMembersPage.module.scss";
 import GroupSettings from "@/features/groups/components/GroupSettings";
 import clsx from "clsx";
-import { useParams } from "next/navigation";
+import { useGroupId } from "@/features/groups/hooks/useGroupId";
 import { useGroupMembersFromId } from "@/features/groups/hooks/useGroupMembersFromId";
 
 const GroupMembers = () => {
-    const params = useParams();
-    const groupId = Number(params.id);
+    const groupId = useGroupId();
 
     const { data, isLoading, error } = useGroupMembersFromId(groupId);
 

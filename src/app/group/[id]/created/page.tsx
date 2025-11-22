@@ -5,13 +5,12 @@ import GroupIcon from "@/features/groups/components/GroupIcon";
 import SubmitBtn from "@/components/ui/SubmitBtn/SubmitBtn";
 import clsx from "clsx";
 import styles from "@/features/groups/styles/pages/GroupCreatedPage.module.scss";
+import { useGroupId } from "@/features/groups/hooks/useGroupId";
 import { useGroupFromId } from "@/features/groups/hooks/useGroupFromId";
 import { useCreateInviteToken } from "@/features/groups/hooks/useCreateInviteToken";
-import { useParams } from "next/navigation";
 
 const GroupCreate = () => {
-    const params = useParams();
-    const groupId = Number(params.id);
+    const groupId = useGroupId();
     const createInvite = useCreateInviteToken();
 
     const { data, isLoading, error } = useGroupFromId(groupId);
