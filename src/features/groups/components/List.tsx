@@ -3,15 +3,22 @@ import GroupDialog from "./GroupDialog";
 import styles from "@/features/groups/styles/List.module.scss";
 import { useState } from "react";
 
+interface member {
+    id: number;
+    username: string;
+    role: string;
+    profile_image_url: string | null;
+}
 interface ListProps {
-    icon: string;
-    name: string;
+    member: member;
+    addHost: boolean;
     membersCount?: number;
     delete?: boolean;
     admin?: boolean;
+    onClick?: (id: number) => void;
 }
 
-const List: React.FC<ListProps> = ({ icon, name, membersCount, admin }) => {
+const List: React.FC<ListProps> = ({ member, membersCount, admin, addHost, onClick }) => {
     const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
 
     const handleDeleteMember = () => {
@@ -23,14 +30,24 @@ const List: React.FC<ListProps> = ({ icon, name, membersCount, admin }) => {
         <>
             <div className={styles.groupWrap}>
                 <div className={styles.details}>
+                    {member.role !== "admin" && addHost && (
+                        <label className={styles.checkboxWrap}>
+                            <input type="checkbox" onClick={() => onClick?.(member.id)} />
+                            <span className={styles.customCheckbox}></span>
+                        </label>
+                    )}
                     <Image
-                        src={icon ? `${icon}` : "/images/groups/test_icon.webp"}
+                        src={
+                            member.profile_image_url
+                                ? `${member.profile_image_url}`
+                                : "/images/groups/test_profile_image_url.webp"
+                        }
                         alt="groupIcon"
                         width={56}
                         height={56}
                     />
                     <p className="text_normal bold">
-                        {name}
+                        {member.username}
                         {membersCount && `(${membersCount})`}
                     </p>
                 </div>
@@ -42,10 +59,10 @@ const List: React.FC<ListProps> = ({ icon, name, membersCount, admin }) => {
             </div>
             {openDeleteDialog && (
                 <GroupDialog
-                    img={icon}
+                    img={member.profile_image_url || ""}
                     onCancel={() => setOpenDeleteDialog(false)}
                     onClick={handleDeleteMember}
-                    name={name}
+                    name={member.username}
                     type="kick"
                 />
             )}
