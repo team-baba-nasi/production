@@ -42,6 +42,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
         const groupMembers = members.map((m) => ({
             role: m.role,
+            id: m.user.id,
             username: m.user.username,
             profile_image_url: m.user.profile_image_url,
         }));

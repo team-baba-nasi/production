@@ -101,6 +101,7 @@ export interface GroupMembersResponse {
     group_name: string;
     group_icon: string;
     members: {
+        id: number;
         role: string;
         username: string;
         profile_image_url: string | null;
