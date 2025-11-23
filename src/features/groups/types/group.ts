@@ -197,3 +197,21 @@ export interface JoinGroupResponse {
 export interface JoinGroupError {
     message: string;
 }
+
+//////////////////////////////////////////////////////////
+// アドミン追加
+//////////////////////////////////////////////////////////
+
+export interface UpdateAdminParams {
+    groupId: number;
+    adminUserIds: number[];
+}
+
+export interface UpdateAdminResponse {
+    success: boolean;
+    updatedCount: number;
+}
+
+export interface UpdateAdminError {
+    error: string;
+}

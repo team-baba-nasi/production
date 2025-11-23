@@ -69,3 +69,59 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
         );
     }
 }
+
+export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+    try {
+        const user = await getUserFromToken(request);
+
+        if (!user) {
+            return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
+        }
+
+        const groupId = parseInt(params.id, 10);
+
+        if (isNaN(groupId)) {
+            return NextResponse.json({ error: "不正なグループIDです" }, { status: 400 });
+        }
+
+        // 管理者権限チェック -------------------------------------------------------
+        const myMembership = await prisma.groupMember.findUnique({
+            where: {
+                group_id_user_id: {
+                    group_id: groupId,
+                    user_id: user.id,
+                },
+            },
+        });
+
+        if (!myMembership || myMembership.role !== "admin") {
+            return NextResponse.json({ error: "管理者権限が必要です" }, { status: 403 });
+        }
+        // -------------------------------------------------------------------------
+
+        const body = await request.json();
+        const userIds: number[] = body.user_ids;
+
+        if (!Array.isArray(userIds) || userIds.length === 0) {
+            return NextResponse.json({ error: "user_ids は空ではいけません" }, { status: 400 });
+        }
+
+        await prisma.groupMember.updateMany({
+            where: {
+                group_id: groupId,
+                user_id: { in: userIds },
+            },
+            data: {
+                role: "admin",
+            },
+        });
+
+        return NextResponse.json(
+            { message: "メンバーの権限を admin に更新しました" },
+            { status: 200 }
+        );
+    } catch (error) {
+        console.error("ホスト権限付与エラー:", error);
+        return NextResponse.json({ error: "権限更新中にエラーが発生しました" }, { status: 500 });
+    }
+}
