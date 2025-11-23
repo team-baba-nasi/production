@@ -2,9 +2,17 @@
     padding: 8px 16px;
     display: flex;
     align-items: center;
-    gap: 24px;
+    justify-content: space-between;
     border-bottom: 1px solid var(----25, rgba(35, 35, 35, 0.25));
+    .details {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+    }
     img {
         border-radius: 50%;
+    }
+    button {
+        color: #d10000;
     }
 }
