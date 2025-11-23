@@ -2,6 +2,8 @@ import Image from "next/image";
 import GroupDialog from "./GroupDialog";
 import styles from "@/features/groups/styles/List.module.scss";
 import { useState } from "react";
+import { useRemoveGroupMember } from "../hooks/useRemoveGroupMember";
+import { useGroupId } from "../hooks/useGroupId";
 
 interface ListProps {
     id?: number;
@@ -10,7 +12,6 @@ interface ListProps {
     icon: string;
     addHost?: boolean;
     membersCount?: number;
-    delete?: boolean;
     admin?: boolean;
     onClick?: (id: number) => void;
 }
@@ -25,11 +26,23 @@ const List: React.FC<ListProps> = ({
     addHost,
     onClick,
 }) => {
-    const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
+    const groupId = useGroupId();
+    const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 
-    const handleDeleteMember = () => {
-        console.log("object");
-        setOpenDeleteDialog(false);
+    const { mutate: removeMember } = useRemoveGroupMember(groupId);
+
+    const handleDeleteMember = (targetUserId: number | undefined) => {
+        if (!targetUserId) return console.error("削除対象の ID が無効です");
+
+        removeMember(targetUserId, {
+            onSuccess: () => {
+                console.log("削除完了");
+                setOpenDeleteDialog(false);
+            },
+            onError: (e) => {
+                console.error(e.response?.data);
+            },
+        });
     };
 
     return (
@@ -38,33 +51,37 @@ const List: React.FC<ListProps> = ({
                 <div className={styles.details}>
                     {role !== "admin" && addHost && id && (
                         <label className={styles.checkboxWrap}>
-                            <input type="checkbox" onClick={() => onClick?.(id)} />
+                            <input type="checkbox" onChange={() => id && onClick?.(id)} />
                             <span className={styles.customCheckbox}></span>
                         </label>
                     )}
+
                     <Image
-                        src={icon ? `${icon}` : "/images/groups/test_profile_image_url.webp"}
+                        src={icon || "/images/groups/test_profile_image_url.webp"}
                         alt="groupIcon"
                         width={56}
                         height={56}
                     />
+
                     <p className="text_normal bold">
                         {name}
-                        {role}
-                        {membersCount && `(${membersCount})`}
+                        {role && ` (${role})`}
+                        {membersCount && ` (${membersCount})`}
                     </p>
                 </div>
-                {admin && (
+
+                {admin && id && (
                     <button className="text_sub" onClick={() => setOpenDeleteDialog(true)}>
                         削除
                     </button>
                 )}
             </div>
-            {openDeleteDialog && (
+
+            {openDeleteDialog && id && (
                 <GroupDialog
-                    img={icon || ""}
+                    img={icon}
                     onCancel={() => setOpenDeleteDialog(false)}
-                    onClick={handleDeleteMember}
+                    onClick={() => handleDeleteMember(id)}
                     name={name}
                     type="kick"
                 />
