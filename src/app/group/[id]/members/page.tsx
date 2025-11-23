@@ -27,6 +27,10 @@ const GroupMembers = () => {
     const { mutate: updateAdmins } = useUpdateGroupAdmin();
 
     const handleAddHost = () => {
+        if (!groupId) {
+            console.error("グループIDが無効です");
+            return;
+        }
         setAddHost((prev) => {
             const next = !prev;
 

@@ -17,6 +17,10 @@ const GroupEdit = () => {
     const router = useRouter();
 
     const groupId = useGroupId();
+    if (!groupId) {
+        console.error("グループIDが無効です");
+        return;
+    }
 
     const { data, error, isLoading } = useGroupFromId(groupId);
     const { mutate: updateGroup } = useUpdateGroup(groupId);

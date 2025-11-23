@@ -1,14 +1,14 @@
 "use client";
-
 import { useParams } from "next/navigation";
 
-export const useGroupId = () => {
+export function useGroupId() {
     const params = useParams();
-    const id = Number(params.id);
 
-    if (Number.isNaN(id)) {
-        throw new Error("Invalid group id");
-    }
+    const id = params?.id;
 
-    return id;
-};
+    if (!id) return undefined;
+
+    const groupId = Number(id);
+
+    return isNaN(groupId) ? undefined : groupId;
+}

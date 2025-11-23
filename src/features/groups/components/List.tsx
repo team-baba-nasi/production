@@ -26,25 +26,20 @@ const List: React.FC<ListProps> = ({
     addHost,
     onClick,
 }) => {
-    const groupId = useGroupId();
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+    const groupId = useGroupId();
 
     const { mutate: removeMember } = useRemoveGroupMember(groupId);
 
     const handleDeleteMember = (targetUserId: number | undefined) => {
-        if (!targetUserId) return console.error("削除対象の ID が無効です");
+        if (!targetUserId) return;
+        if (!groupId) return console.error("グループIDが無効です");
 
         removeMember(targetUserId, {
-            onSuccess: () => {
-                console.log("削除完了");
-                setOpenDeleteDialog(false);
-            },
-            onError: (e) => {
-                console.error(e.response?.data);
-            },
+            onSuccess: () => setOpenDeleteDialog(false),
+            onError: (e) => console.error(e.response?.data),
         });
     };
-
     return (
         <>
             <div className={styles.groupWrap}>
