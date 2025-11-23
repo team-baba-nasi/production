@@ -8,6 +8,7 @@ import clsx from "clsx";
 import SubmitBtn from "@/components/ui/SubmitBtn/SubmitBtn";
 import { useGroupId } from "@/features/groups/hooks/useGroupId";
 import { useGroupMembersFromId } from "@/features/groups/hooks/useGroupMembersFromId";
+import { useUpdateGroupAdmin } from "@/features/groups/hooks/useUpdateGroupAdmin";
 import { useState } from "react";
 
 const GroupMembers = () => {
@@ -23,12 +24,22 @@ const GroupMembers = () => {
             prev.includes(id) ? prev.filter((v) => v !== id) : [...prev, id]
         );
     };
+    const { mutate: updateAdmins } = useUpdateGroupAdmin();
 
     const handleAddHost = () => {
-        setAddHost((prev) => !prev);
-        if (selectedAddHost.length !== 0 && addHost) {
-            console.log(selectedAddHost);
-        }
+        setAddHost((prev) => {
+            const next = !prev;
+
+            if (prev && selectedAddHost.length > 0) {
+                updateAdmins({
+                    groupId: groupId,
+                    adminUserIds: selectedAddHost,
+                });
+            }
+
+            return next;
+        });
+
         setSelectedAddHost([]);
     };
 
