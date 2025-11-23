@@ -215,3 +215,14 @@ export interface UpdateAdminResponse {
 export interface UpdateAdminError {
     error: string;
 }
+
+//////////////////////////////////////////////////////////
+// グループメンバー削除
+//////////////////////////////////////////////////////////
+
+export interface RemoveMemberResponse {
+    message: string;
+}
+export interface RemoveMemberError {
+    error: string;
+}

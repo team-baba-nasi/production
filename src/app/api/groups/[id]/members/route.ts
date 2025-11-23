@@ -125,3 +125,81 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
         return NextResponse.json({ error: "権限更新中にエラーが発生しました" }, { status: 500 });
     }
 }
+
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+    try {
+        const user = await getUserFromToken(request);
+
+        if (!user) {
+            return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
+        }
+
+        const groupId = parseInt(params.id, 10);
+
+        if (isNaN(groupId)) {
+            return NextResponse.json({ error: "不正なグループIDです" }, { status: 400 });
+        }
+
+        // 管理者権限チェック -------------------------------------------------------
+        const myMembership = await prisma.groupMember.findUnique({
+            where: {
+                group_id_user_id: {
+                    group_id: groupId,
+                    user_id: user.id,
+                },
+            },
+        });
+
+        if (!myMembership || myMembership.role !== "admin") {
+            return NextResponse.json({ error: "管理者権限が必要です" }, { status: 403 });
+        }
+        // -------------------------------------------------------------------------
+
+        const body = await request.json();
+        const targetUserId = body.user_id;
+
+        if (!targetUserId || typeof targetUserId !== "number") {
+            return NextResponse.json({ error: "user_id が必要です" }, { status: 400 });
+        }
+
+        // 自分自身を削除しようとした場合
+        if (targetUserId === user.id) {
+            return NextResponse.json(
+                { error: "自分自身を削除することはできません" },
+                { status: 400 }
+            );
+        }
+
+        // 対象メンバーが存在するか確認
+        const member = await prisma.groupMember.findUnique({
+            where: {
+                group_id_user_id: {
+                    group_id: groupId,
+                    user_id: targetUserId,
+                },
+            },
+        });
+
+        if (!member) {
+            return NextResponse.json({ error: "対象メンバーが存在しません" }, { status: 404 });
+        }
+
+        // 削除実行
+        await prisma.groupMember.delete({
+            where: {
+                group_id_user_id: {
+                    group_id: groupId,
+                    user_id: targetUserId,
+                },
+            },
+        });
+
+        return NextResponse.json({ message: "メンバーを削除しました" }, { status: 200 });
+    } catch (error) {
+        console.error("メンバー削除エラー:", error);
+        return NextResponse.json(
+            { error: "メンバー削除中にエラーが発生しました" },
+            { status: 500 }
+        );
+    }
+}
