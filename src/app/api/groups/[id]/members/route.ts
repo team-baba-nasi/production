@@ -48,6 +48,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
         const myMembership = members.find((m) => m.user.username === user.username);
         const myRole = myMembership?.role ?? null;
+        const myName = myMembership?.user.username ?? null;
 
         return NextResponse.json(
             {
@@ -55,6 +56,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
                 group_icon: group.icon_image_url,
                 members: groupMembers,
                 myRole,
+                myName,
             },
             { status: 200 }
         );

@@ -105,7 +105,8 @@ export interface GroupMembersResponse {
         username: string;
         profile_image_url: string | null;
     }[];
-    MyRole: string;
+    myRole: string;
+    myName: string;
 }
 
 //////////////////////////////////////////////////////////
