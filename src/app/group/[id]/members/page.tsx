@@ -24,6 +24,14 @@ const GroupMembers = () => {
         );
     };
 
+    const handleAddHost = () => {
+        setAddHost((prev) => !prev);
+        if (selectedAddHost.length !== 0 && addHost) {
+            console.log(selectedAddHost);
+        }
+        setSelectedAddHost([]);
+    };
+
     if (isLoading) return <p>読み込み中...</p>;
     if (error) return <p>エラー: {error.response?.data.error}</p>;
 
@@ -39,7 +47,10 @@ const GroupMembers = () => {
                     {data?.members?.map((member) => (
                         <List
                             addHost={addHost && member.username !== data.myName}
-                            member={member}
+                            id={member.id}
+                            name={`${member.username}`}
+                            icon={`${member.profile_image_url}`}
+                            role={member.role}
                             key={`${member.id}-${member.role}`}
                             admin={data.myRole === "admin" && member.username !== data.myName}
                             onClick={handleSelectAddHost}
@@ -50,7 +61,7 @@ const GroupMembers = () => {
             {data?.myRole === "admin" && (
                 <SubmitBtn
                     text={!addHost ? "ホスト権限を与える" : "完了"}
-                    onClick={() => setAddHost((prev) => !prev)}
+                    onClick={handleAddHost}
                 />
             )}
         </div>

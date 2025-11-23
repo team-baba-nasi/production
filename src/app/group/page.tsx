@@ -31,7 +31,11 @@ const GroupList = () => {
                     {data?.groups.map((g) => (
                         <li key={g.group.id}>
                             <Link href={`/group/${g.group.id}`}>
-                                <List name={g.group.name} membersCount={g.group.members.length} />
+                                <List
+                                    name={g.group.name}
+                                    icon={`${g.group.icon_image_url}`}
+                                    membersCount={g.group.members.length}
+                                />
                             </Link>
                         </li>
                     ))}
