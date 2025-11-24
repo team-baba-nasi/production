@@ -140,6 +140,51 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
             return NextResponse.json({ error: "不正なグループIDです" }, { status: 400 });
         }
 
+        const body = await request.json();
+        const targetUserId = body.user_id;
+
+        // 退会処理
+        if (targetUserId === user.id) {
+            const myMembership = await prisma.groupMember.findUnique({
+                where: {
+                    group_id_user_id: {
+                        group_id: groupId,
+                        user_id: user.id,
+                    },
+                },
+            });
+
+            if (!myMembership) {
+                return NextResponse.json({ error: "メンバーではありません" }, { status: 400 });
+            }
+
+            // 管理者が一人しかいない状態で抜けようとした場合
+            const adminCount = await prisma.groupMember.count({
+                where: {
+                    group_id: groupId,
+                    role: "admin",
+                },
+            });
+
+            if (myMembership.role === "admin" && adminCount === 1) {
+                return NextResponse.json(
+                    { error: "最後の管理者は退会できません。他の管理者を追加してください。" },
+                    { status: 400 }
+                );
+            }
+
+            await prisma.groupMember.delete({
+                where: {
+                    group_id_user_id: {
+                        group_id: groupId,
+                        user_id: user.id,
+                    },
+                },
+            });
+
+            return NextResponse.json({ message: "グループを退会しました" }, { status: 200 });
+        }
+
         // 管理者権限チェック -------------------------------------------------------
         const myMembership = await prisma.groupMember.findUnique({
             where: {
@@ -155,19 +200,8 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
         }
         // -------------------------------------------------------------------------
 
-        const body = await request.json();
-        const targetUserId = body.user_id;
-
         if (!targetUserId || typeof targetUserId !== "number") {
             return NextResponse.json({ error: "user_id が必要です" }, { status: 400 });
-        }
-
-        // 自分自身を削除しようとした場合
-        if (targetUserId === user.id) {
-            return NextResponse.json(
-                { error: "自分自身を削除することはできません" },
-                { status: 400 }
-            );
         }
 
         // 対象メンバーが存在するか確認
