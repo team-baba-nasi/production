@@ -60,7 +60,7 @@ const List: React.FC<ListProps> = ({
 
                     <p className="text_normal bold">
                         {name}
-                        {role && ` (${role})`}
+                        {role === "admin" && `(ホスト)`}
                         {membersCount && ` (${membersCount})`}
                     </p>
                 </div>
