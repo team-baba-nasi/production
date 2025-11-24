@@ -6,6 +6,8 @@ import clsx from "clsx";
 import GroupDialog from "./GroupDialog";
 import { useArchiveGroup } from "../hooks/useDeleateGroup";
 import { useRouter } from "next/navigation";
+import { useRemoveGroupMember } from "../hooks/useRemoveGroupMember";
+import { useCurrentUser } from "@/features/auth/hooks/useCurrentUset";
 
 interface GroupSettingsProps {
     role: string;
@@ -19,6 +21,8 @@ const GroupSettings: React.FC<GroupSettingsProps> = ({ role, icon_image_url, nam
 
     const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
     const [openLeaveDialog, setOpenLeaveDialog] = useState<boolean>(false);
+    const { data: currentUser } = useCurrentUser();
+    const { mutate: removeMember } = useRemoveGroupMember(groupId);
     const { mutate: archiveGroup } = useArchiveGroup(groupId);
 
     const handleDeleteGroup = () => {
@@ -35,6 +39,8 @@ const GroupSettings: React.FC<GroupSettingsProps> = ({ role, icon_image_url, nam
     };
 
     const handleLeaveGroup = () => {
+        if (!currentUser?.id) return;
+        removeMember(currentUser.id);
         setOpenLeaveDialog(false);
     };
 

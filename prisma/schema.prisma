@@ -64,6 +64,7 @@ model Group {
   owner        User          @relation("OwnerRelation", fields: [owner_id], references: [id])
   members      GroupMember[]
   pins         Pin[]
+  inviteTokens       GroupInviteToken[]
 }
 
 model GroupMember {
@@ -245,4 +246,18 @@ model Notification {
   user User @relation(fields: [user_id], references: [id])
 
   @@index([user_id, is_read, created_at])
+}
+
+//////////////////////////////////////////////////////////
+// 招待URL発行関連
+//////////////////////////////////////////////////////////
+
+model GroupInviteToken {
+  id          Int      @id @default(autoincrement())
+  group_id    Int
+  token       String   @unique
+  expires_at  DateTime
+  created_at  DateTime @default(now())
+
+  group Group @relation(fields: [group_id], references: [id])
 }

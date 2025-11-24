@@ -1,4 +1,3 @@
-// グループのオーナー
 export type GroupOwner = {
     id: string | number;
     username: string;
@@ -41,7 +40,27 @@ export type CreateGroupError = {
 export type GroupsResponse = {
     groups: {
         role: string;
-        group: Group;
+        group: {
+            id: number;
+            name: string;
+            description: string | null;
+            icon_image_url: string | null;
+            status: string;
+            created_at: Date;
+            owner: {
+                id: number;
+                username: string;
+            };
+            members: {
+                id: number;
+                role: string;
+                joined_at: Date;
+                user: {
+                    id: number;
+                    username: string;
+                };
+            }[];
+        };
     }[];
 };
 
@@ -82,11 +101,13 @@ export interface GroupMembersResponse {
     group_name: string;
     group_icon: string;
     members: {
+        id: number;
         role: string;
         username: string;
         profile_image_url: string | null;
     }[];
-    MyRole: string;
+    myRole: string;
+    myName: string;
 }
 
 //////////////////////////////////////////////////////////
@@ -129,5 +150,79 @@ export interface ArchiveGroupResponse {
 }
 
 export interface ArchiveGroupError {
+    error: string;
+}
+//////////////////////////////////////////////////////////
+// 招待URL生成
+//////////////////////////////////////////////////////////
+
+export interface CreateInviteTokenForm {
+    groupId: number;
+}
+
+export interface CreateInviteTokenResponse {
+    inviteUrl: string;
+    token: string;
+    expires_at: string;
+}
+
+export interface CreateInviteTokenError {
+    error: string;
+}
+
+//////////////////////////////////////////////////////////
+// 招待グループ
+//////////////////////////////////////////////////////////
+
+export interface InviteGroupResponse {
+    id: number;
+    name: string;
+    icon: string;
+    description: string;
+}
+
+export interface InviteGroupError {
+    error: string;
+}
+
+//////////////////////////////////////////////////////////
+// 招待グループ参加
+//////////////////////////////////////////////////////////
+
+export interface JoinGroupResponse {
+    success: boolean;
+    groupId: number;
+}
+
+export interface JoinGroupError {
+    message: string;
+}
+
+//////////////////////////////////////////////////////////
+// アドミン追加
+//////////////////////////////////////////////////////////
+
+export interface UpdateAdminParams {
+    groupId: number;
+    adminUserIds: number[];
+}
+
+export interface UpdateAdminResponse {
+    success: boolean;
+    updatedCount: number;
+}
+
+export interface UpdateAdminError {
+    error: string;
+}
+
+//////////////////////////////////////////////////////////
+// グループメンバー削除
+//////////////////////////////////////////////////////////
+
+export interface RemoveMemberResponse {
+    message: string;
+}
+export interface RemoveMemberError {
     error: string;
 }

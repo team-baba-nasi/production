@@ -3,14 +3,12 @@
     padding: 0 16px;
     .iconWrap {
         position: relative;
-        width: 80px;
-        height: 80px;
         margin: 0 auto;
+        display: flex;
+        justify-content: center;
 
         .groupIcon {
             display: block;
-            width: 100%;
-            height: 100%;
             object-fit: cover;
             border-radius: 50%;
         }
