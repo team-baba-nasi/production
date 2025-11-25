@@ -17,6 +17,73 @@ const createPinSchema = z.object({
     status: z.enum(["open", "scheduled", "closed", "cancelled"]).optional(),
 });
 
+export async function GET(request: NextRequest) {
+    try {
+        // 認証チェック
+        const user = await getUserFromToken(request);
+        if (!user) {
+            return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
+        }
+
+        // 自分のピンと所属グループのピンを取得
+        const pins = await prisma.pin.findMany({
+            where: {
+                OR: [
+                    {
+                        // 自分のuser_idと同じでgroup_idがないピン
+                        user_id: user.id,
+                        group_id: null,
+                    },
+                    {
+                        // 自分の所属しているグループのピン
+                        group: {
+                            members: {
+                                some: {
+                                    user_id: user.id,
+                                },
+                            },
+                        },
+                    },
+                ],
+            },
+            select: {
+                id: true,
+                place_name: true,
+                place_address: true,
+                latitude: true,
+                longitude: true,
+                comment: true,
+                status: true,
+                created_at: true,
+                updated_at: true,
+                user: {
+                    select: { id: true, username: true },
+                },
+                group: {
+                    select: { id: true, name: true },
+                },
+                reactions: {
+                    select: {
+                        id: true,
+                        reaction_type: true,
+                        user: {
+                            select: { id: true, username: true },
+                        },
+                    },
+                },
+            },
+            orderBy: {
+                created_at: "desc",
+            },
+        });
+
+        return NextResponse.json({ pins }, { status: 200 });
+    } catch (error) {
+        console.error("Pin 取得エラー:", error);
+        return NextResponse.json({ error: "Pin 取得中にエラーが発生しました" }, { status: 500 });
+    }
+}
+
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
