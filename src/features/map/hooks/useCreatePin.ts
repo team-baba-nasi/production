@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
+import axios from "@/lib/axios";
 import { AxiosError } from "axios";
 import { CreatePinError, CreatePinPayload, CreatePinResponse } from "../types/map";
 
