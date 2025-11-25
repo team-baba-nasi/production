@@ -13,12 +13,12 @@ export const createCustomPin = (photoUrl: string, name: string) => {
     container.appendChild(image);
     container.appendChild(label);
 
-    label.style.width = "0";
+    label.style.maxWidth = "0";
     label.style.opacity = "0";
 
     container.addEventListener("click", () => {
         const isOpen = container.classList.toggle("open");
-        label.style.width = isOpen ? "140px" : "0";
+        label.style.maxWidth = isOpen ? "max-content" : "0";
         label.style.opacity = isOpen ? "1" : "0";
     });
 
