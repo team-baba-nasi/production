@@ -3,6 +3,27 @@ type PinUser = {
     username: string;
 };
 
+export interface PinData {
+    latitude: string | number | null;
+    longitude: string | number | null;
+    place_id?: string | null;
+    place_name: string;
+    comment?: string | null;
+}
+
+export interface PinsResponse {
+    pins: PinData[];
+}
+
+export interface MarkerPinData {
+    lat: number;
+    lng: number;
+    comment?: string;
+    place?: google.maps.places.PlaceResult;
+    placeName?: string;
+    placeId?: string;
+}
+
 type PinGroup = {
     id: number;
     name: string;
