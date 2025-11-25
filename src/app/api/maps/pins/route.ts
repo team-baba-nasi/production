@@ -48,6 +48,7 @@ export async function GET(request: NextRequest) {
             },
             select: {
                 id: true,
+                place_id: true,
                 place_name: true,
                 place_address: true,
                 latitude: true,

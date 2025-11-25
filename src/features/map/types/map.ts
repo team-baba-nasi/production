@@ -16,6 +16,7 @@ type PinReaction = {
 
 type Pin = {
     id: number;
+    place_id: string;
     place_name: string;
     place_address: string | null;
     latitude: string | null;
