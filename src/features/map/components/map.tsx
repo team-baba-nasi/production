@@ -12,6 +12,7 @@ import { usePlaceDetails } from "../hooks/usePlaceDetails";
 import { useExistingPins } from "../hooks/useExistingPins";
 
 const GoogleMap = () => {
+    const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
     const [selectedPlace, setSelectedPlace] = useState<google.maps.places.PlaceResult | null>(null);
     const [isClosing, setIsClosing] = useState(false);
 
@@ -23,16 +24,17 @@ const GoogleMap = () => {
     const handleMapClick = (placeId: string, service: google.maps.places.PlacesService) => {
         fetchPlaceDetails(service, placeId, (placeDetails) => {
             if (isRestaurant(placeDetails)) {
+                setSelectedPlaceId(placeId);
                 setSelectedPlace(placeDetails);
                 setIsClosing(false);
-            } else if (selectedPlace) {
+            } else if (selectedPlaceId) {
                 handleClose();
             }
         });
     };
 
     const handleBackgroundClick = () => {
-        if (selectedPlace) handleClose();
+        if (selectedPlaceId) handleClose();
     };
 
     const { mapRef, mapInstanceRef, placesServiceRef } = useMapInitialization(
@@ -40,28 +42,36 @@ const GoogleMap = () => {
         handleBackgroundClick
     );
 
-    const { clearMarkers, addMarker } = useMarkerManager(mapInstanceRef);
+    const { clearMarkers, addMarker } = useMarkerManager(mapInstanceRef, selectedPlaceId);
 
     const handlePinClick = (
         placeId: string | undefined,
         fallbackPlace?: google.maps.places.PlaceResult
     ) => {
+        if (placeId === selectedPlaceId) {
+            handleClose();
+            console.log("閉じる");
+            return;
+        }
         if (placeId && placesServiceRef.current) {
             fetchPlaceDetails(
                 placesServiceRef.current,
                 placeId,
                 (placeDetails) => {
+                    setSelectedPlaceId(placeId);
                     setSelectedPlace(placeDetails);
                     setIsClosing(false);
                 },
                 () => {
                     if (fallbackPlace) {
+                        setSelectedPlaceId(placeId);
                         setSelectedPlace(fallbackPlace);
                         setIsClosing(false);
                     }
                 }
             );
-        } else if (fallbackPlace) {
+        } else if (fallbackPlace && placeId) {
+            setSelectedPlaceId(placeId);
             setSelectedPlace(fallbackPlace);
             setIsClosing(false);
         }
@@ -111,6 +121,7 @@ const GoogleMap = () => {
     const handleClose = () => {
         setIsClosing(true);
         setTimeout(() => {
+            setSelectedPlaceId(null);
             setSelectedPlace(null);
             setIsClosing(false);
         }, 300);
@@ -120,7 +131,7 @@ const GoogleMap = () => {
         <div className={styles.wrap}>
             <div ref={mapRef} className={styles.map} />
 
-            {selectedPlace && (
+            {selectedPlace && selectedPlaceId && (
                 <Window
                     place={selectedPlace}
                     isClosing={isClosing}
