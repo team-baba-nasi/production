@@ -53,9 +53,9 @@ const GoogleMap = ({ pinsData }: GoogleMapProps) => {
     ) => {
         if (placeId === selectedPlaceId) {
             handleClose();
-            console.log("閉じる");
             return;
         }
+
         if (placeId && placesServiceRef.current) {
             fetchPlaceDetails(
                 placesServiceRef.current,
@@ -64,12 +64,29 @@ const GoogleMap = ({ pinsData }: GoogleMapProps) => {
                     setSelectedPlaceId(placeId);
                     setSelectedPlace(placeDetails);
                     setIsClosing(false);
+
+                    if (placeDetails?.geometry?.location && mapInstanceRef.current) {
+                        const position = placeDetails.geometry.location;
+                        mapInstanceRef.current.panTo(position);
+
+                        window.setTimeout(() => {
+                            mapInstanceRef.current?.setZoom(17);
+                        }, 200);
+                    }
                 },
                 () => {
                     if (fallbackPlace) {
                         setSelectedPlaceId(placeId);
                         setSelectedPlace(fallbackPlace);
                         setIsClosing(false);
+
+                        if (fallbackPlace.geometry?.location && mapInstanceRef.current) {
+                            const position = fallbackPlace.geometry.location;
+                            mapInstanceRef.current.panTo(position);
+                            window.setTimeout(() => {
+                                mapInstanceRef.current?.setZoom(17);
+                            }, 200);
+                        }
                     }
                 }
             );
@@ -77,6 +94,14 @@ const GoogleMap = ({ pinsData }: GoogleMapProps) => {
             setSelectedPlaceId(placeId);
             setSelectedPlace(fallbackPlace);
             setIsClosing(false);
+
+            if (fallbackPlace.geometry?.location && mapInstanceRef.current) {
+                const position = fallbackPlace.geometry.location;
+                mapInstanceRef.current.panTo(position);
+                window.setTimeout(() => {
+                    mapInstanceRef.current?.setZoom(17);
+                }, 200);
+            }
         }
     };
 
