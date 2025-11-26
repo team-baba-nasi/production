@@ -4,21 +4,24 @@ import styles from "../styles/map.module.scss";
 import Window from "./Window";
 import "@/features/map/styles/customPin.scss";
 import { useCreatePin } from "@/features/map/hooks/useCreatePin";
-import { usePins } from "../hooks/usePins";
 import { useQueryClient } from "@tanstack/react-query";
 import { useMapInitialization } from "../hooks/useMapInitialization";
 import { useMarkerManager } from "../hooks/useMarkerManager";
 import { usePlaceDetails } from "../hooks/usePlaceDetails";
 import { useExistingPins } from "../hooks/useExistingPins";
+import { GetPinsResponse } from "../types/map";
 
-const GoogleMap = () => {
+type GoogleMapProps = {
+    pinsData: GetPinsResponse | undefined;
+};
+
+const GoogleMap = ({ pinsData }: GoogleMapProps) => {
     const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
     const [selectedPlace, setSelectedPlace] = useState<google.maps.places.PlaceResult | null>(null);
     const [isClosing, setIsClosing] = useState(false);
 
     const queryClient = useQueryClient();
     const { mutate: createPinMutation } = useCreatePin();
-    const { data: pinsData } = usePins();
     const { fetchPlaceDetails, isRestaurant } = usePlaceDetails();
 
     const handleMapClick = (placeId: string, service: google.maps.places.PlacesService) => {
