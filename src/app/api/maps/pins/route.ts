@@ -25,17 +25,74 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
         }
 
-        // 自分のピンと所属グループのピンを取得
-        const pins = await prisma.pin.findMany({
-            where: {
+        // クエリパラメータの取得
+        const { searchParams } = new URL(request.url);
+        const scope = searchParams.get("scope");
+        const groupId = searchParams.get("group_id");
+
+        type WhereCondition = {
+            user_id?: number;
+            group_id?: number | null;
+            status?: string;
+            OR?: Array<{
+                user_id?: number;
+                group_id?: number | null;
+                group?: {
+                    members: {
+                        some: {
+                            user_id: number;
+                        };
+                    };
+                };
+            }>;
+        };
+
+        let whereCondition: WhereCondition;
+
+        if (scope === "mine") {
+            // 自分のピン（group_idがnull）
+            whereCondition = {
+                user_id: user.id,
+                group_id: null,
+            };
+        } else if (groupId) {
+            // 指定グループのopenピンのみ
+            const groupIdNum = parseInt(groupId, 10);
+            if (isNaN(groupIdNum)) {
+                return NextResponse.json(
+                    { error: "group_idは数値である必要があります" },
+                    { status: 400 }
+                );
+            }
+
+            const membership = await prisma.groupMember.findFirst({
+                where: {
+                    group_id: groupIdNum,
+                    user_id: user.id,
+                },
+            });
+
+            if (!membership) {
+                return NextResponse.json(
+                    { error: "指定されたグループにアクセスする権限がありません" },
+                    { status: 403 }
+                );
+            }
+
+            whereCondition = {
+                group_id: groupIdNum,
+                status: "open",
+            };
+        } else {
+            // パラメータなし：自分のopenピン + 所属グループのopenピン
+            whereCondition = {
+                status: "open",
                 OR: [
                     {
-                        // 自分のuser_idと同じでgroup_idがないピン
                         user_id: user.id,
                         group_id: null,
                     },
                     {
-                        // 自分の所属しているグループのピン
                         group: {
                             members: {
                                 some: {
@@ -45,7 +102,11 @@ export async function GET(request: NextRequest) {
                         },
                     },
                 ],
-            },
+            };
+        }
+
+        const pins = await prisma.pin.findMany({
+            where: whereCondition,
             select: {
                 id: true,
                 place_id: true,
