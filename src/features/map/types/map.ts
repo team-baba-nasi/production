@@ -1,6 +1,7 @@
 type PinUser = {
     id: number;
     username: string;
+    profile_image_url: string;
 };
 
 export interface PinData {

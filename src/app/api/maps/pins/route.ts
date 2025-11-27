@@ -119,7 +119,7 @@ export async function GET(request: NextRequest) {
                 created_at: true,
                 updated_at: true,
                 user: {
-                    select: { id: true, username: true },
+                    select: { id: true, username: true, profile_image_url: true },
                 },
                 group: {
                     select: { id: true, name: true },
