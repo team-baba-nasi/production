@@ -23,39 +23,44 @@ export const useExistingPins = (
 
             clearMarkers();
 
+            // 全てのピンを順番に処理
             for (const pin of pinsData.pins) {
                 if (!pin.latitude || !pin.longitude) continue;
 
                 if (pin.place_id) {
-                    fetchPlaceDetails(
-                        placesService,
-                        pin.place_id,
-                        async (placeDetails) => {
-                            await addMarker(
-                                {
-                                    lat: Number(pin.latitude),
-                                    lng: Number(pin.longitude),
-                                    comment: pin.comment ?? undefined,
-                                    place: placeDetails,
-                                    placeName: placeDetails.name,
-                                    placeId: pin.place_id ?? undefined,
-                                },
-                                () => onPinClick(pin.place_id ?? undefined, placeDetails)
-                            );
-                        },
-                        async () => {
-                            await addMarker(
-                                {
-                                    lat: Number(pin.latitude),
-                                    lng: Number(pin.longitude),
-                                    comment: pin.comment ?? undefined,
-                                    placeName: pin.place_name,
-                                    placeId: pin.place_id ?? undefined,
-                                },
-                                () => onPinClick(pin.place_id ?? undefined)
-                            );
-                        }
-                    );
+                    await new Promise<void>((resolve) => {
+                        fetchPlaceDetails(
+                            placesService,
+                            pin.place_id!,
+                            async (placeDetails) => {
+                                await addMarker(
+                                    {
+                                        lat: Number(pin.latitude),
+                                        lng: Number(pin.longitude),
+                                        comment: pin.comment ?? undefined,
+                                        place: placeDetails,
+                                        placeName: placeDetails.name,
+                                        placeId: pin.place_id ?? undefined,
+                                    },
+                                    () => onPinClick(pin.place_id ?? undefined, placeDetails)
+                                );
+                                resolve();
+                            },
+                            async () => {
+                                await addMarker(
+                                    {
+                                        lat: Number(pin.latitude),
+                                        lng: Number(pin.longitude),
+                                        comment: pin.comment ?? undefined,
+                                        placeName: pin.place_name,
+                                        placeId: pin.place_id ?? undefined,
+                                    },
+                                    () => onPinClick(pin.place_id ?? undefined)
+                                );
+                                resolve();
+                            }
+                        );
+                    });
                 } else {
                     await addMarker(
                         {
@@ -71,5 +76,5 @@ export const useExistingPins = (
         };
 
         loadExistingPins();
-    }, [pinsData, placesService]);
+    }, [pinsData, placesService, clearMarkers, addMarker, fetchPlaceDetails, onPinClick]);
 };

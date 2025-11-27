@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import styles from "../styles/map.module.scss";
 import Window from "./Window";
 import "@/features/map/styles/customPin.scss";
@@ -47,63 +47,63 @@ const GoogleMap = ({ pinsData }: GoogleMapProps) => {
 
     const { clearMarkers, addMarker } = useMarkerManager(mapInstanceRef, selectedPlaceId);
 
-    const handlePinClick = (
-        placeId: string | undefined,
-        fallbackPlace?: google.maps.places.PlaceResult
-    ) => {
-        if (placeId === selectedPlaceId) {
-            handleClose();
-            return;
-        }
+    const handlePinClick = useCallback(
+        (placeId: string | undefined, fallbackPlace?: google.maps.places.PlaceResult) => {
+            if (placeId === selectedPlaceId) {
+                handleClose();
+                return;
+            }
 
-        if (placeId && placesServiceRef.current) {
-            fetchPlaceDetails(
-                placesServiceRef.current,
-                placeId,
-                (placeDetails) => {
-                    setSelectedPlaceId(placeId);
-                    setSelectedPlace(placeDetails);
-                    setIsClosing(false);
-
-                    if (placeDetails?.geometry?.location && mapInstanceRef.current) {
-                        const position = placeDetails.geometry.location;
-                        mapInstanceRef.current.panTo(position);
-
-                        window.setTimeout(() => {
-                            mapInstanceRef.current?.setZoom(17);
-                        }, 200);
-                    }
-                },
-                () => {
-                    if (fallbackPlace) {
+            if (placeId && placesServiceRef.current) {
+                fetchPlaceDetails(
+                    placesServiceRef.current,
+                    placeId,
+                    (placeDetails) => {
                         setSelectedPlaceId(placeId);
-                        setSelectedPlace(fallbackPlace);
+                        setSelectedPlace(placeDetails);
                         setIsClosing(false);
 
-                        if (fallbackPlace.geometry?.location && mapInstanceRef.current) {
-                            const position = fallbackPlace.geometry.location;
+                        if (placeDetails?.geometry?.location && mapInstanceRef.current) {
+                            const position = placeDetails.geometry.location;
                             mapInstanceRef.current.panTo(position);
+
                             window.setTimeout(() => {
                                 mapInstanceRef.current?.setZoom(17);
                             }, 200);
                         }
-                    }
-                }
-            );
-        } else if (fallbackPlace && placeId) {
-            setSelectedPlaceId(placeId);
-            setSelectedPlace(fallbackPlace);
-            setIsClosing(false);
+                    },
+                    () => {
+                        if (fallbackPlace) {
+                            setSelectedPlaceId(placeId);
+                            setSelectedPlace(fallbackPlace);
+                            setIsClosing(false);
 
-            if (fallbackPlace.geometry?.location && mapInstanceRef.current) {
-                const position = fallbackPlace.geometry.location;
-                mapInstanceRef.current.panTo(position);
-                window.setTimeout(() => {
-                    mapInstanceRef.current?.setZoom(17);
-                }, 200);
+                            if (fallbackPlace.geometry?.location && mapInstanceRef.current) {
+                                const position = fallbackPlace.geometry.location;
+                                mapInstanceRef.current.panTo(position);
+                                window.setTimeout(() => {
+                                    mapInstanceRef.current?.setZoom(17);
+                                }, 200);
+                            }
+                        }
+                    }
+                );
+            } else if (fallbackPlace && placeId) {
+                setSelectedPlaceId(placeId);
+                setSelectedPlace(fallbackPlace);
+                setIsClosing(false);
+
+                if (fallbackPlace.geometry?.location && mapInstanceRef.current) {
+                    const position = fallbackPlace.geometry.location;
+                    mapInstanceRef.current.panTo(position);
+                    window.setTimeout(() => {
+                        mapInstanceRef.current?.setZoom(17);
+                    }, 200);
+                }
             }
-        }
-    };
+        },
+        [selectedPlaceId, placesServiceRef, mapInstanceRef, fetchPlaceDetails]
+    );
 
     useExistingPins(
         pinsData,
@@ -135,7 +135,7 @@ const GoogleMap = ({ pinsData }: GoogleMapProps) => {
             },
             {
                 onSuccess: () => {
-                    queryClient.invalidateQueries({ queryKey: ["pins"] });
+                    queryClient.invalidateQueries({ queryKey: ["pins"], exact: false });
                     handleClose();
                 },
                 onError: (error) => {
