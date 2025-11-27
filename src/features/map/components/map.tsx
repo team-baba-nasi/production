@@ -10,12 +10,14 @@ import { useMarkerManager } from "../hooks/useMarkerManager";
 import { usePlaceDetails } from "../hooks/usePlaceDetails";
 import { useExistingPins } from "../hooks/useExistingPins";
 import { GetPinsResponse } from "../types/map";
+import { useGroupId } from "@/features/groups/hooks/useGroupId";
 
 type GoogleMapProps = {
     pinsData: GetPinsResponse | undefined;
 };
 
 const GoogleMap = ({ pinsData }: GoogleMapProps) => {
+    const groupId = useGroupId();
     const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
     const [selectedPlace, setSelectedPlace] = useState<google.maps.places.PlaceResult | null>(null);
     const [isClosing, setIsClosing] = useState(false);
@@ -125,6 +127,7 @@ const GoogleMap = ({ pinsData }: GoogleMapProps) => {
 
         createPinMutation(
             {
+                group_id: groupId,
                 place_name: selectedPlace.name || "不明な店舗",
                 place_address: selectedPlace.vicinity,
                 latitude: lat,
