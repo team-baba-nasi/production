@@ -21,10 +21,7 @@ const Window: React.FC<WindowProps> = ({ place, isClosing, onClose, onCreatePin,
     return (
         <>
             {/* ピン一覧 */}
-            <div
-                className={`${styles.window} ${isClosing ? styles.shopClosing : ""}`}
-                onClick={(e) => e.stopPropagation()}
-            >
+            <div className={styles.wrap}>
                 {matchingPins.length > 0 && (
                     <div className={styles.pinsList}>
                         {matchingPins.map((pin) => (
@@ -40,21 +37,26 @@ const Window: React.FC<WindowProps> = ({ place, isClosing, onClose, onCreatePin,
                         ))}
                     </div>
                 )}
-                {/* ShopDetailまたはCreatePinを表示 */}
-                {isCreatePin ? (
-                    <CreatePin
-                        onSubmit={(comment) => {
-                            onCreatePin(comment);
-                            setIsCreatePin(false);
-                        }}
-                    />
-                ) : (
-                    <ShopDetail
-                        place={place}
-                        onClose={onClose}
-                        isCreatePin={() => setIsCreatePin(true)}
-                    />
-                )}
+                <div
+                    className={`${styles.window} ${isClosing ? styles.shopClosing : ""}`}
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    {/* ShopDetailまたはCreatePinを表示 */}
+                    {isCreatePin ? (
+                        <CreatePin
+                            onSubmit={(comment) => {
+                                onCreatePin(comment);
+                                setIsCreatePin(false);
+                            }}
+                        />
+                    ) : (
+                        <ShopDetail
+                            place={place}
+                            onClose={onClose}
+                            isCreatePin={() => setIsCreatePin(true)}
+                        />
+                    )}
+                </div>
             </div>
         </>
     );
