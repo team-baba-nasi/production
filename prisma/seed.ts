@@ -234,6 +234,19 @@ async function main() {
                 status: "closed",
             },
         }),
+        prisma.pin.create({
+            data: {
+                user_id: users[3].id,
+                group_id: null,
+                place_id: "ChIJo06D01WJGGARsG8wm7KW0Rw",
+                place_name: "日本橋 天丼 金子半之助 日本橋総本店",
+                place_address: "中央区日本橋室町１丁目１１−１５",
+                latitude: 35.6853778,
+                longitude: 139.7752665,
+                comment: "mbuu",
+                status: "closed",
+            },
+        }),
     ]);
 
     console.log(`✅ ${pins.length}個のピンを作成しました`);
