@@ -168,6 +168,7 @@ const GoogleMap = ({ pinsData }: GoogleMapProps) => {
                     isClosing={isClosing}
                     onClose={handleClose}
                     onCreatePin={handleCreatePin}
+                    pinsData={pinsData}
                 />
             )}
         </div>
