@@ -87,7 +87,7 @@ export interface CreatePinError {
 }
 
 //////////////////////////////////////////////////////////
-// 取得
+// ピン取得
 //////////////////////////////////////////////////////////
 
 // GET /api/pins のレスポンス型
@@ -102,4 +102,24 @@ export interface GetPinsError {
         field: string | number;
         message: string;
     }>;
+}
+
+//////////////////////////////////////////////////////////
+// リアクション取得
+//////////////////////////////////////////////////////////
+
+export interface CreateReactionResponse {
+    id: number;
+    pin_id: number;
+    user_id: number;
+    reaction_type: string;
+    created_at: string;
+}
+
+export interface CreateReactionError {
+    error: string;
+}
+
+export interface CreateReactionPayload {
+    pin_id: number;
 }
