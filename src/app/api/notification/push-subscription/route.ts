@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getUserFromToken } from "@/features/auth/libs/getUserFromToken";
 
 interface SubscriptionPayload {
     endpoint: string;
@@ -11,6 +12,8 @@ interface SubscriptionPayload {
 }
 
 export async function POST(request: NextRequest) {
+    const user = await getUserFromToken(request);
+    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     const body = (await request.json()) as SubscriptionPayload;
 
     if (!body.endpoint || !body.keys) {
@@ -28,7 +31,7 @@ export async function POST(request: NextRequest) {
             endpoint: body.endpoint,
             p256dh: body.keys.p256dh,
             auth: body.keys.auth,
-            user_id: body.user_id,
+            user_id: user.id,
         },
     });
 
