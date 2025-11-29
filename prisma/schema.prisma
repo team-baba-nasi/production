@@ -34,6 +34,7 @@ model User {
   chat_participants ChatParticipant[]
   messages         Message[] @relation("MessageSender")
   notifications    Notification[]
+  pushSubscription PushSubscription[]
 }
 
 model Follow {
@@ -232,6 +233,20 @@ model Message {
 // 通知関連
 //////////////////////////////////////////////////////////
 
+model PushSubscription {
+  id        String   @id @default(cuid())
+  endpoint  String   @unique
+  p256dh    String 
+  auth      String 
+  user_id   Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [user_id], references: [id])
+
+  @@index([user_id])
+  @@index([endpoint])
+}
 model Notification {
   id              Int       @id @default(autoincrement())
   user_id         Int
@@ -247,6 +262,7 @@ model Notification {
 
   @@index([user_id, is_read, created_at])
 }
+
 
 //////////////////////////////////////////////////////////
 // 招待URL発行関連
