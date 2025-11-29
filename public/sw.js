@@ -12,9 +12,13 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("push", (event) => {
     console.log("Push received:", event);
 
-    let data = {};
     if (event.data) {
-        data = event.data.json();
+        try {
+            data = event.data.json();
+        } catch {
+            // JSON でない場合は text() を使う
+            data = { body: event.data.text() };
+        }
     }
 
     const title = data.title || "New Notification";
