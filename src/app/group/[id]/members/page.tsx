@@ -75,6 +75,7 @@ const GroupMembers = () => {
             </div>
             {data?.myRole === "admin" && (
                 <SubmitBtn
+                    submit={addHost}
                     text={!addHost ? "ホスト権限を与える" : "完了"}
                     onClick={handleAddHost}
                 />
