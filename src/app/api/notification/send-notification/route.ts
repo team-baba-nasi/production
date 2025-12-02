@@ -38,41 +38,40 @@ export async function POST(request: NextRequest) {
                         },
                         payload
                     )
-                    .then(() => ({ success: true, user_id: sub.user_id }))
+                    .then(() => ({ success: true as const, user_id: sub.user_id }))
                     .catch((err) => {
                         console.error("Failed to send:", err);
-                        return { success: false, user_id: sub.user_id };
+                        return { success: false as const, user_id: sub.user_id };
                     })
             )
         );
 
         // DBに履歴保存
+        const successfulUserIds: number[] = [];
+
+        for (const result of results) {
+            if (result.status === "fulfilled" && result.value.success && result.value.user_id) {
+                successfulUserIds.push(result.value.user_id);
+            }
+        }
+
         await Promise.all(
-            results
-                .filter(
-                    (
-                        r
-                    ): r is {
-                        status: "fulfilled";
-                        value: { success: true; user_id: number | null };
-                    } => r.status === "fulfilled" && r.value.success && r.value.user_id
-                )
-                .map((r) =>
-                    prisma.notification.create({
-                        data: {
-                            user_id: r.value.user_id!,
-                            type: "push",
-                            title,
-                            message: body,
-                        },
-                    })
-                )
+            successfulUserIds.map((user_id) =>
+                prisma.notification.create({
+                    data: {
+                        user_id,
+                        type: "push",
+                        title,
+                        message: body,
+                    },
+                })
+            )
         );
 
         return NextResponse.json({
             message: "Notification sent",
             total: subscriptions.length,
-            success: results.filter((r) => r.status === "fulfilled" && r.value.success).length,
+            success: successfulUserIds.length,
         });
     } catch (err) {
         console.error(err);

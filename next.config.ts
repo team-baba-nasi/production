@@ -24,6 +24,6 @@ const nextConfig: NextConfig = withPWA({
             "i.pravatar.cc",
         ],
     },
-});
+}) as NextConfig;
 
 export default nextConfig;
