@@ -3,7 +3,7 @@
     display: flex;
     align-items: center;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.5s ease;
 }
 
 .pin-image {
@@ -31,4 +31,9 @@
     transition: all 0.3s ease;
     overflow: hidden;
     z-index: 1;
+    max-width: 0;
+}
+
+.custom-pin.open .pin-label {
+    max-width: 300px;
 }

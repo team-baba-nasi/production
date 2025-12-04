@@ -1,6 +1,12 @@
-export const createCustomPin = (photoUrl: string, name: string) => {
+export const createCustomPin = (
+    photoUrl: string,
+    name: string,
+    placeId: string,
+    isSelected: boolean
+) => {
     const container = document.createElement("div");
     container.classList.add("custom-pin");
+    container.dataset.placeId = placeId;
 
     const image = document.createElement("img");
     image.src = photoUrl || "/images/map/default.jpg";
@@ -13,14 +19,15 @@ export const createCustomPin = (photoUrl: string, name: string) => {
     container.appendChild(image);
     container.appendChild(label);
 
-    label.style.width = "0";
-    label.style.opacity = "0";
-
-    container.addEventListener("click", () => {
-        const isOpen = container.classList.toggle("open");
-        label.style.width = isOpen ? "140px" : "0";
-        label.style.opacity = isOpen ? "1" : "0";
-    });
+    // 選択状態に応じてラベルを展開
+    if (isSelected) {
+        container.classList.add("open");
+        label.style.maxWidth = "max-content";
+        label.style.opacity = "1";
+    } else {
+        label.style.maxWidth = "0";
+        label.style.opacity = "0";
+    }
 
     return container;
 };

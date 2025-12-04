@@ -1,28 +1,24 @@
 "use client";
 
-import GroupHeader from "@/features/groups/components/GroupHeader";
-import List from "@/features/groups/components/List";
-import InputField from "@/components/ui/InputField/InputField";
-import { useState } from "react";
-// import GroupDialog from "@/features/groups/components/GroupDialog";
+import { usePins } from "@/features/map/hooks/usePins";
 
 const test = () => {
-    const [gorupname, setGroupname] = useState<string>("");
+    const { data, isLoading, error } = usePins();
+
+    if (isLoading) return <div>読み込み中...</div>;
+    if (error) return <div>エラー: {error.response?.data.error}</div>;
 
     return (
-        <>
-            <InputField
-                value={gorupname}
-                onChange={setGroupname}
-                placeholder="グループ名を入力"
-                search={true}
-            />
-            <GroupHeader text="グループ管理" add addToPage="/" />
-            <GroupHeader text="グループ編集" back backToPage="/" />
-            <GroupHeader text="グループ作成" />
-            <List icon="test_icon" name="テストグループ" membersCount={5} />
-            {/* <GroupDialog img={contents.img} type="delete" name="ババ抜きババ無し" /> */}
-        </>
+        <div>
+            {data?.pins.map((pin) => (
+                <div key={pin.id}>
+                    <p>{pin.latitude}</p>
+                    <h3>{pin.place_name}</h3>
+                    <p>{pin.comment}</p>
+                    {pin.group && <span>グループ: {pin.group.name}</span>}
+                </div>
+            ))}
+        </div>
     );
 };
 

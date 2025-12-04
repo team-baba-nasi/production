@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import styles from "../styles/map.module.scss";
+import styles from "../styles/ShopDetil.module.scss";
 
 type ShopDetailProps = {
     place: google.maps.places.PlaceResult;

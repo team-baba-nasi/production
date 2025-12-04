@@ -4,7 +4,7 @@ import styles from "@/features/map/styles/CreatePin.module.scss";
 import { useState } from "react";
 
 type CreatePinProps = {
-    onSubmit: (comment: string) => void; // ← コメントを親に渡す
+    onSubmit: (comment: string) => void;
 };
 
 const CreatePin = ({ onSubmit }: CreatePinProps) => {
