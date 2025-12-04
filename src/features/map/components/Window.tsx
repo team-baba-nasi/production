@@ -47,11 +47,7 @@ const Window: React.FC<WindowProps> = ({ place, isClosing, onClose, onCreatePin,
                                     />
                                 </button>
                                 {openDialog && (
-                                    <MapDialog
-                                        comment="テスト"
-                                        icon={pin.user.profile_image_url}
-                                        handleClose={handleCloseDialog}
-                                    />
+                                    <MapDialog pin={pin} handleClose={handleCloseDialog} />
                                 )}
                             </div>
                         ))}

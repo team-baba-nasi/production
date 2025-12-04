@@ -36,7 +36,7 @@ type PinReaction = {
     user: PinUser;
 };
 
-type Pin = {
+export type Pin = {
     id: number;
     place_id: string;
     place_name: string;
