@@ -47,7 +47,7 @@ const GroupCreate = () => {
                     placeholder="グループ名を入力"
                 />
             </div>
-            <SubmitBtn text="作成" onClick={handleCreate} />
+            <SubmitBtn submit text="作成" onClick={handleCreate} />
         </div>
     );
 };

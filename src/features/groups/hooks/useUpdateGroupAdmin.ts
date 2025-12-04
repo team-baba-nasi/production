@@ -6,8 +6,8 @@ import { UpdateAdminParams, UpdateAdminError, UpdateAdminResponse } from "../typ
 export function useUpdateGroupAdmin() {
     return useMutation<UpdateAdminResponse, AxiosError<UpdateAdminError>, UpdateAdminParams>({
         mutationFn: async ({ groupId, adminUserIds }) => {
-            const res = await axios.post<UpdateAdminResponse>(`/groups/${groupId}/members/role`, {
-                adminUserIds,
+            const res = await axios.patch<UpdateAdminResponse>(`/groups/${groupId}/members`, {
+                user_ids: adminUserIds,
             });
             return res.data;
         },

@@ -14,9 +14,10 @@ body {
 
 :root {
     --background: #fafaf8;
-    /* --foreground: #111111; */
     --base: #fafaf8;
     --main: #d10000;
+    --blue: #2db2ff;
+    --yellow: #f3ff52;
     --black: #232323;
     --radius: 8px;
 }
@@ -64,4 +65,16 @@ input:focus {
 
 .bold {
     font-weight: bold;
+}
+
+.shadow_1 {
+    box-shadow: 0 0 1px 0 rgba(35, 35, 35, 0.25);
+}
+
+.shadow_4 {
+    box-shadow: 0 0 4px 0 rgba(35, 35, 35, 0.25);
+}
+
+.shadow_8 {
+    box-shadow: 0 0 8px 0 rgba(35, 35, 35, 0.25);
 }
