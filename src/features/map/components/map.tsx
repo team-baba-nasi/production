@@ -2,7 +2,7 @@
 import { useState, useCallback } from "react";
 import styles from "../styles/map.module.scss";
 import Window from "./Window";
-import "@/features/map/styles/customPin.scss";
+import "@/features/map/styles/CustomPin.scss";
 import { useCreatePin } from "@/features/map/hooks/useCreatePin";
 import { useQueryClient } from "@tanstack/react-query";
 import { useMapInitialization } from "../hooks/useMapInitialization";

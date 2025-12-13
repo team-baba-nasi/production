@@ -8,6 +8,11 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    position: fixed;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: auto;
+    bottom: 24px;
     img {
         border-radius: 50%;
     }
