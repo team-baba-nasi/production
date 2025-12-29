@@ -1,0 +1,41 @@
+.navWrap {
+    width: 360px;
+    height: 64px;
+    border-radius: 50px;
+    background: #fafaf8;
+    box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(12px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: fixed;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: auto;
+    bottom: 24px;
+    img {
+        border-radius: 50%;
+    }
+    .iconWrap {
+        width: 25%;
+        height: 100%;
+        border-radius: 50px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: rgba(91, 91, 91, 0.5);
+        font-size: 1rem;
+        font-weight: 700;
+        line-height: normal;
+    }
+    .selected {
+        background: linear-gradient(
+            180deg,
+            rgba(24, 255, 70, 0.25) 0%,
+            rgba(24, 255, 209, 0.25) 100%
+        );
+
+        box-shadow: 0 0 1px 0 rgba(35, 35, 35, 0.25);
+    }
+}

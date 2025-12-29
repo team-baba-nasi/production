@@ -20,6 +20,7 @@ export async function getUserFromToken(request: NextRequest) {
                 username: true,
                 email: true,
                 role: true,
+                profile_image_url: true,
             },
         });
 

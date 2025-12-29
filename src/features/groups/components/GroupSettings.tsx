@@ -7,7 +7,7 @@ import GroupDialog from "./GroupDialog";
 import { useArchiveGroup } from "../hooks/useDeleateGroup";
 import { useRouter } from "next/navigation";
 import { useRemoveGroupMember } from "../hooks/useRemoveGroupMember";
-import { useCurrentUser } from "@/features/auth/hooks/useCurrentUset";
+import { useCurrentUser } from "@/features/auth/hooks/useCurrentUser";
 
 interface GroupSettingsProps {
     role: string;
@@ -39,8 +39,8 @@ const GroupSettings: React.FC<GroupSettingsProps> = ({ role, icon_image_url, nam
     };
 
     const handleLeaveGroup = () => {
-        if (!currentUser?.id) return;
-        removeMember(currentUser.id);
+        if (!currentUser?.user) return;
+        removeMember(currentUser.user.id);
         setOpenLeaveDialog(false);
     };
 

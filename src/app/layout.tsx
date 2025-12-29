@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "@/styles/globals.css";
 import { Providers } from "@/features/providers/providers";
 import clsx from "clsx";
+import NavigationWrapper from "@/components/ui/Navigation/NavigationWrapper";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -32,7 +33,10 @@ export default function RootLayout({
                     "pb-[102px]"
                 )}
             >
-                <Providers>{children}</Providers>
+                <Providers>
+                    {children}
+                    <NavigationWrapper />
+                </Providers>
             </body>
         </html>
     );
