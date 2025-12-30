@@ -186,11 +186,12 @@ model UserCalendar {
 
 model ChatRoom {
   id         Int        @id @default(autoincrement())
-  pin_id     Int?
+  uuid       String     @unique @default(uuid())
+  pin_id     Int?       @unique
   room_type  String     @default("pin") // pin, group, direct など
   created_at DateTime   @default(now())
   updated_at DateTime   @updatedAt
-
+  
   pin            Pin?              @relation(fields: [pin_id], references: [id])
   participants   ChatParticipant[]
   messages       Message[]
