@@ -2,6 +2,10 @@ export type ChatGroupListResponse = {
     chatGroups: ChatGroupItem[];
 };
 
+export type ChatsError = {
+    error: string;
+};
+
 export type ChatGroupItem = {
     chat_room: ChatRoom;
 };
