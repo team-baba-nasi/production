@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
             where: {
                 user_id: user.id,
                 chat_room: {
-                    room_type: "group",
+                    room_type: "pin",
                 },
             },
             select: {
