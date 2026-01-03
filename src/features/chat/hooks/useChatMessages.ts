@@ -8,7 +8,7 @@ export const useChatMessages = (uuid: string) => {
         queryKey: ["chat-room", uuid],
         enabled: Boolean(uuid),
         queryFn: async () => {
-            const res = await axios.get<ChatRoomResponse>(`/chat/${uuid}`);
+            const res = await axios.get<ChatRoomResponse>(`/chats/${uuid}`);
             return res.data;
         },
     });
