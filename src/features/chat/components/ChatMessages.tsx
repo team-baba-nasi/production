@@ -68,6 +68,7 @@ const ChatMessages = ({ chatRoom, myUserId }: Props) => {
                                             alt="送信者アイコン"
                                             width={40}
                                             height={40}
+                                            className={styles.senderIcon}
                                         />
                                     )}
 
