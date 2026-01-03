@@ -7,9 +7,33 @@ import { useParams } from "next/navigation";
 import { useCurrentUser } from "@/features/auth/hooks/useCurrentUser";
 import styles from "@/features/chat/styles/pages/chat.module.scss";
 import { useChatMessages } from "@/features/chat/hooks/useChatMessages";
-import { formatTime } from "@/utils/formatTime";
+import ChatMessages from "@/features/chat/components/ChatMessages";
+
+type ShopInfo = {
+    name: string;
+    address: string;
+    date: {
+        year: number;
+        month: number;
+        day: number;
+        weekday: string;
+    };
+    time: string;
+};
 
 const Chat = () => {
+    const shopInfo: ShopInfo = {
+        name: "山根屋",
+        address: "大阪府大阪市北区中崎西1丁目4−22",
+        date: {
+            year: 2025,
+            month: 12,
+            day: 12,
+            weekday: "金",
+        },
+        time: "17:00 ~ 19:00",
+    };
+
     const { uuid } = useParams<{ uuid: string }>();
 
     const { data: currentUser, isLoading: isUserLoading } = useCurrentUser();
@@ -23,9 +47,6 @@ const Chat = () => {
     if (error || !data || !currentUser) {
         return <div className={styles.wrap}>エラーが発生しました</div>;
     }
-
-    const messages = data.chatRoom.messages;
-    const myUserId = currentUser.user?.id;
 
     return (
         <div className={styles.wrap}>
@@ -52,61 +73,63 @@ const Chat = () => {
                 <div />
             </div>
 
-            {/* messages */}
-            <div>
-                {messages.map((message, index) => {
-                    const prevSenderId = index > 0 ? messages[index - 1].sender.id : null;
+            <div className={styles.shopInfoWrap}>
+                <div className={styles.matching}>
+                    <p className="text_normal bold">マッチングしました</p>
+                </div>
 
-                    const isContinuous = prevSenderId === message.sender.id;
-                    const isMine = message.sender.id === myUserId;
+                <div className={styles.shopInfo}>
+                    <Image
+                        src="/images/groups/test_icon_4x.webp"
+                        alt="ショッププレビュー"
+                        width={108}
+                        height={108}
+                    />
 
-                    return (
-                        <div
-                            key={message.id}
-                            className={clsx(
-                                styles.content,
-                                isContinuous ? styles.mt8 : styles.mt24
-                            )}
-                        >
-                            {isMine ? (
-                                <>
-                                    <div />
-                                    <div className={styles.messageWrap}>
-                                        <p className="text_sub_sub">
-                                            {formatTime(message.created_at)}
-                                        </p>
-                                        <div className={styles.message}>
-                                            <p className="text_chat">{message.content}</p>
-                                        </div>
-                                    </div>
-                                </>
-                            ) : (
-                                <div className={styles.messageWrap}>
-                                    {isContinuous ? (
-                                        <div className={styles.avatarSpacer} />
-                                    ) : (
-                                        <Image
-                                            src={
-                                                message.sender.profile_image_url ??
-                                                "/images/groups/test_icon.webp"
-                                            }
-                                            alt="送信者アイコン"
-                                            width={40}
-                                            height={40}
-                                        />
-                                    )}
-
-                                    <div className={clsx(styles.message, styles.otherMessage)}>
-                                        <p className="text_chat">{message.content}</p>
-                                    </div>
-
-                                    <p className="text_sub_sub">{formatTime(message.created_at)}</p>
-                                </div>
-                            )}
+                    <div className={styles.shopTexts}>
+                        <div>
+                            <h3 className="text_normal">{shopInfo.name}</h3>
+                            <p className="text_sub">{shopInfo.address}</p>
                         </div>
-                    );
-                })}
+
+                        <div>
+                            <div className={styles.messageTime}>
+                                <p>
+                                    {shopInfo.date.year}
+                                    <span className="text_sub">/</span>
+                                    {shopInfo.date.month}
+                                    <span className="text_sub">/</span>
+                                    {shopInfo.date.day}
+                                </p>
+
+                                <div className={styles.weekDayWrap}>
+                                    <Image
+                                        src="/images/chat/eclipse.svg"
+                                        alt="曜日の背景の円"
+                                        width={24}
+                                        height={24}
+                                    />
+                                    <p className={clsx(styles.weekDay, "text_sub bold")}>
+                                        {shopInfo.date.weekday}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <p className="text_sub bold">{shopInfo.time}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <Image
+                    src="/images/chat/cracker.png"
+                    alt="クラッカー"
+                    width={64}
+                    height={64}
+                    className={styles.cracker}
+                />
             </div>
+
+            <ChatMessages chatRoom={data.chatRoom} myUserId={currentUser.user?.id} />
         </div>
     );
 };
