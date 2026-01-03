@@ -2,14 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUserFromToken } from "@/features/auth/libs/getUserFromToken";
 
-type Params = {
-    params: {
-        uuid: string;
-    };
-};
-
-export async function GET(request: NextRequest, { params }: Params) {
+export async function GET(request: NextRequest, context: { params: Promise<{ uuid: string }> }) {
     try {
+        const { uuid } = await context.params;
+
+        if (!uuid) {
+            return NextResponse.json({ error: "uuid が指定されていません" }, { status: 400 });
+        }
+
         const user = await getUserFromToken(request);
         if (!user) {
             return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
@@ -17,7 +17,7 @@ export async function GET(request: NextRequest, { params }: Params) {
 
         const chatRoom = await prisma.chatRoom.findUnique({
             where: {
-                uuid: params.uuid,
+                uuid,
             },
             select: {
                 id: true,
@@ -25,7 +25,7 @@ export async function GET(request: NextRequest, { params }: Params) {
                 room_type: true,
                 participants: {
                     where: {
-                        user_id: user.id, // 参加者チェック
+                        user_id: user.id,
                     },
                     select: {
                         id: true,
@@ -52,12 +52,10 @@ export async function GET(request: NextRequest, { params }: Params) {
             },
         });
 
-        // ルームが存在しない
         if (!chatRoom) {
             return NextResponse.json({ error: "チャットルームが存在しません" }, { status: 404 });
         }
 
-        // 参加していないルームへのアクセス防止
         if (chatRoom.participants.length === 0) {
             return NextResponse.json(
                 { error: "このチャットルームへのアクセス権限がありません" },
