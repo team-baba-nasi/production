@@ -10,6 +10,24 @@ export type ChatGroupItem = {
     chat_room: ChatRoom;
 };
 
+export type ChatRoomResponse = {
+    chatRoom: {
+        uuid: string;
+        room_type: "pin" | "group" | "direct";
+        messages: {
+            id: number;
+            content: string;
+            created_at: string;
+            message_type: "text";
+            sender: {
+                id: number;
+                username: string;
+                profile_image_url: string | null;
+            };
+        }[];
+    };
+};
+
 export type ChatRoom = {
     id: number;
     uuid: string;
