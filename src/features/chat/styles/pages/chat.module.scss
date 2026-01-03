@@ -1,0 +1,128 @@
+.wrap {
+    padding: 48px 16px 40px 16px;
+    .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0, 0, 8px, 0, rgba($color: #232323, $alpha: 0.25);
+        padding-bottom: 8px;
+        image {
+            border-radius: 50%;
+        }
+        .groupInfo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+    }
+    .shopInfoWrap {
+        margin-top: 30px;
+        padding: 0 8px;
+        position: relative;
+        .matching {
+            background-color: #d10000;
+            color: #ffffff;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 16px;
+            position: absolute;
+            box-shadow: 0 0 4px 0 rgba(35, 35, 35, 0.25);
+            top: -20px;
+            left: 5px;
+        }
+
+        .shopInfo {
+            border-radius: 16px;
+            box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.25);
+            padding: 25px 8px 8px 8px;
+            display: flex;
+            justify-content: space-between;
+            .shopTexts {
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                .messageTime {
+                    display: flex;
+                    gap: 4px;
+                    align-items: end;
+                    font-size: 20px;
+                    font-style: normal;
+                    font-weight: 500;
+                    line-height: normal;
+                    p {
+                        display: flex;
+                        align-items: end;
+                        gap: 2px;
+                    }
+                    .weekDayWrap {
+                        position: relative;
+                        width: 24px;
+                        height: 24px;
+                        box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.25);
+                        border-radius: 50%;
+                        .weekDay {
+                            position: absolute;
+                            top: 50%;
+                            left: 50%;
+                            transform: translate(-50%, -50%);
+                        }
+                    }
+                }
+            }
+        }
+        .cracker {
+            position: absolute;
+            right: 0;
+            bottom: -12px;
+        }
+    }
+
+    .messageDate {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 20px;
+        p {
+            background: #fafaf8;
+            border-radius: 24px;
+            padding: 4px 8px;
+        }
+    }
+    .mt8 {
+        margin-top: 8px;
+    }
+
+    .mt24 {
+        margin-top: 24px;
+    }
+
+    .content {
+        margin-top: 20px;
+        display: flex;
+        justify-content: space-between;
+        .messageWrap {
+            display: flex;
+            align-items: end;
+            gap: 4px;
+            .avatarSpacer {
+                width: 40px;
+                height: 40px;
+                flex-shrink: 0;
+            }
+            img {
+                align-self: center;
+            }
+            .message {
+                padding: 12px;
+                box-shadow: 0 0 2px 0 rgba(35, 35, 35, 0.25);
+                width: fit-content;
+                border-radius: 16px;
+            }
+            .otherMessage {
+                margin-left: 6px;
+            }
+        }
+    }
+}
