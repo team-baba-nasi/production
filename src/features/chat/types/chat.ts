@@ -98,15 +98,21 @@ export type SendMessageError = {
 //////////////////////////////////////////////////////////
 // 店舗詳細
 //////////////////////////////////////////////////////////
+export type ConfirmedMeeting = {
+    id: number;
+    place_name: string;
+    place_address: string;
+    meeting_date: string;
+    meeting_end: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+};
 
-export type ConfirmedMeetingInfo = {
-    name: string;
-    address: string;
-    date: {
-        year: number;
-        month: number;
-        day: number;
-        weekday: string;
-    };
-    time: string;
+export type ConfirmedMeetingResponse = {
+    confirmedMeeting: ConfirmedMeeting;
+};
+
+export type ConfirmedMeetingError = {
+    error: string;
 };
