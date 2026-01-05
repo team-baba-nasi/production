@@ -4,8 +4,8 @@ import ShopDetail from "./ShopDetail";
 import CreatePin from "./CreatePin";
 import { GetPinsResponse } from "../types/map";
 import Image from "next/image";
-import { BiSolidMap } from "react-icons/bi";
 import buildJapaneseAddress from "../utils/BuildJapaneseAddress";
+import CreatePinButton from "./CreatePinBtn";
 
 type WindowMode = "detail" | "createPin" | "pinList" | "home";
 
@@ -72,13 +72,7 @@ const Window: React.FC<WindowProps> = ({ place, isClosing, onClose, onCreatePin,
                                 <p className="text_sub">友達の行きたいピンを見る</p>
                             </button>
                         </div>
-                        <button
-                            className={styles.createPinBtn}
-                            onClick={() => setWindowMode("createPin")}
-                        >
-                            <BiSolidMap color="white" size={30} />
-                            <p>いきたいピンを指す</p>
-                        </button>
+                        <CreatePinButton onClick={() => setWindowMode("createPin")} />
                     </div>
                 )}
                 {windowMode === "pinList" && <ShopDetail place={place} onClose={onClose} />}
