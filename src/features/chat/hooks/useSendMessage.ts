@@ -14,11 +14,11 @@ export function useSendMessage() {
         onSuccess: (data, variables) => {
             // メッセージ一覧のキャッシュを無効化して再取得
             queryClient.invalidateQueries({
-                queryKey: ["chatMessages", variables.chatRoomUuid],
+                queryKey: ["chat-room", variables.chatRoomUuid],
             });
             // チャットグループ一覧のキャッシュも無効化
             queryClient.invalidateQueries({
-                queryKey: ["chatGroups"],
+                queryKey: ["chats"],
             });
         },
     });
