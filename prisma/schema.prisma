@@ -195,6 +195,7 @@ model ChatRoom {
   pin            Pin?              @relation(fields: [pin_id], references: [id])
   participants   ChatParticipant[]
   messages       Message[]
+  confirmed_meeting ConfirmedMeeting?
 }
 
 model ChatParticipant {
@@ -228,6 +229,23 @@ model Message {
 
   @@index([chat_room_id, created_at])
   @@index([sender_id])
+}
+
+model ConfirmedMeeting {
+  id              Int      @id @default(autoincrement())
+  chat_room_id    Int      @unique
+  place_name      String
+  place_address   String
+  meeting_date    DateTime
+  meeting_end     DateTime 
+  status          String   @default("confirmed")
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  chat_room ChatRoom @relation(fields: [chat_room_id], references: [id])
+
+  @@index([chat_room_id])
+  @@index([meeting_date])
 }
 
 //////////////////////////////////////////////////////////
