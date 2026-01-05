@@ -8,7 +8,7 @@ export function useSendMessage() {
 
     return useMutation<SendMessageResponse, AxiosError<SendMessageError>, SendMessageForm>({
         mutationFn: async (form) => {
-            const res = await axios.post("/chat/messages", form);
+            const res = await axios.post(`/chats/${form.chatRoomUuid}`, form);
             return res.data;
         },
         onSuccess: (data, variables) => {
