@@ -9,6 +9,7 @@ import { useCurrentUser } from "@/features/auth/hooks/useCurrentUser";
 import styles from "@/features/chat/styles/pages/chat.module.scss";
 import { useChatMessages } from "@/features/chat/hooks/useChatMessages";
 import ChatMessages from "@/features/chat/components/ChatMessages";
+import { useSendMessage } from "@/features/chat/hooks/useSendMessage";
 
 type ShopInfo = {
     name: string;
@@ -23,8 +24,25 @@ type ShopInfo = {
 };
 
 const Chat = () => {
-    const handleSubmitMessge = () => {
-        console.log(message);
+    const [message, setMessage] = useState<string>("");
+    const { uuid } = useParams<{ uuid: string }>();
+
+    const sendMessageMutation = useSendMessage();
+
+    const handleSendMessage = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (!message.trim()) return;
+
+        try {
+            await sendMessageMutation.mutateAsync({
+                chatRoomUuid: uuid,
+                content: message,
+            });
+            setMessage("");
+        } catch (error) {
+            console.error("メッセージ送信エラー:", error);
+        }
     };
 
     const shopInfo: ShopInfo = {
@@ -38,10 +56,6 @@ const Chat = () => {
         },
         time: "17:00 ~ 19:00",
     };
-
-    const [message, setMessage] = useState<string>("");
-
-    const { uuid } = useParams<{ uuid: string }>();
 
     const { data: currentUser, isLoading: isUserLoading } = useCurrentUser();
 
@@ -147,7 +161,7 @@ const Chat = () => {
                     className="text_normal"
                     placeholder="メッセージを入力"
                 />
-                <div className={styles.submitBtn} onClick={handleSubmitMessge}>
+                <div className={styles.submitBtn} onClick={handleSendMessage}>
                     <Image
                         src="/images/chat/send.svg"
                         alt="メッセージ送信ボタン"
