@@ -10,24 +10,22 @@ import styles from "@/features/chat/styles/pages/chat.module.scss";
 import { useChatMessages } from "@/features/chat/hooks/useChatMessages";
 import ChatMessages from "@/features/chat/components/ChatMessages";
 import { useSendMessage } from "@/features/chat/hooks/useSendMessage";
-
-type ShopInfo = {
-    name: string;
-    address: string;
-    date: {
-        year: number;
-        month: number;
-        day: number;
-        weekday: string;
-    };
-    time: string;
-};
+import { useConfirmedMeeting } from "@/features/chat/hooks/useConfirmedMeeting";
+import { ConfirmedMeeting } from "@/features/chat/types/chat";
 
 const Chat = () => {
-    const [message, setMessage] = useState<string>("");
     const { uuid } = useParams<{ uuid: string }>();
+    const [message, setMessage] = useState<string>("");
 
     const sendMessageMutation = useSendMessage();
+
+    const { data: currentUser, isLoading: isUserLoading } = useCurrentUser();
+    const { data, isLoading, error } = useChatMessages(uuid);
+    const {
+        data: meetingData,
+        isLoading: isMeetingLoading,
+        error: meetingError,
+    } = useConfirmedMeeting(uuid);
 
     const handleSendMessage = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -45,29 +43,33 @@ const Chat = () => {
         }
     };
 
-    const shopInfo: ShopInfo = {
-        name: "山根屋",
-        address: "大阪府大阪市北区中崎西1丁目4−22",
-        date: {
-            year: 2025,
-            month: 12,
-            day: 12,
-            weekday: "金",
-        },
-        time: "17:00 ~ 19:00",
-    };
-
-    const { data: currentUser, isLoading: isUserLoading } = useCurrentUser();
-
-    const { data, isLoading, error } = useChatMessages(uuid);
-
-    if (isLoading || isUserLoading) {
+    if (isLoading || isUserLoading || isMeetingLoading) {
         return <div className={styles.wrap}>Loading...</div>;
     }
 
-    if (error || !data || !currentUser) {
+    if (error || !data || !currentUser || meetingError) {
         return <div className={styles.wrap}>エラーが発生しました</div>;
     }
+
+    const formatMeetingInfo = (meeting: ConfirmedMeeting) => {
+        const startDate = new Date(meeting.meeting_date);
+        const endDate = new Date(meeting.meeting_end);
+
+        return {
+            name: meeting.place_name,
+            address: meeting.place_address,
+            date: {
+                year: startDate.getFullYear(),
+                month: startDate.getMonth() + 1,
+                day: startDate.getDate(),
+                weekday: ["日", "月", "火", "水", "木", "金", "土"][startDate.getDay()],
+            },
+            time: `${startDate.getHours().toString().padStart(2, "0")}:${startDate.getMinutes().toString().padStart(2, "0")} ~ ${endDate.getHours().toString().padStart(2, "0")}:${endDate.getMinutes().toString().padStart(2, "0")}`,
+        };
+    };
+
+    const confirmedMeeting = meetingData?.confirmedMeeting;
+    const shopInfo = confirmedMeeting ? formatMeetingInfo(confirmedMeeting) : null;
 
     return (
         <>
@@ -95,61 +97,63 @@ const Chat = () => {
                     <div />
                 </div>
 
-                <div className={styles.shopInfoWrap}>
-                    <div className={styles.matching}>
-                        <p className="text_normal bold">マッチングしました</p>
-                    </div>
+                {shopInfo && (
+                    <div className={styles.shopInfoWrap}>
+                        <div className={styles.matching}>
+                            <p className="text_normal bold">マッチングしました</p>
+                        </div>
 
-                    <div className={styles.shopInfo}>
-                        <Image
-                            src="/images/groups/test_icon_4x.webp"
-                            alt="ショッププレビュー"
-                            width={108}
-                            height={108}
-                        />
+                        <div className={styles.shopInfo}>
+                            <Image
+                                src="/images/groups/test_icon_4x.webp"
+                                alt="ショッププレビュー"
+                                width={108}
+                                height={108}
+                            />
 
-                        <div className={styles.shopTexts}>
-                            <div>
-                                <h3 className="text_normal">{shopInfo.name}</h3>
-                                <p className="text_sub">{shopInfo.address}</p>
-                            </div>
-
-                            <div>
-                                <div className={styles.messageTime}>
-                                    <p>
-                                        {shopInfo.date.year}
-                                        <span className="text_sub">/</span>
-                                        {shopInfo.date.month}
-                                        <span className="text_sub">/</span>
-                                        {shopInfo.date.day}
-                                    </p>
-
-                                    <div className={styles.weekDayWrap}>
-                                        <Image
-                                            src="/images/chat/eclipse.svg"
-                                            alt="曜日の背景の円"
-                                            width={24}
-                                            height={24}
-                                        />
-                                        <p className={clsx(styles.weekDay, "text_sub bold")}>
-                                            {shopInfo.date.weekday}
-                                        </p>
-                                    </div>
+                            <div className={styles.shopTexts}>
+                                <div>
+                                    <h3 className="text_normal">{shopInfo.name}</h3>
+                                    <p className="text_sub">{shopInfo.address}</p>
                                 </div>
 
-                                <p className="text_sub bold">{shopInfo.time}</p>
+                                <div>
+                                    <div className={styles.messageTime}>
+                                        <p>
+                                            {shopInfo.date.year}
+                                            <span className="text_sub">/</span>
+                                            {shopInfo.date.month}
+                                            <span className="text_sub">/</span>
+                                            {shopInfo.date.day}
+                                        </p>
+
+                                        <div className={styles.weekDayWrap}>
+                                            <Image
+                                                src="/images/chat/eclipse.svg"
+                                                alt="曜日の背景の円"
+                                                width={24}
+                                                height={24}
+                                            />
+                                            <p className={clsx(styles.weekDay, "text_sub bold")}>
+                                                {shopInfo.date.weekday}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <p className="text_sub bold">{shopInfo.time}</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <Image
-                        src="/images/chat/cracker.png"
-                        alt="クラッカー"
-                        width={64}
-                        height={64}
-                        className={styles.cracker}
-                    />
-                </div>
+                        <Image
+                            src="/images/chat/cracker.png"
+                            alt="クラッカー"
+                            width={64}
+                            height={64}
+                            className={styles.cracker}
+                        />
+                    </div>
+                )}
 
                 <ChatMessages chatRoom={data.chatRoom} myUserId={currentUser.user?.id} />
             </div>
