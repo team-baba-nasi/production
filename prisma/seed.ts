@@ -434,6 +434,33 @@ async function main() {
 
     console.log("✅ メッセージを作成しました");
 
+    // 確定した待ち合わせ情報の作成
+    console.log("📍 確定した待ち合わせ情報を作成中...");
+    await Promise.all([
+        prisma.confirmedMeeting.create({
+            data: {
+                chat_room_id: chatRooms[0].id,
+                place_name: "山根屋",
+                place_address: "大阪府大阪市北区中崎西1丁目4−22",
+                meeting_date: new Date("2025-12-12T17:00:00"),
+                meeting_end: new Date("2025-12-12T19:00:00"),
+                status: "confirmed",
+            },
+        }),
+        prisma.confirmedMeeting.create({
+            data: {
+                chat_room_id: chatRooms[1].id,
+                place_name: "1110 CAFE/BAKERY",
+                place_address: "川口市領家５丁目４−１",
+                meeting_date: new Date("2025-11-20T10:00:00"),
+                meeting_end: new Date("2025-11-20T16:00:00"),
+                status: "confirmed",
+            },
+        }),
+    ]);
+
+    console.log("✅ 確定した待ち合わせ情報を作成しました");
+
     // 通知の作成
     console.log("🔔 通知を作成中...");
     await Promise.all([
