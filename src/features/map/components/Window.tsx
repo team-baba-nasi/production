@@ -81,20 +81,10 @@ const Window: React.FC<WindowProps> = ({ place, isClosing, onClose, onCreatePin,
                         </button>
                     </div>
                 )}
-                {windowMode === "pinList" && (
-                    <ShopDetail
-                        place={place}
-                        onClose={onClose}
-                        isCreatePin={() => setWindowMode("createPin")}
-                    />
-                )}
+                {windowMode === "pinList" && <ShopDetail place={place} onClose={onClose} />}
 
                 {windowMode === "detail" && (
-                    <ShopDetail
-                        place={place}
-                        onClose={() => setWindowMode("home")}
-                        isCreatePin={() => setWindowMode("createPin")}
-                    />
+                    <ShopDetail place={place} onClose={() => setWindowMode("home")} />
                 )}
 
                 {windowMode === "createPin" && (
