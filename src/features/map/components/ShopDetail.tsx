@@ -1,25 +1,22 @@
 "use client";
 import Image from "next/image";
 import styles from "../styles/ShopDetil.module.scss";
+import { IoIosClose } from "react-icons/io";
 
 type ShopDetailProps = {
     place: google.maps.places.PlaceResult;
     onClose: () => void;
-    isCreatePin: () => void;
 };
 
-const ShopDetail: React.FC<ShopDetailProps> = ({ place, onClose, isCreatePin }) => {
+const ShopDetail: React.FC<ShopDetailProps> = ({ place, onClose }) => {
     return (
         <div className={styles.content}>
             {/* 店舗ヘッダー */}
             <div className={styles.shop_header}>
                 <h3>{place.name}</h3>
                 <div className={styles.header_buttons}>
-                    <button className={styles.add_btn} onClick={isCreatePin}>
-                        <span className={styles.addIcon}>○</span>追加
-                    </button>
                     <button className={styles.close_btn} onClick={onClose}>
-                        ×
+                        <IoIosClose size={30} />
                     </button>
                 </div>
             </div>
@@ -43,7 +40,6 @@ const ShopDetail: React.FC<ShopDetailProps> = ({ place, onClose, isCreatePin }) 
                 {place.vicinity && <p className={styles.vicinity}>{place.vicinity}</p>}
             </div>
 
-            {/* 写真 */}
             {place.photos && (
                 <Image
                     src={place.photos[0].getUrl({ maxWidth: 400 })}
@@ -54,7 +50,6 @@ const ShopDetail: React.FC<ShopDetailProps> = ({ place, onClose, isCreatePin }) 
                 />
             )}
 
-            {/* レビュー */}
             {place.rating && (
                 <p className={styles.rating_wrap}>
                     口コミ {place.user_ratings_total}件<span className={styles.rating_star}>★</span>
