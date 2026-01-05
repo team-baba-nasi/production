@@ -56,3 +56,33 @@ export type ChatMessage = {
         username: string;
     };
 };
+
+export type SendMessageForm = {
+    chatRoomUuid: string;
+    content: string;
+    messageType?: string;
+    metadata?: Record<string, string | number | boolean | null> | null;
+};
+
+export type SendMessageResponse = {
+    message: {
+        id: number;
+        chat_room_id: number;
+        sender_id: number;
+        content: string;
+        message_type: string;
+        metadata: Record<string, string | number | boolean | null> | null;
+        is_deleted: boolean;
+        created_at: string;
+        updated_at: string;
+        sender: {
+            id: number;
+            username: string;
+            profile_image_url: string | null;
+        };
+    };
+};
+
+export type SendMessageError = {
+    error: string;
+};
