@@ -1,3 +1,7 @@
+//////////////////////////////////////////////////////////
+// チャットグループ一覧
+//////////////////////////////////////////////////////////
+
 export type ChatGroupListResponse = {
     chatGroups: ChatGroupItem[];
 };
@@ -47,6 +51,10 @@ export type ChatParticipant = {
     };
 };
 
+//////////////////////////////////////////////////////////
+// メッセージ
+//////////////////////////////////////////////////////////
+
 export type ChatMessage = {
     id: number;
     content: string;
@@ -85,4 +93,20 @@ export type SendMessageResponse = {
 
 export type SendMessageError = {
     error: string;
+};
+
+//////////////////////////////////////////////////////////
+// 店舗詳細
+//////////////////////////////////////////////////////////
+
+export type ConfirmedMeetingInfo = {
+    name: string;
+    address: string;
+    date: {
+        year: number;
+        month: number;
+        day: number;
+        weekday: string;
+    };
+    time: string;
 };
