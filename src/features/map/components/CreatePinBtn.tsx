@@ -1,5 +1,5 @@
 import { BiSolidMap } from "react-icons/bi";
-import styles from "../styles/Window.module.scss";
+import styles from "@/features/map/styles/CreatePinBtn.module.scss";
 
 type CreatePinButtonProps = {
     onClick: () => void;
