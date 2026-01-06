@@ -1,0 +1,14 @@
+.selectSchedule {
+    color: #5b5b5b;
+    margin-top: 72px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100px;
+    border-radius: 0 0 8px 8px;
+    border-top: 8px solid #d10000;
+    box-shadow: 0 0 4px 0 rgba(35, 35, 35, 0.25);
+    .selectedText {
+    }
+}
