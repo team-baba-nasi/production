@@ -134,12 +134,14 @@ const CreatePin = ({ onSubmit, onClose }: CreatePinProps) => {
                     })}
                 </div>
             </div>
-            <ScheduleButton
-                selectedDate={selectedDate}
-                selectedStartTime={selectedStartTime}
-                selectedEndTime={selectedEndTime}
-                onClick={() => setShowDatePicker(!showDatePicker)}
-            />
+            <div className={styles.scheduleButtonWrap}>
+                <ScheduleButton
+                    selectedDate={selectedDate}
+                    selectedStartTime={selectedStartTime}
+                    selectedEndTime={selectedEndTime}
+                    onClick={() => setShowDatePicker(!showDatePicker)}
+                />
+            </div>
             <p className={clsx("text_sub", styles.caution)}>
                 予定日を過ぎると自動的にピンは削除されます
             </p>

@@ -4,9 +4,9 @@ import Image from "next/image";
 
 type ScheduleButtonProps = {
     selectedDate: string;
-    selectedStartTime: string;
-    selectedEndTime: string;
-    onClick: () => void;
+    selectedStartTime?: string;
+    selectedEndTime?: string;
+    onClick?: () => void;
 };
 
 const ScheduleButton = ({
