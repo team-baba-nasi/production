@@ -4,16 +4,27 @@ import ShopDetail from "./ShopDetail";
 import CreatePin from "./CreatePin";
 import { GetPinsResponse } from "../types/map";
 import Image from "next/image";
+
 import buildJapaneseAddress from "../utils/BuildJapaneseAddress";
 import CreatePinButton from "./CreatePinBtn";
 
 type WindowMode = "detail" | "createPin" | "pinList" | "home";
 
+type CreatePinSubmitPayload = {
+    comment: string;
+    groupIds: number[];
+    schedule?: {
+        date: string;
+        startTime?: string;
+        endTime?: string;
+    };
+};
+
 type WindowProps = {
     place: google.maps.places.PlaceResult;
     isClosing: boolean;
     onClose: () => void;
-    onCreatePin: (comment: string) => void;
+    onCreatePin: (payload: CreatePinSubmitPayload) => void;
     pinsData: GetPinsResponse | undefined;
 };
 
@@ -83,9 +94,9 @@ const Window: React.FC<WindowProps> = ({ place, isClosing, onClose, onCreatePin,
 
                 {windowMode === "createPin" && (
                     <CreatePin
-                        onSubmit={(comment) => {
-                            onCreatePin(comment);
-                            setWindowMode("detail");
+                        onSubmit={(payload) => {
+                            onCreatePin(payload);
+                            setWindowMode("home");
                         }}
                     />
                 )}

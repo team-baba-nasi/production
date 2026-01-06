@@ -8,8 +8,18 @@ import { useState, useRef, useEffect } from "react";
 import { useGroups } from "@/features/groups/hooks/useGroups";
 import clsx from "clsx";
 
+type CreatePinSubmitPayload = {
+    comment: string;
+    groupIds: number[];
+    schedule?: {
+        date: string;
+        startTime?: string;
+        endTime?: string;
+    };
+};
+
 type CreatePinProps = {
-    onSubmit: (comment: string) => void;
+    onSubmit: (payload: CreatePinSubmitPayload) => void;
 };
 
 const CreatePin = ({ onSubmit }: CreatePinProps) => {
@@ -41,7 +51,20 @@ const CreatePin = ({ onSubmit }: CreatePinProps) => {
 
     const handleCreatePin = () => {
         if (!commentText.trim()) return;
-        onSubmit(commentText);
+        if (selectedGroupIds.length === 0) return;
+
+        onSubmit({
+            comment: commentText,
+            groupIds: selectedGroupIds,
+            schedule: selectedDate
+                ? {
+                      date: selectedDate,
+                      startTime: selectedStartTime || undefined,
+                      endTime: selectedEndTime || undefined,
+                  }
+                : undefined,
+        });
+
         setCommentText("");
     };
 

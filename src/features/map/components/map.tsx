@@ -10,14 +10,12 @@ import { useMarkerManager } from "../hooks/useMarkerManager";
 import { usePlaceDetails } from "../hooks/usePlaceDetails";
 import { useExistingPins } from "../hooks/useExistingPins";
 import { GetPinsResponse } from "../types/map";
-import { useGroupId } from "@/features/groups/hooks/useGroupId";
 
 type GoogleMapProps = {
     pinsData: GetPinsResponse | undefined;
 };
 
 const GoogleMap = ({ pinsData }: GoogleMapProps) => {
-    const groupId = useGroupId();
     const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
     const [selectedPlace, setSelectedPlace] = useState<google.maps.places.PlaceResult | null>(null);
     const [isClosing, setIsClosing] = useState(false);
@@ -116,34 +114,35 @@ const GoogleMap = ({ pinsData }: GoogleMapProps) => {
         handlePinClick
     );
 
-    const handleCreatePin = (comment: string) => {
-        if (!selectedPlace?.geometry?.location) {
-            console.error("selectedPlaceにgeometry情報がありません");
-            return;
-        }
+    const handleCreatePin = (payload: {
+        comment: string;
+        groupIds: number[];
+        schedule?: {
+            date: string;
+            startTime?: string;
+            endTime?: string;
+        };
+    }) => {
+        if (!selectedPlace?.geometry?.location) return;
 
         const lat = selectedPlace.geometry.location.lat();
         const lng = selectedPlace.geometry.location.lng();
 
         createPinMutation(
             {
-                group_id: groupId,
                 place_name: selectedPlace.name || "不明な店舗",
                 place_address: selectedPlace.vicinity,
                 latitude: lat,
                 longitude: lng,
-                comment: comment || undefined,
                 place_id: selectedPlace.place_id,
-                status: "open",
+                comment: payload.comment,
+                group_ids: payload.groupIds,
+                schedule: payload.schedule,
             },
             {
                 onSuccess: () => {
                     queryClient.invalidateQueries({ queryKey: ["pins"], exact: false });
                     handleClose();
-                },
-                onError: (error) => {
-                    console.error("ピン作成エラー:", error);
-                    alert("ピンの作成に失敗しました");
                 },
             }
         );
