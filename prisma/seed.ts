@@ -172,7 +172,6 @@ async function main() {
         prisma.pin.create({
             data: {
                 user_id: users[0].id,
-                group_id: groups[0].id,
                 place_id: "ChIJSZ4ycvCLGGARhZWEb_3OfDQ",
                 place_name: "あづま 有楽町新国際ビル",
                 place_address: "千代田区丸の内３丁目４−１ 新国際ビルB1",
@@ -180,12 +179,16 @@ async function main() {
                 longitude: 139.762167,
                 comment: "test",
                 status: "open",
+                pin_groups: {
+                    create: {
+                        group_id: groups[0].id,
+                    },
+                },
             },
         }),
         prisma.pin.create({
             data: {
                 user_id: users[1].id,
-                group_id: groups[1].id,
                 place_id: "ChIJVVVFgBPnAGARLbCliBbVOI8",
                 place_name: "かに道楽 道頓堀本店",
                 place_address: "大阪市中央区道頓堀１丁目６−１８",
@@ -193,12 +196,16 @@ async function main() {
                 longitude: 135.5014873,
                 comment: "grs",
                 status: "open",
+                pin_groups: {
+                    create: {
+                        group_id: groups[1].id,
+                    },
+                },
             },
         }),
         prisma.pin.create({
             data: {
                 user_id: users[2].id,
-                group_id: groups[2].id,
                 place_id: "ChIJgbD0vvCTGGARCJYb0dKm4jE",
                 place_name: "1110 CAFE/BAKERY",
                 place_address: "川口市領家５丁目４−１",
@@ -206,38 +213,16 @@ async function main() {
                 longitude: 139.7408302,
                 comment: "gyvt",
                 status: "scheduled",
-            },
-        }),
-        prisma.pin.create({
-            data: {
-                user_id: users[0].id,
-                group_id: groups[0].id,
-                place_id: "ChIJryo9d1uJGGARgdvUgLj-aYQ",
-                place_name: "ニューカヤバ",
-                place_address: "中央区日本橋茅場町２丁目１７−１１",
-                latitude: 35.6788526,
-                longitude: 139.7808677,
-                comment: "てすと",
-                status: "open",
+                pin_groups: {
+                    create: {
+                        group_id: groups[2].id,
+                    },
+                },
             },
         }),
         prisma.pin.create({
             data: {
                 user_id: users[3].id,
-                group_id: groups[1].id,
-                place_id: "ChIJDS_57WeJGGARS7nfB7QmlVs",
-                place_name: "鶏鬨 新川店",
-                place_address: "中央区新川２丁目２６−１１ 平和自動車ビル B1~2F",
-                latitude: 35.6739952,
-                longitude: 139.7827614,
-                comment: "tex",
-                status: "closed",
-            },
-        }),
-        prisma.pin.create({
-            data: {
-                user_id: users[3].id,
-                group_id: null,
                 place_id: "ChIJo06D01WJGGARsG8wm7KW0Rw",
                 place_name: "日本橋 天丼 金子半之助 日本橋総本店",
                 place_address: "中央区日本橋室町１丁目１１−１５",
@@ -280,21 +265,18 @@ async function main() {
             data: {
                 pin_id: pins[2].id,
                 organizer_id: users[2].id,
-                proposed_date_start: new Date("2025-11-20T10:00:00"),
-                proposed_date_end: new Date("2025-11-20T16:00:00"),
-                status: "proposed",
-                description: "箕面公園でハイキングしましょう！",
+                date: new Date("2025-11-20"),
+                start_at: new Date("2025-11-20T10:00:00"),
+                end_at: new Date("2025-11-20T16:00:00"),
             },
         }),
         prisma.schedule.create({
             data: {
                 pin_id: pins[0].id,
                 organizer_id: users[0].id,
-                proposed_date_start: new Date("2025-11-25T18:00:00"),
-                proposed_date_end: new Date("2025-11-25T20:00:00"),
-                final_date: new Date("2025-11-25T18:30:00"),
-                status: "confirmed",
-                description: "たこ焼きを食べに行きましょう！",
+                date: new Date("2025-11-25"),
+                start_at: new Date("2025-11-25T18:30:00"),
+                end_at: new Date("2025-11-25T20:00:00"),
             },
         }),
     ]);
