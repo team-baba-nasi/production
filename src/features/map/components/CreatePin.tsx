@@ -4,6 +4,7 @@ import styles from "@/features/map/styles/CreatePin.module.scss";
 import CreatePinButton from "./CreatePinBtn";
 import Image from "next/image";
 import ScheduleButton from "./ScheduleButton";
+import { IoIosClose } from "react-icons/io";
 import { useState, useRef, useEffect } from "react";
 import { useGroups } from "@/features/groups/hooks/useGroups";
 import clsx from "clsx";
@@ -20,9 +21,10 @@ type CreatePinSubmitPayload = {
 
 type CreatePinProps = {
     onSubmit: (payload: CreatePinSubmitPayload) => void;
+    onClose: () => void;
 };
 
-const CreatePin = ({ onSubmit }: CreatePinProps) => {
+const CreatePin = ({ onSubmit, onClose }: CreatePinProps) => {
     const [commentText, setCommentText] = useState<string>("");
     const [selectedDate, setSelectedDate] = useState<string>("");
     const [selectedStartTime, setSelectedStartTime] = useState<string>("");
@@ -76,7 +78,14 @@ const CreatePin = ({ onSubmit }: CreatePinProps) => {
 
     return (
         <div className={styles.createPinWrap}>
-            <h3 className="text_normal bold">いきたいピンを指す</h3>
+            <div className={styles.createPinHeader}>
+                <div className={styles.space}></div>
+                <h3 className="text_normal bold">いきたいピンを指す</h3>
+
+                <button className={styles.close_btn} onClick={onClose}>
+                    <IoIosClose size={30} />
+                </button>
+            </div>
             <div className={styles.comment_wrap}>
                 <p className="text_sub">この店のPRをして一緒に行く友達を見つけよう</p>
 
@@ -117,7 +126,9 @@ const CreatePin = ({ onSubmit }: CreatePinProps) => {
                                         height={58}
                                     />
                                 </div>
-                                <p className="text_sub_sub bold">{group.name}</p>
+                                <p className={clsx("text_sub_sub bold", styles.groupName)}>
+                                    {group.name}
+                                </p>
                             </button>
                         );
                     })}

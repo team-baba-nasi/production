@@ -4,7 +4,6 @@ import ShopDetail from "./ShopDetail";
 import CreatePin from "./CreatePin";
 import { GetPinsResponse } from "../types/map";
 import Image from "next/image";
-
 import buildJapaneseAddress from "../utils/BuildJapaneseAddress";
 import CreatePinButton from "./CreatePinBtn";
 
@@ -98,6 +97,7 @@ const Window: React.FC<WindowProps> = ({ place, isClosing, onClose, onCreatePin,
                             onCreatePin(payload);
                             setWindowMode("home");
                         }}
+                        onClose={() => setWindowMode("home")}
                     />
                 )}
             </div>
