@@ -1,4 +1,6 @@
 import styles from "@/features/map/styles/ScheduleButton.module.scss";
+import clsx from "clsx";
+import Image from "next/image";
 
 type ScheduleButtonProps = {
     selectedDate: string;
@@ -30,18 +32,31 @@ const ScheduleButton = ({
     return (
         <button className={styles.selectSchedule} onClick={onClick}>
             {dateInfo ? (
-                <div className={styles.selectedText}>
-                    <p>
-                        {dateInfo.year}
-                        <span>/</span>
-                        {dateInfo.month}
-                        <span>/</span>
-                        {dateInfo.day}
-                        <span>({dateInfo.weekday})</span>
-                    </p>
+                <div className={clsx(styles.selectedText, "text_title")}>
+                    <div className={styles.dateWrap}>
+                        <p className={styles.date}>
+                            {dateInfo.year}
+                            <span className="text_sub bold">/</span>
+                            {dateInfo.month}
+                            <span className="text_sub bold">/</span>
+                            {dateInfo.day}
+                            {/* <span>({dateInfo.weekday})</span> */}
+                        </p>
+                        <div className={styles.weekDayWrap}>
+                            <Image
+                                src="/images/chat/eclipse.svg"
+                                alt="曜日の背景の円"
+                                width={24}
+                                height={24}
+                            />
+                            <p className={clsx(styles.weekDay, "text_normal bold")}>
+                                {dateInfo.weekday}
+                            </p>
+                        </div>
+                    </div>
                     {selectedStartTime && selectedEndTime && (
-                        <p>
-                            {selectedStartTime}~{selectedEndTime}
+                        <p className="text_normal bold">
+                            {selectedStartTime} ~ {selectedEndTime}
                         </p>
                     )}
                     {selectedStartTime && !selectedEndTime && <p>{selectedStartTime}~</p>}
