@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUserFromToken } from "@/features/auth/libs/getUserFromToken";
 
-export async function GET(request: NextRequest, context: { params: Promise<{ uuid: string }> }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ uuid: string }> }) {
     try {
-        const { uuid } = await context.params;
+        const { uuid } = await params;
 
         if (!uuid) {
             return NextResponse.json({ error: "uuid が指定されていません" }, { status: 400 });
@@ -15,7 +15,6 @@ export async function GET(request: NextRequest, context: { params: Promise<{ uui
             return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
         }
 
-        // チャットルームの存在確認とユーザーの参加確認
         const chatRoom = await prisma.chatRoom.findUnique({
             where: { uuid },
             select: {
@@ -25,9 +24,7 @@ export async function GET(request: NextRequest, context: { params: Promise<{ uui
                         user_id: user.id,
                         is_active: true,
                     },
-                    select: {
-                        id: true,
-                    },
+                    select: { id: true },
                 },
                 confirmed_meeting: {
                     select: {
@@ -55,7 +52,7 @@ export async function GET(request: NextRequest, context: { params: Promise<{ uui
             );
         }
 
-        if (!chatRoom.confirmed_meeting) {
+        if (chatRoom.confirmed_meeting === null) {
             return NextResponse.json(
                 { error: "確定したスケジュールが見つかりません" },
                 { status: 404 }

@@ -72,9 +72,14 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // トランザクションでスケジュール参加とチャットルーム処理を実行
         const result = await prisma.$transaction(async (tx) => {
-            // スケジュール参加の作成または更新
+            if (!schedule.start_at || !schedule.end_at) {
+                throw new Error("MEETING_DATETIME_NOT_SET");
+            }
+
+            if (!schedule.pin.place_name || !schedule.pin.place_address) {
+                throw new Error("MEETING_PLACE_NOT_SET");
+            }
             const scheduleResponse = await tx.scheduleResponse.upsert({
                 where: {
                     schedule_id_user_id: {
@@ -97,9 +102,7 @@ export async function POST(request: NextRequest) {
                 },
             });
 
-            // "going" または "maybe" の場合のみチャットルーム処理
             if (response_type === "going" || response_type === "maybe") {
-                // ピンに紐づくチャットルームを検索
                 let chatRoom = await tx.chatRoom.findUnique({
                     where: { pin_id: schedule.pin_id },
                     include: {
@@ -108,7 +111,6 @@ export async function POST(request: NextRequest) {
                 });
 
                 if (!chatRoom) {
-                    // チャットルームが存在しない場合は作成
                     chatRoom = await tx.chatRoom.create({
                         data: {
                             pin_id: schedule.pin_id,
@@ -117,11 +119,11 @@ export async function POST(request: NextRequest) {
                                 createMany: {
                                     data: [
                                         {
-                                            user_id: schedule.pin.user_id, // ピン作成者
+                                            user_id: schedule.pin.user_id,
                                             is_active: true,
                                         },
                                         {
-                                            user_id: user.id, // 参加者
+                                            user_id: user.id,
                                             is_active: true,
                                         },
                                     ],
@@ -133,7 +135,6 @@ export async function POST(request: NextRequest) {
                         },
                     });
                 } else {
-                    // チャットルームが存在する場合、参加者を追加
                     const isAlreadyParticipant = chatRoom.participants.some(
                         (p) => p.user_id === user.id
                     );
@@ -147,7 +148,6 @@ export async function POST(request: NextRequest) {
                             },
                         });
                     } else {
-                        // 既に参加者だが非アクティブの場合は再アクティブ化
                         const participant = chatRoom.participants.find(
                             (p) => p.user_id === user.id
                         );
@@ -163,7 +163,27 @@ export async function POST(request: NextRequest) {
                     }
                 }
 
-                return { scheduleResponse, chatRoom };
+                const confirmedMeeting = await tx.confirmedMeeting.upsert({
+                    where: {
+                        chat_room_id: chatRoom.id,
+                    },
+                    update: {
+                        meeting_date: schedule.start_at,
+                        meeting_end: schedule.end_at,
+                        status: "confirmed",
+                        updated_at: new Date(),
+                    },
+                    create: {
+                        chat_room_id: chatRoom.id,
+                        place_name: schedule.pin.place_name,
+                        place_address: schedule.pin.place_address,
+                        meeting_date: schedule.start_at,
+                        meeting_end: schedule.end_at,
+                        status: "confirmed",
+                    },
+                });
+
+                return { scheduleResponse, chatRoom, confirmedMeeting };
             }
 
             return { scheduleResponse, chatRoom: null };
@@ -191,7 +211,6 @@ export async function POST(request: NextRequest) {
     }
 }
 
-// スケジュール参加状況を取得するGETエンドポイント
 export async function GET(request: NextRequest) {
     try {
         const user = await getUserFromToken(request);
