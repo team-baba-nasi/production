@@ -6,6 +6,7 @@ import { GetPinsResponse } from "../types/map";
 import Image from "next/image";
 import buildJapaneseAddress from "../utils/BuildJapaneseAddress";
 import CreatePinButton from "./CreatePinBtn";
+import PinList from "./PinList";
 
 type WindowMode = "detail" | "createPin" | "pinList" | "home";
 
@@ -27,7 +28,7 @@ type WindowProps = {
     pinsData: GetPinsResponse | undefined;
 };
 
-const Window: React.FC<WindowProps> = ({ place, isClosing, onClose, onCreatePin, pinsData }) => {
+const Window: React.FC<WindowProps> = ({ place, isClosing, onCreatePin, pinsData }) => {
     const [windowMode, setWindowMode] = useState<WindowMode>("home");
     const { postalCode, address } = buildJapaneseAddress(place);
 
@@ -78,14 +79,19 @@ const Window: React.FC<WindowProps> = ({ place, isClosing, onClose, onCreatePin,
                             >
                                 <p className="text_sub">お店の詳細を見る</p>
                             </button>
-                            <button className={styles.windowChangeBtn}>
+                            <button
+                                className={styles.windowChangeBtn}
+                                onClick={() => setWindowMode("pinList")}
+                            >
                                 <p className="text_sub">友達の行きたいピンを見る</p>
                             </button>
                         </div>
                         <CreatePinButton onClick={() => setWindowMode("createPin")} />
                     </div>
                 )}
-                {windowMode === "pinList" && <ShopDetail place={place} onClose={onClose} />}
+                {windowMode === "pinList" && (
+                    <PinList onClose={() => setWindowMode("home")} pins={matchingPins} />
+                )}
 
                 {windowMode === "detail" && (
                     <ShopDetail place={place} onClose={() => setWindowMode("home")} />
