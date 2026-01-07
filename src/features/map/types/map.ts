@@ -216,3 +216,11 @@ export interface JoinScheduleResponse {
 export interface ScheduleResponsesData {
     responses: ScheduleResponse[];
 }
+
+export interface ScheduleJoinError {
+    error: string;
+    details?: Array<{
+        field: string;
+        message: string;
+    }>;
+}

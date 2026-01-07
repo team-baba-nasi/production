@@ -1,83 +1,52 @@
-import { useState } from "react";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import axios from "@/lib/axios";
+import { AxiosError } from "axios";
 import { toast } from "sonner";
 import {
     JoinScheduleParams,
     JoinScheduleResponse,
     ScheduleResponsesData,
     ScheduleResponse,
+    ScheduleJoinError,
 } from "../types/map";
 
-export function useScheduleJoin() {
-    const [isJoining, setIsJoining] = useState(false);
-    const [isFetching, setIsFetching] = useState(false);
-
-    const joinSchedule = async (
-        params: JoinScheduleParams
-    ): Promise<JoinScheduleResponse | null> => {
-        setIsJoining(true);
-        try {
-            const response = await fetch("/api/schedules/join", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(params),
-            });
-
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.error || "スケジュール参加に失敗しました");
-            }
-
-            const data: JoinScheduleResponse = await response.json();
-
+export function useJoinSchedule() {
+    return useMutation<JoinScheduleResponse, AxiosError<ScheduleJoinError>, JoinScheduleParams>({
+        mutationFn: async (params) => {
+            const res = await axios.post("/maps/join", params);
+            return res.data;
+        },
+        onSuccess: (data, variables) => {
             const messages = {
                 going: "参加登録しました！",
                 maybe: "検討中として登録しました",
                 not_going: "不参加として登録しました",
             };
-            toast.success(messages[params.response_type]);
-
-            return data;
-        } catch (error) {
-            const message =
-                error instanceof Error ? error.message : "スケジュール参加に失敗しました";
+            toast.success(messages[variables.response_type]);
+        },
+        onError: (error) => {
+            const message = error.response?.data.error || "スケジュール参加に失敗しました";
             toast.error(message);
             console.error("スケジュール参加エラー:", error);
-            return null;
-        } finally {
-            setIsJoining(false);
-        }
-    };
+        },
+    });
+}
 
-    const fetchScheduleResponses = async (scheduleId: number): Promise<ScheduleResponse[]> => {
-        setIsFetching(true);
-        try {
-            const response = await fetch(`/api/schedules/join?schedule_id=${scheduleId}`);
-
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.error || "参加状況の取得に失敗しました");
-            }
-
-            const data: ScheduleResponsesData = await response.json();
-            return data.responses;
-        } catch (error) {
-            const message = error instanceof Error ? error.message : "参加状況の取得に失敗しました";
-            toast.error(message);
-            console.error("参加状況取得エラー:", error);
-            return [];
-        } finally {
-            setIsFetching(false);
-        }
-    };
-
-    return {
-        joinSchedule,
-        fetchScheduleResponses,
-        isJoining,
-        isFetching,
-    };
+/**
+ * スケジュールの参加状況を取得するQuery
+ */
+export function useScheduleResponses(scheduleId: number, enabled = true) {
+    return useQuery<ScheduleResponse[], AxiosError<ScheduleJoinError>>({
+        queryKey: ["schedule-responses", scheduleId],
+        queryFn: async () => {
+            const res = await axios.get<ScheduleResponsesData>(
+                `/maps/join?schedule_id=${scheduleId}`
+            );
+            return res.data.responses;
+        },
+        enabled: enabled && scheduleId > 0,
+        staleTime: 1000 * 60 * 5, // 5分キャッシュ
+    });
 }
 
 /**
