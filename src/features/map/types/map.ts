@@ -174,3 +174,45 @@ export interface CreateReactionResponse {
 export interface CreateReactionError {
     error: string;
 }
+
+//////////////////////////////////////////////////////////
+// ScheduleJoin
+//////////////////////////////////////////////////////////
+
+export type ResponseType = "going" | "maybe" | "not_going";
+
+export interface JoinScheduleParams {
+    schedule_id: number;
+    response_type: ResponseType;
+    available_dates?: string[];
+    comment?: string;
+}
+
+export interface ScheduleResponse {
+    id: number;
+    schedule_id: number;
+    user_id: number;
+    response_type: string;
+    available_dates: string[] | null;
+    comment: string | null;
+    created_at: string;
+    updated_at: string;
+    user: {
+        id: number;
+        username: string;
+        profile_image_url: string | null;
+    };
+}
+
+export interface JoinScheduleResponse {
+    message: string;
+    scheduleResponse: ScheduleResponse;
+    chatRoom: {
+        id: number;
+        uuid: string;
+    } | null;
+}
+
+export interface ScheduleResponsesData {
+    responses: ScheduleResponse[];
+}
