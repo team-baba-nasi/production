@@ -22,6 +22,7 @@ export const useMapInitialization = (
                 zoom: 13,
                 center,
                 mapId: "DEMO_MAP_ID",
+                disableDefaultUI: true,
             });
 
             const service = new PlacesService(map);
