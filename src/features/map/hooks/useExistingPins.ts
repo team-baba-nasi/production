@@ -1,8 +1,8 @@
 import { useEffect } from "react";
-import type { PinsResponse, MarkerPinData } from "../types/map";
+import type { GetPinsResponse, MarkerPinData } from "../types/map";
 
 export const useExistingPins = (
-    pinsData: PinsResponse | undefined,
+    pinsData: GetPinsResponse | undefined,
     placesService: google.maps.places.PlacesService | null,
     clearMarkers: () => void,
     addMarker: (pin: MarkerPinData, onClick: () => void) => Promise<void>,
