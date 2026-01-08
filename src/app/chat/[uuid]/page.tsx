@@ -105,7 +105,7 @@ const Chat = () => {
 
                         <div className={styles.shopInfo}>
                             <Image
-                                src="/images/groups/test_icon_4x.webp"
+                                src="/images/chat/demo_img.JPG"
                                 alt="ショッププレビュー"
                                 width={108}
                                 height={108}
