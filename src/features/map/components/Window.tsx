@@ -58,6 +58,7 @@ const Window: React.FC<WindowProps> = ({ place, isClosing, onCreatePin, pinsData
                                         alt={place.name ?? "restaurant photo"}
                                         width={400}
                                         height={250}
+                                        className={styles.restaurantPhoto}
                                     />
                                 </button>
                             )}

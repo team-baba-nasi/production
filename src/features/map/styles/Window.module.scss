@@ -29,6 +29,9 @@
             .shopPreview {
                 position: relative;
                 margin-top: 20px;
+                .restaurantPhoto {
+                    object-fit: cover;
+                }
                 .favoriteBtn {
                     width: 48px;
                     height: 48px;
