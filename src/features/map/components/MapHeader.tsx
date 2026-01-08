@@ -4,6 +4,8 @@ import { HiUserGroup } from "react-icons/hi";
 import { MdOutlineMenu } from "react-icons/md";
 import Image from "next/image";
 import { useGroups } from "@/features/groups/hooks/useGroups";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 type MapHeaderProps = {
     onPlaceSelect?: (place: google.maps.places.PlaceResult) => void;
@@ -15,6 +17,8 @@ const MapHeader = ({ onPlaceSelect, mapInstance }: MapHeaderProps) => {
     const [searchValue, setSearchValue] = useState("");
     const [predictions, setPredictions] = useState<google.maps.places.AutocompletePrediction[]>([]);
     const [showPredictions, setShowPredictions] = useState(false);
+    const pathname = usePathname();
+    const activeGroupId = pathname.split("/").at(-1);
 
     const { data: groups, isLoading, isError } = useGroups();
     const autocompleteServiceRef = useRef<google.maps.places.AutocompleteService | null>(null);
@@ -229,14 +233,25 @@ const MapHeader = ({ onPlaceSelect, mapInstance }: MapHeaderProps) => {
             </header>
 
             <div className={`${styles.dropdown} ${isOpen ? styles.open : ""}`}>
-                {groups.groups.map((g, index) => (
-                    <button
-                        key={g.group.id}
-                        className={`${styles.groupItem} ${index === 0 ? styles.active : ""}`}
-                    >
-                        {g.group.name}
-                    </button>
-                ))}
+                <Link
+                    href={"/map"}
+                    className={`${styles.groupItem} ${pathname === "/map" && styles.active}`}
+                >
+                    お気に入り
+                </Link>
+                {groups.groups.map((g) => {
+                    const isActive = String(g.group.id) === activeGroupId;
+
+                    return (
+                        <Link
+                            key={g.group.id}
+                            href={`/map/${g.group.id}`}
+                            className={`${styles.groupItem} ${isActive ? styles.active : ""}`}
+                        >
+                            {g.group.name}
+                        </Link>
+                    );
+                })}
             </div>
         </div>
     );
