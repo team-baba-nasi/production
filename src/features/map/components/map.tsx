@@ -40,8 +40,7 @@ const GoogleMap = ({ pinsData }: GoogleMapProps) => {
     const handleBackgroundClick = () => {
         if (selectedPlaceId) handleClose();
     };
-
-    const { mapRef, mapInstanceRef, placesServiceRef } = useMapInitialization(
+    const { mapRef, mapInstanceRef, placesServiceRef, isMapReady } = useMapInitialization(
         handleMapClick,
         handleBackgroundClick
     );
@@ -109,6 +108,7 @@ const GoogleMap = ({ pinsData }: GoogleMapProps) => {
     useExistingPins(
         pinsData,
         placesServiceRef.current,
+        isMapReady,
         clearMarkers,
         addMarker,
         fetchPlaceDetails,
@@ -169,7 +169,11 @@ const GoogleMap = ({ pinsData }: GoogleMapProps) => {
 
     return (
         <div className={styles.wrap}>
-            <MapHeader onPlaceSelect={handlePlaceSelect} mapInstance={mapInstanceRef.current} />
+            <MapHeader
+                onPlaceSelect={handlePlaceSelect}
+                mapInstance={mapInstanceRef.current}
+                key={mapInstanceRef.current ? "map-loaded" : "map-loading"}
+            />
             <div ref={mapRef} className={styles.map} />
 
             {selectedPlace && selectedPlaceId && (

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export const useMapInitialization = (
     onMapClick: (placeId: string, service: google.maps.places.PlacesService) => void,
@@ -8,11 +8,14 @@ export const useMapInitialization = (
     const mapInstanceRef = useRef<google.maps.Map | null>(null);
     const placesServiceRef = useRef<google.maps.places.PlacesService | null>(null);
 
+    const [isMapReady, setIsMapReady] = useState(false);
+
     useEffect(() => {
         const initMap = async () => {
             if (!mapRef.current || mapInstanceRef.current) return;
 
             const center = { lat: 35.6812, lng: 139.7671 };
+
             const { Map } = (await google.maps.importLibrary("maps")) as google.maps.MapsLibrary;
             const { PlacesService } = (await google.maps.importLibrary(
                 "places"
@@ -26,10 +29,10 @@ export const useMapInitialization = (
             });
 
             const service = new PlacesService(map);
-            placesServiceRef.current = service;
 
             map.addListener("click", (e: google.maps.MapMouseEvent) => {
                 const placeId = (e as google.maps.MapMouseEvent & { placeId?: string }).placeId;
+
                 if (!placeId) {
                     onBackgroundClick();
                     return;
@@ -40,6 +43,10 @@ export const useMapInitialization = (
             });
 
             mapInstanceRef.current = map;
+            placesServiceRef.current = service;
+
+            // Map 初期化完了を通知
+            setIsMapReady(true);
         };
 
         if (!document.getElementById("googleMapsScript")) {
@@ -48,12 +55,19 @@ export const useMapInitialization = (
             script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places&v=weekly`;
             script.async = true;
             script.defer = true;
-            script.onload = () => initMap();
+            script.onload = () => {
+                initMap();
+            };
             document.head.appendChild(script);
         } else if (window.google?.maps) {
             initMap();
         }
-    }, []);
+    }, [onMapClick, onBackgroundClick]);
 
-    return { mapRef, mapInstanceRef, placesServiceRef };
+    return {
+        mapRef,
+        mapInstanceRef,
+        placesServiceRef,
+        isMapReady,
+    };
 };

@@ -1,9 +1,10 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import type { GetPinsResponse, MarkerPinData } from "../types/map";
 
 export const useExistingPins = (
     pinsData: GetPinsResponse | undefined,
     placesService: google.maps.places.PlacesService | null,
+    isMapReady: boolean,
     clearMarkers: () => void,
     addMarker: (pin: MarkerPinData, onClick: () => void) => Promise<void>,
     fetchPlaceDetails: (
@@ -17,45 +18,64 @@ export const useExistingPins = (
         fallbackPlace?: google.maps.places.PlaceResult
     ) => void
 ) => {
-    useEffect(() => {
-        const loadExistingPins = async () => {
-            if (!pinsData?.pins || !placesService) return;
+    const effectIdRef = useRef(0);
 
+    useEffect(() => {
+        if (!isMapReady || !pinsData?.pins || !placesService) {
+            return;
+        }
+
+        effectIdRef.current += 1;
+        const currentEffectId = effectIdRef.current;
+
+        const load = async () => {
             clearMarkers();
 
-            // 全てのピンを順番に処理
             for (const pin of pinsData.pins) {
-                if (!pin.latitude || !pin.longitude) continue;
+                if (effectIdRef.current !== currentEffectId) return;
 
-                if (pin.place_id) {
+                if (pin.latitude == null || pin.longitude == null) continue;
+
+                const lat = Number(pin.latitude);
+                const lng = Number(pin.longitude);
+                if (!Number.isFinite(lat) || !Number.isFinite(lng)) continue;
+
+                const placeId = typeof pin.place_id === "string" ? pin.place_id : undefined;
+
+                if (placeId) {
                     await new Promise<void>((resolve) => {
                         fetchPlaceDetails(
                             placesService,
-                            pin.place_id!,
-                            async (placeDetails) => {
+                            placeId,
+                            async (place) => {
+                                if (effectIdRef.current !== currentEffectId) {
+                                    resolve();
+                                    return;
+                                }
+
                                 await addMarker(
                                     {
-                                        lat: Number(pin.latitude),
-                                        lng: Number(pin.longitude),
+                                        lat,
+                                        lng,
                                         comment: pin.comment ?? undefined,
-                                        place: placeDetails,
-                                        placeName: placeDetails.name,
-                                        placeId: pin.place_id ?? undefined,
+                                        place: place,
+                                        placeName: place.name,
+                                        placeId,
                                     },
-                                    () => onPinClick(pin.place_id ?? undefined, placeDetails)
+                                    () => onPinClick(placeId, place)
                                 );
                                 resolve();
                             },
                             async () => {
                                 await addMarker(
                                     {
-                                        lat: Number(pin.latitude),
-                                        lng: Number(pin.longitude),
+                                        lat,
+                                        lng,
                                         comment: pin.comment ?? undefined,
                                         placeName: pin.place_name,
-                                        placeId: pin.place_id ?? undefined,
+                                        placeId,
                                     },
-                                    () => onPinClick(pin.place_id ?? undefined)
+                                    () => onPinClick(placeId)
                                 );
                                 resolve();
                             }
@@ -64,8 +84,8 @@ export const useExistingPins = (
                 } else {
                     await addMarker(
                         {
-                            lat: Number(pin.latitude),
-                            lng: Number(pin.longitude),
+                            lat,
+                            lng,
                             comment: pin.comment ?? undefined,
                             placeName: pin.place_name,
                         },
@@ -75,6 +95,18 @@ export const useExistingPins = (
             }
         };
 
-        loadExistingPins();
-    }, [pinsData, placesService, clearMarkers, addMarker, fetchPlaceDetails, onPinClick]);
+        load();
+
+        return () => {
+            effectIdRef.current += 1;
+        };
+    }, [
+        isMapReady, // ← これが超重要
+        pinsData,
+        placesService,
+        clearMarkers,
+        addMarker,
+        fetchPlaceDetails,
+        onPinClick,
+    ]);
 };

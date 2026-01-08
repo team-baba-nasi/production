@@ -1,3 +1,4 @@
+"use client";
 import { useState, useRef, useEffect } from "react";
 import styles from "@/features/map/styles/MapHeader.module.scss";
 import { HiUserGroup } from "react-icons/hi";
@@ -25,7 +26,6 @@ const MapHeader = ({ onPlaceSelect, mapInstance }: MapHeaderProps) => {
     const placesServiceRef = useRef<google.maps.places.PlacesService | null>(null);
     const searchInputRef = useRef<HTMLInputElement>(null);
 
-    // Google Maps APIが読み込まれているかチェック
     useEffect(() => {
         const initializeServices = () => {
             if (typeof window !== "undefined" && window.google?.maps?.places) {
@@ -40,7 +40,6 @@ const MapHeader = ({ onPlaceSelect, mapInstance }: MapHeaderProps) => {
 
         initializeServices();
 
-        // Google Maps APIの読み込みを待つ
         const checkInterval = setInterval(() => {
             if (window.google?.maps?.places) {
                 initializeServices();
@@ -61,7 +60,6 @@ const MapHeader = ({ onPlaceSelect, mapInstance }: MapHeaderProps) => {
             return;
         }
 
-        // AutocompleteServiceが初期化されているか確認
         if (!autocompleteServiceRef.current) {
             console.warn("AutocompleteService is not initialized yet");
             return;
@@ -72,12 +70,27 @@ const MapHeader = ({ onPlaceSelect, mapInstance }: MapHeaderProps) => {
                 {
                     input: value,
                     componentRestrictions: { country: "jp" },
-                    types: ["restaurant", "cafe", "bar", "food"],
+                    types: ["establishment"],
                 },
                 (results, status) => {
                     if (status === google.maps.places.PlacesServiceStatus.OK && results) {
-                        setPredictions(results);
-                        setShowPredictions(true);
+                        // 飲食店のみにフィルタリング
+                        const restaurantTypes = [
+                            "restaurant",
+                            "cafe",
+                            "bar",
+                            "food",
+                            "bakery",
+                            "meal_takeaway",
+                            "meal_delivery",
+                        ];
+
+                        const filteredResults = results.filter((prediction) => {
+                            return prediction.types?.some((type) => restaurantTypes.includes(type));
+                        });
+
+                        setPredictions(filteredResults);
+                        setShowPredictions(filteredResults.length > 0);
                     } else if (status === google.maps.places.PlacesServiceStatus.ZERO_RESULTS) {
                         setPredictions([]);
                         setShowPredictions(false);
@@ -94,12 +107,10 @@ const MapHeader = ({ onPlaceSelect, mapInstance }: MapHeaderProps) => {
     };
 
     const handlePredictionClick = (placeId: string) => {
-        // PlacesServiceが初期化されていない場合、mapInstanceから再初期化を試みる
         if (!placesServiceRef.current && mapInstance) {
             placesServiceRef.current = new google.maps.places.PlacesService(mapInstance);
         }
 
-        // それでも初期化できない場合、一時的なdiv要素を使用
         if (!placesServiceRef.current) {
             const div = document.createElement("div");
             placesServiceRef.current = new google.maps.places.PlacesService(div);
