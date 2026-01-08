@@ -11,6 +11,7 @@ const PLACE_FIELDS = [
     "types",
     "geometry",
     "place_id",
+    "address_components",
 ] as const;
 
 export const usePlaceDetails = () => {

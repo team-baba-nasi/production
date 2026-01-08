@@ -1,8 +1,77 @@
-type PinUser = {
+//////////////////////////////////////////////////////////
+// User
+//////////////////////////////////////////////////////////
+
+export type PinUser = {
     id: number;
     username: string;
     profile_image_url: string;
 };
+
+//////////////////////////////////////////////////////////
+// Group
+//////////////////////////////////////////////////////////
+
+export type PinGroup = {
+    id: number;
+    name: string;
+};
+
+export type PinGroupRelation = {
+    group: PinGroup;
+};
+
+//////////////////////////////////////////////////////////
+// Schedule
+//////////////////////////////////////////////////////////
+
+export type Schedule = {
+    id: number;
+    date: string; // YYYY-MM-DD
+    start_at: string | null; // ISO
+    end_at: string | null; // ISO
+};
+
+//////////////////////////////////////////////////////////
+// Reaction
+//////////////////////////////////////////////////////////
+
+export type PinReaction = {
+    id: number;
+    reaction_type: string;
+    user: PinUser;
+};
+
+//////////////////////////////////////////////////////////
+// Status
+//////////////////////////////////////////////////////////
+
+export type PinStatus = "open" | "scheduled" | "closed" | "cancelled";
+
+//////////////////////////////////////////////////////////
+// Pin
+//////////////////////////////////////////////////////////
+
+export type Pin = {
+    id: number;
+    place_id: string | null;
+    place_name: string;
+    place_address: string | null;
+    latitude: string | null;
+    longitude: string | null;
+    comment: string | null;
+    status: PinStatus;
+    created_at: string; // ISO 8601
+    updated_at: string; // ISO 8601
+    user: PinUser;
+    pin_groups: PinGroupRelation[];
+    reactions: PinReaction[];
+    schedules: Schedule[];
+};
+
+//////////////////////////////////////////////////////////
+// Map / Marker
+//////////////////////////////////////////////////////////
 
 export interface PinData {
     latitude: string | number | null;
@@ -10,10 +79,6 @@ export interface PinData {
     place_id?: string | null;
     place_name: string;
     comment?: string | null;
-}
-
-export interface PinsResponse {
-    pins: PinData[];
 }
 
 export interface MarkerPinData {
@@ -25,77 +90,14 @@ export interface MarkerPinData {
     placeId?: string;
 }
 
-type PinGroup = {
-    id: number;
-    name: string;
-};
-
-type PinReaction = {
-    id: number;
-    reaction_type: string;
-    user: PinUser;
-};
-
-export type Pin = {
-    id: number;
-    place_id: string;
-    place_name: string;
-    place_address: string | null;
-    latitude: string | null;
-    longitude: string | null;
-    comment: string | null;
-    status: string;
-    created_at: string; // ISO 8601 形式の日時文字列
-    updated_at: string; // ISO 8601 形式の日時文字列
-    user: PinUser;
-    group: PinGroup | null;
-    reactions: PinReaction[];
-};
-
 //////////////////////////////////////////////////////////
-// ピン作成
+// Get Pins
 //////////////////////////////////////////////////////////
 
-export interface CreatePinPayload {
-    group_id?: number;
-    place_id?: string;
-    place_name: string;
-    place_address?: string;
-    latitude?: number;
-    longitude?: number;
-    comment?: string;
-    status?: "open" | "scheduled" | "closed" | "cancelled";
-}
-
-export interface CreatePinResponse {
-    pin: {
-        id: number;
-        place_name: string;
-        place_address?: string | null;
-        latitude?: number | null;
-        longitude?: number | null;
-        comment?: string | null;
-        status: string;
-        created_at: string;
-        updated_at: string;
-        user: { id: number; username: string };
-        group?: { id: number; name: string } | null;
-    };
-}
-export interface CreatePinError {
-    error: string;
-}
-
-//////////////////////////////////////////////////////////
-// ピン取得
-//////////////////////////////////////////////////////////
-
-// GET /api/pins のレスポンス型
 export interface GetPinsResponse {
     pins: Pin[];
 }
 
-// エラーレスポンス型
 export interface GetPinsError {
     error: string;
     details?: Array<{
@@ -105,8 +107,61 @@ export interface GetPinsError {
 }
 
 //////////////////////////////////////////////////////////
-// リアクション取得
+// Create Pin
 //////////////////////////////////////////////////////////
+
+export interface CreatePinPayload {
+    group_ids: number[];
+    place_id?: string;
+    place_name: string;
+    place_address?: string;
+    latitude?: number;
+    longitude?: number;
+    comment?: string;
+    schedule?: {
+        date: string; // YYYY-MM-DD
+        start_time?: string; // HH:mm
+        end_time?: string; // HH:mm
+    };
+    status?: PinStatus;
+}
+
+export interface CreatePinResponse {
+    pin: {
+        id: number;
+        place_name: string;
+        place_address: string | null;
+        latitude: number | null;
+        longitude: number | null;
+        comment: string | null;
+        status: PinStatus;
+        created_at: string;
+        updated_at: string;
+        user: {
+            id: number;
+            username: string;
+        };
+        pin_groups: {
+            group: {
+                id: number;
+                name: string;
+            };
+        }[];
+        schedules: Schedule[];
+    };
+}
+
+export interface CreatePinError {
+    error: string;
+}
+
+//////////////////////////////////////////////////////////
+// Reaction
+//////////////////////////////////////////////////////////
+
+export interface CreateReactionPayload {
+    pin_id: number;
+}
 
 export interface CreateReactionResponse {
     id: number;
@@ -120,6 +175,52 @@ export interface CreateReactionError {
     error: string;
 }
 
-export interface CreateReactionPayload {
-    pin_id: number;
+//////////////////////////////////////////////////////////
+// ScheduleJoin
+//////////////////////////////////////////////////////////
+
+export type ResponseType = "going" | "maybe" | "not_going";
+
+export interface JoinScheduleParams {
+    schedule_id: number;
+    response_type: ResponseType;
+    available_dates?: string[];
+    comment?: string;
+}
+
+export interface ScheduleResponse {
+    id: number;
+    schedule_id: number;
+    user_id: number;
+    response_type: string;
+    available_dates: string[] | null;
+    comment: string | null;
+    created_at: string;
+    updated_at: string;
+    user: {
+        id: number;
+        username: string;
+        profile_image_url: string | null;
+    };
+}
+
+export interface JoinScheduleResponse {
+    message: string;
+    scheduleResponse: ScheduleResponse;
+    chatRoom: {
+        id: number;
+        uuid: string;
+    } | null;
+}
+
+export interface ScheduleResponsesData {
+    responses: ScheduleResponse[];
+}
+
+export interface ScheduleJoinError {
+    error: string;
+    details?: Array<{
+        field: string;
+        message: string;
+    }>;
 }

@@ -6,7 +6,12 @@ import { useGroupId } from "@/features/groups/hooks/useGroupId";
 
 const GroupMap = () => {
     const groupId = useGroupId();
-    const { data: pinsData } = usePins({ groupId: groupId });
+
+    if (groupId === undefined) {
+        return null;
+    }
+
+    const { data: pinsData } = usePins({ groupId });
 
     return <GoogleMap pinsData={pinsData} />;
 };
