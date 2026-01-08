@@ -21,13 +21,30 @@ const MapHeader = ({ onPlaceSelect, mapInstance }: MapHeaderProps) => {
     const placesServiceRef = useRef<google.maps.places.PlacesService | null>(null);
     const searchInputRef = useRef<HTMLInputElement>(null);
 
+    // Google Maps APIが読み込まれているかチェック
     useEffect(() => {
-        if (typeof google !== "undefined" && google.maps && google.maps.places) {
-            autocompleteServiceRef.current = new google.maps.places.AutocompleteService();
-            if (mapInstance) {
-                placesServiceRef.current = new google.maps.places.PlacesService(mapInstance);
+        const initializeServices = () => {
+            if (typeof window !== "undefined" && window.google?.maps?.places) {
+                if (!autocompleteServiceRef.current) {
+                    autocompleteServiceRef.current = new google.maps.places.AutocompleteService();
+                }
+                if (mapInstance && !placesServiceRef.current) {
+                    placesServiceRef.current = new google.maps.places.PlacesService(mapInstance);
+                }
             }
-        }
+        };
+
+        initializeServices();
+
+        // Google Maps APIの読み込みを待つ
+        const checkInterval = setInterval(() => {
+            if (window.google?.maps?.places) {
+                initializeServices();
+                clearInterval(checkInterval);
+            }
+        }, 100);
+
+        return () => clearInterval(checkInterval);
     }, [mapInstance]);
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,7 +57,13 @@ const MapHeader = ({ onPlaceSelect, mapInstance }: MapHeaderProps) => {
             return;
         }
 
-        if (autocompleteServiceRef.current) {
+        // AutocompleteServiceが初期化されているか確認
+        if (!autocompleteServiceRef.current) {
+            console.warn("AutocompleteService is not initialized yet");
+            return;
+        }
+
+        try {
             autocompleteServiceRef.current.getPlacePredictions(
                 {
                     input: value,
@@ -51,17 +74,37 @@ const MapHeader = ({ onPlaceSelect, mapInstance }: MapHeaderProps) => {
                     if (status === google.maps.places.PlacesServiceStatus.OK && results) {
                         setPredictions(results);
                         setShowPredictions(true);
+                    } else if (status === google.maps.places.PlacesServiceStatus.ZERO_RESULTS) {
+                        setPredictions([]);
+                        setShowPredictions(false);
                     } else {
+                        console.warn("Places API error:", status);
                         setPredictions([]);
                         setShowPredictions(false);
                     }
                 }
             );
+        } catch (error) {
+            console.error("Error fetching predictions:", error);
         }
     };
 
     const handlePredictionClick = (placeId: string) => {
-        if (!placesServiceRef.current) return;
+        // PlacesServiceが初期化されていない場合、mapInstanceから再初期化を試みる
+        if (!placesServiceRef.current && mapInstance) {
+            placesServiceRef.current = new google.maps.places.PlacesService(mapInstance);
+        }
+
+        // それでも初期化できない場合、一時的なdiv要素を使用
+        if (!placesServiceRef.current) {
+            const div = document.createElement("div");
+            placesServiceRef.current = new google.maps.places.PlacesService(div);
+        }
+
+        if (!placesServiceRef.current) {
+            console.warn("PlacesService could not be initialized");
+            return;
+        }
 
         placesServiceRef.current.getDetails(
             {

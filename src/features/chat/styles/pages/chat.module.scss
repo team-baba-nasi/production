@@ -39,10 +39,21 @@
             padding: 25px 8px 8px 8px;
             display: flex;
             justify-content: space-between;
+            gap: 16px;
+            img {
+                object-fit: cover;
+            }
             .shopTexts {
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between;
+                gap: 24px;
+                h3 {
+                    width: 200px;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
                 .messageTime {
                     display: flex;
                     gap: 4px;
