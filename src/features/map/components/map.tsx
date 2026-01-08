@@ -10,6 +10,7 @@ import { useMarkerManager } from "../hooks/useMarkerManager";
 import { usePlaceDetails } from "../hooks/usePlaceDetails";
 import { useExistingPins } from "../hooks/useExistingPins";
 import { GetPinsResponse } from "../types/map";
+import MapHeader from "./MapHeader";
 
 type GoogleMapProps = {
     pinsData: GetPinsResponse | undefined;
@@ -157,8 +158,18 @@ const GoogleMap = ({ pinsData }: GoogleMapProps) => {
         }, 300);
     };
 
+    // 検索から場所が選択された時のハンドラー
+    const handlePlaceSelect = useCallback((place: google.maps.places.PlaceResult) => {
+        if (place.place_id) {
+            setSelectedPlaceId(place.place_id);
+            setSelectedPlace(place);
+            setIsClosing(false);
+        }
+    }, []);
+
     return (
         <div className={styles.wrap}>
+            <MapHeader onPlaceSelect={handlePlaceSelect} mapInstance={mapInstanceRef.current} />
             <div ref={mapRef} className={styles.map} />
 
             {selectedPlace && selectedPlaceId && (
