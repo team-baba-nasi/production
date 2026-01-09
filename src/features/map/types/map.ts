@@ -224,3 +224,25 @@ export interface ScheduleJoinError {
         message: string;
     }>;
 }
+
+//////////////////////////////////////////////////////////
+// FavoritePlace
+//////////////////////////////////////////////////////////
+export interface FavoritePin {
+    id: number;
+    place_id: string | null;
+    place_name: string;
+    place_address: string | null;
+    latitude: string | null;
+    longitude: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface AddFavoriteResponse {
+    pin: FavoritePin;
+}
+
+export interface GetFavoriteResponse {
+    pins: FavoritePin[];
+}
