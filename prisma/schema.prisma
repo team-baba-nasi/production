@@ -35,6 +35,7 @@ model User {
   messages           Message[]          @relation("MessageSender")
   notifications      Notification[]
   pushSubscription   PushSubscription[]
+  FavoritePlace      FavoritePlace[]
 }
 
 model Follow {
@@ -127,6 +128,20 @@ model PinReaction {
   user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@unique([pin_id, user_id])
+}
+
+model FavoritePlace {
+  id    Int  @id @default(autoincrement())
+  user_id       Int
+  place_id      String?
+  place_name    String
+  place_address String?
+  latitude      Decimal? @db.Decimal(10, 8)
+  longitude     Decimal? @db.Decimal(11, 8)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
 
 //////////////////////////////////////////////////////////
