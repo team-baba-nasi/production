@@ -252,3 +252,47 @@ export interface GetFavoriteError {
 }
 
 export type UnifiedPinResponse = GetPinsResponse | GetFavoriteResponse;
+
+//////////////////////////////////////////////////////////
+// Add Favorite
+//////////////////////////////////////////////////////////
+
+export interface AddFavoritePinPayload {
+    place_id?: string;
+    place_name: string;
+    place_address?: string;
+    latitude?: number;
+    longitude?: number;
+}
+
+export interface AddFavoritePinResponse {
+    pin: {
+        id: number;
+        place_name: string;
+        place_address: string | null;
+        latitude: string | null;
+        longitude: string | null;
+        created_at: string;
+        updated_at: string;
+    };
+}
+
+export interface AddFavoritePinError {
+    error: string;
+    details?: Array<{
+        field: string;
+        message: string;
+    }>;
+}
+
+//////////////////////////////////////////////////////////
+// Delete Favorite
+//////////////////////////////////////////////////////////
+
+export interface DeleteFavoritePinResponse {
+    success: boolean;
+}
+
+export interface DeleteFavoritePinError {
+    error: string;
+}
