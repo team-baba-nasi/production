@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
 
         const data = validation.data;
 
-        const pin = await prisma.pin.create({
+        const pin = await prisma.favoritePlace.create({
             data: {
                 user_id: user.id,
                 place_id: data.place_id,
@@ -61,8 +61,11 @@ export async function POST(request: NextRequest) {
 
         return NextResponse.json({ pin }, { status: 201 });
     } catch (error) {
-        console.error("Pin 作成エラー:", error);
-        return NextResponse.json({ error: "Pin 作成中にエラーが発生しました" }, { status: 500 });
+        console.error("お気に入り追加エラー:", error);
+        return NextResponse.json(
+            { error: "お気に入り追加中にエラーが発生しました" },
+            { status: 500 }
+        );
     }
 }
 
