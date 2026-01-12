@@ -25,14 +25,14 @@ type WindowProps = {
     isClosing: boolean;
     onClose: () => void;
     onCreatePin: (payload: CreatePinSubmitPayload) => void;
-    pinsData: GetPinsResponse | undefined;
+    normalizedPin: GetPinsResponse | undefined;
 };
 
-const Window: React.FC<WindowProps> = ({ place, isClosing, onCreatePin, pinsData }) => {
+const Window: React.FC<WindowProps> = ({ place, isClosing, onCreatePin, normalizedPin }) => {
     const [windowMode, setWindowMode] = useState<WindowMode>("home");
     const { postalCode, address } = buildJapaneseAddress(place);
 
-    const matchingPins = pinsData?.pins.filter((pin) => pin.place_id === place.place_id) ?? [];
+    const matchingPins = normalizedPin?.pins.filter((pin) => pin.place_id === place.place_id) ?? [];
 
     return (
         <div className={styles.wrap}>

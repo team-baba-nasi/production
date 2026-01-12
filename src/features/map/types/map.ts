@@ -246,3 +246,9 @@ export interface AddFavoriteResponse {
 export interface GetFavoriteResponse {
     pins: FavoritePin[];
 }
+
+export interface GetFavoriteError {
+    error: string;
+}
+
+export type UnifiedPinResponse = GetPinsResponse | GetFavoriteResponse;

@@ -1,10 +1,10 @@
 "use client";
 
 import GoogleMap from "@/features/map/components/map";
-import { usePins } from "@/features/map/hooks/usePins";
+import { useFavorite } from "@/features/map/hooks/useFavorite";
 
 const MyMap = () => {
-    const { data: pinsData } = usePins({ scope: "mine" });
+    const { data: pinsData } = useFavorite();
 
     return <GoogleMap pinsData={pinsData} />;
 };

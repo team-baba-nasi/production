@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import type { GetPinsResponse, MarkerPinData } from "../types/map";
 
 export const useExistingPins = (
-    pinsData: GetPinsResponse | undefined,
+    normalizedPins: GetPinsResponse | undefined,
     placesService: google.maps.places.PlacesService | null,
     isMapReady: boolean,
     clearMarkers: () => void,
@@ -21,7 +21,7 @@ export const useExistingPins = (
     const effectIdRef = useRef(0);
 
     useEffect(() => {
-        if (!isMapReady || !pinsData?.pins || !placesService) {
+        if (!isMapReady || !normalizedPins?.pins || !placesService) {
             return;
         }
 
@@ -31,7 +31,7 @@ export const useExistingPins = (
         const load = async () => {
             clearMarkers();
 
-            for (const pin of pinsData.pins) {
+            for (const pin of normalizedPins.pins) {
                 if (effectIdRef.current !== currentEffectId) return;
 
                 if (pin.latitude == null || pin.longitude == null) continue;
@@ -101,8 +101,8 @@ export const useExistingPins = (
             effectIdRef.current += 1;
         };
     }, [
-        isMapReady, // ← これが超重要
-        pinsData,
+        isMapReady,
+        normalizedPins,
         placesService,
         clearMarkers,
         addMarker,
