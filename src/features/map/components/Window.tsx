@@ -7,6 +7,11 @@ import Image from "next/image";
 import buildJapaneseAddress from "../utils/BuildJapaneseAddress";
 import CreatePinButton from "./CreatePinBtn";
 import PinList from "./PinList";
+import { useAddFavoritePin } from "../hooks/useAddFavoritePin";
+import { useDeleteFavoritePin } from "../hooks/useDeleteFavoritePin";
+import { useQueryClient } from "@tanstack/react-query";
+import { FaHeart } from "react-icons/fa";
+import clsx from "clsx";
 
 type WindowMode = "detail" | "createPin" | "pinList" | "home";
 
@@ -32,7 +37,48 @@ const Window: React.FC<WindowProps> = ({ place, isClosing, onCreatePin, normaliz
     const [windowMode, setWindowMode] = useState<WindowMode>("home");
     const { postalCode, address } = buildJapaneseAddress(place);
 
+    const queryClient = useQueryClient();
+    const { mutate: addFavorite } = useAddFavoritePin();
+    const { mutate: deleteFavorite } = useDeleteFavoritePin();
+
     const matchingPins = normalizedPin?.pins.filter((pin) => pin.place_id === place.place_id) ?? [];
+
+    // このお店が既にお気に入りかチェック
+    const isFavorite = matchingPins.length > 0;
+    const favoritePin = matchingPins[0];
+
+    const handleFavoriteToggle = () => {
+        if (isFavorite && favoritePin) {
+            deleteFavorite(favoritePin.id, {
+                onSuccess: () => {
+                    queryClient.invalidateQueries({ queryKey: ["favorites"] });
+                },
+                onError: (error) => {
+                    console.error("お気に入り削除エラー:", error);
+                    alert("お気に入りの削除に失敗しました");
+                },
+            });
+        } else {
+            addFavorite(
+                {
+                    place_id: place.place_id,
+                    place_name: place.name || "不明な店舗",
+                    place_address: place.vicinity,
+                    latitude: place.geometry?.location?.lat(),
+                    longitude: place.geometry?.location?.lng(),
+                },
+                {
+                    onSuccess: () => {
+                        queryClient.invalidateQueries({ queryKey: ["favorites"] });
+                    },
+                    onError: (error) => {
+                        console.error("お気に入り追加エラー:", error);
+                        alert("お気に入りの追加に失敗しました");
+                    },
+                }
+            );
+        }
+    };
 
     return (
         <div className={styles.wrap}>
@@ -43,12 +89,14 @@ const Window: React.FC<WindowProps> = ({ place, isClosing, onCreatePin, normaliz
                 {windowMode === "home" && (
                     <div className={styles.windowHome}>
                         <div className={styles.shopPreview}>
-                            <button className={styles.favoriteBtn}>
-                                <Image
-                                    src="/images/map/heart.svg"
-                                    alt="ハートアイコン"
-                                    width={33}
-                                    height={33}
+                            <button
+                                className={clsx(styles.favoriteBtn, isFavorite && styles.selected)}
+                                onClick={handleFavoriteToggle}
+                            >
+                                <FaHeart
+                                    color={isFavorite ? "red" : "gray"}
+                                    size={26}
+                                    className={styles.heart}
                                 />
                             </button>
                             {place.photos && (
