@@ -3,44 +3,54 @@ import { prisma } from "@/lib/prisma";
 import { getUserFromToken } from "@/features/auth/libs/getUserFromToken";
 
 type Params = {
-    params: {
-        id: string;
-    };
+    id: string;
 };
 
-export async function DELETE(request: NextRequest, { params }: Params) {
+type RouteContext<T> = {
+    params: T | Promise<T>;
+};
+
+export async function DELETE(request: NextRequest, context: RouteContext<Params>) {
     try {
         const user = await getUserFromToken(request);
         if (!user) {
             return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
         }
 
-        const pinId = Number(params.id);
-        if (Number.isNaN(pinId)) {
+        const { id } = await context.params;
+        const pinId = Number(id);
+
+        if (!Number.isInteger(pinId)) {
             return NextResponse.json({ error: "不正なIDです" }, { status: 400 });
         }
 
-        const pin = await prisma.favoritePlace.findFirst({
+        const favoritePin = await prisma.favoritePlace.findFirst({
             where: {
                 id: pinId,
                 user_id: user.id,
                 is_active: true,
             },
-            select: { id: true },
+            select: {
+                id: true,
+            },
         });
 
-        if (!pin) {
+        if (!favoritePin) {
             return NextResponse.json({ error: "対象の Pin が見つかりません" }, { status: 404 });
         }
 
         await prisma.favoritePlace.update({
-            where: { id: pinId },
-            data: { is_active: false },
+            where: {
+                id: pinId,
+            },
+            data: {
+                is_active: false,
+            },
         });
 
         return NextResponse.json({ success: true }, { status: 200 });
     } catch (error) {
-        console.error("Pin 削除エラー:", error);
+        console.error("Favorite Pin 削除エラー:", error);
         return NextResponse.json({ error: "Pin 削除中にエラーが発生しました" }, { status: 500 });
     }
 }
