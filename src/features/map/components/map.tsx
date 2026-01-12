@@ -9,10 +9,12 @@ import { useMapInitialization } from "../hooks/useMapInitialization";
 import { useMarkerManager } from "../hooks/useMarkerManager";
 import { usePlaceDetails } from "../hooks/usePlaceDetails";
 import { useExistingPins } from "../hooks/useExistingPins";
-import { GetPinsResponse } from "../types/map";
+import { GetPinsResponse, GetFavoriteResponse, FavoritePin, Pin } from "../types/map";
+import { convertFavoritePinToPin } from "../utils/ConvertFavoritePinToPin";
+import MapHeader from "./MapHeader";
 
 type GoogleMapProps = {
-    pinsData: GetPinsResponse | undefined;
+    pinsData: GetPinsResponse | GetFavoriteResponse | undefined;
 };
 
 const GoogleMap = ({ pinsData }: GoogleMapProps) => {
@@ -23,6 +25,18 @@ const GoogleMap = ({ pinsData }: GoogleMapProps) => {
     const queryClient = useQueryClient();
     const { mutate: createPinMutation } = useCreatePin();
     const { fetchPlaceDetails, isRestaurant } = usePlaceDetails();
+
+    // Pinがお気に入りピンの場合共通の型に変換
+    const normalizedPinsData: GetPinsResponse | undefined = pinsData
+        ? {
+              pins: pinsData.pins.map((pin) => {
+                  if (!("user" in pin)) {
+                      return convertFavoritePinToPin(pin as FavoritePin);
+                  }
+                  return pin as Pin;
+              }),
+          }
+        : undefined;
 
     const handleMapClick = (placeId: string, service: google.maps.places.PlacesService) => {
         fetchPlaceDetails(service, placeId, (placeDetails) => {
@@ -39,8 +53,7 @@ const GoogleMap = ({ pinsData }: GoogleMapProps) => {
     const handleBackgroundClick = () => {
         if (selectedPlaceId) handleClose();
     };
-
-    const { mapRef, mapInstanceRef, placesServiceRef } = useMapInitialization(
+    const { mapRef, mapInstanceRef, placesServiceRef, isMapReady } = useMapInitialization(
         handleMapClick,
         handleBackgroundClick
     );
@@ -106,8 +119,9 @@ const GoogleMap = ({ pinsData }: GoogleMapProps) => {
     );
 
     useExistingPins(
-        pinsData,
+        normalizedPinsData, // GetPinsResponse型を渡す
         placesServiceRef.current,
+        isMapReady,
         clearMarkers,
         addMarker,
         fetchPlaceDetails,
@@ -157,8 +171,21 @@ const GoogleMap = ({ pinsData }: GoogleMapProps) => {
         }, 300);
     };
 
+    const handlePlaceSelect = useCallback((place: google.maps.places.PlaceResult) => {
+        if (place.place_id) {
+            setSelectedPlaceId(place.place_id);
+            setSelectedPlace(place);
+            setIsClosing(false);
+        }
+    }, []);
+
     return (
         <div className={styles.wrap}>
+            <MapHeader
+                onPlaceSelect={handlePlaceSelect}
+                mapInstance={mapInstanceRef.current}
+                key={mapInstanceRef.current ? "map-loaded" : "map-loading"}
+            />
             <div ref={mapRef} className={styles.map} />
 
             {selectedPlace && selectedPlaceId && (
@@ -167,7 +194,7 @@ const GoogleMap = ({ pinsData }: GoogleMapProps) => {
                     isClosing={isClosing}
                     onClose={handleClose}
                     onCreatePin={handleCreatePin}
-                    pinsData={pinsData}
+                    normalizedPin={normalizedPinsData}
                 />
             )}
         </div>
