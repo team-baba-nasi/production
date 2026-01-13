@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { verifyJwt } from "@/lib/jwt";
+import { verifyAccessToken } from "@/lib/jwt";
 import { prisma } from "@/lib/prisma";
 
 export async function getUserFromToken(request: NextRequest) {
@@ -9,7 +9,7 @@ export async function getUserFromToken(request: NextRequest) {
         if (!token) return null;
 
         // JWTの検証
-        const decoded = verifyJwt(token);
+        const decoded = verifyAccessToken(token);
         if (!decoded || !decoded.id) return null;
 
         // DBからユーザー情報を取得
