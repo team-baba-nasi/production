@@ -36,14 +36,14 @@ export async function POST(request: NextRequest) {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: "strict",
-            maxAge: 60 * 15,
+            maxAge: 60 * 15, // 15分
         });
 
         response.cookies.set("refreshToken", refreshToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: "strict",
-            path: "/api/auth/refresh",
+            path: "/",
             maxAge: 60 * 60 * 24 * 7,
         });
 
