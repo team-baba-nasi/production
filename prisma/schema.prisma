@@ -20,6 +20,7 @@ model User {
   profile_image_url String?
   created_at        DateTime @default(now())
   updated_at        DateTime @updatedAt
+  tokenVersion      Int      @default(0)
 
   // relations
   following          Follow[]           @relation("FollowingRelation")

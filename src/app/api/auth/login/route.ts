@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { compare } from "bcrypt";
 import { prisma } from "@/lib/prisma";
-import { signJwt } from "@/lib/jwt";
+import { signAccessToken, signRefreshToken } from "@/lib/jwt";
 
 export async function POST(request: NextRequest) {
     try {
@@ -17,19 +17,34 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: "パスワードが間違っています" }, { status: 401 });
         }
 
-        const token = signJwt({ id: user.id, email: user.email });
+        const accessToken = signAccessToken({
+            id: user.id,
+            email: user.email,
+        });
+
+        const refreshToken = signRefreshToken({
+            id: user.id,
+            tokenVersion: user.tokenVersion,
+        });
 
         const response = NextResponse.json({
             message: "ログイン成功",
             user: { id: user.id, username: user.username, email: user.email },
         });
 
-        response.cookies.set("token", token, {
+        response.cookies.set("accessToken", accessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 60 * 15, // 15分
+        });
+
+        response.cookies.set("refreshToken", refreshToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: "strict",
             path: "/",
-            maxAge: 60 * 60,
+            maxAge: 60 * 60 * 24 * 7,
         });
 
         return response;

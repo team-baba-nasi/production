@@ -1,26 +1,47 @@
-import jwt, { Secret, JwtPayload, SignOptions } from "jsonwebtoken";
+import jwt, { Secret, JwtPayload } from "jsonwebtoken";
 
-const SECRET_KEY: Secret = process.env.JWT_SECRET || "your-secret-key";
+const ACCESS_TOKEN_SECRET: Secret = process.env.JWT_ACCESS_SECRET || "access-secret";
 
-export interface JwtPayloadWithId extends JwtPayload {
+const REFRESH_TOKEN_SECRET: Secret = process.env.JWT_REFRESH_SECRET || "refresh-secret";
+
+export interface AccessTokenPayload extends JwtPayload {
     id: number;
     email: string;
 }
 
-export function signJwt(payload: object, expiresIn: string | number = "1h"): string {
-    return jwt.sign(payload, SECRET_KEY, { expiresIn } as SignOptions);
+export interface RefreshTokenPayload extends JwtPayload {
+    id: number;
+    tokenVersion: number;
 }
 
-export function verifyJwt(token: string): JwtPayloadWithId | null {
+export function signAccessToken(payload: AccessTokenPayload): string {
+    return jwt.sign(payload, ACCESS_TOKEN_SECRET, {
+        expiresIn: "15m",
+    });
+}
+
+export function signRefreshToken(payload: RefreshTokenPayload): string {
+    return jwt.sign(payload, REFRESH_TOKEN_SECRET, {
+        expiresIn: "7d",
+    });
+}
+
+export function verifyAccessToken(token: string): AccessTokenPayload | null {
     try {
-        const decoded = jwt.verify(token, SECRET_KEY);
-        // string型の場合はnullを返す
-        if (typeof decoded === "string") {
-            return null;
-        }
-        return decoded as JwtPayloadWithId;
-    } catch (error) {
-        console.error("Invalid token:", error);
+        const decoded = jwt.verify(token, ACCESS_TOKEN_SECRET);
+        if (typeof decoded === "string") return null;
+        return decoded as AccessTokenPayload;
+    } catch {
+        return null;
+    }
+}
+
+export function verifyRefreshToken(token: string): RefreshTokenPayload | null {
+    try {
+        const decoded = jwt.verify(token, REFRESH_TOKEN_SECRET);
+        if (typeof decoded === "string") return null;
+        return decoded as RefreshTokenPayload;
+    } catch {
         return null;
     }
 }
