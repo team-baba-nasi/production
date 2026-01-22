@@ -6,7 +6,7 @@ import { ChatRoom, ChatMessage } from "../types/chat";
 
 interface ChatGroupProos {
     room: ChatRoom;
-    lastMessage: ChatMessage;
+    lastMessage: ChatMessage | null;
 }
 
 const ChatGroup = ({ room, lastMessage }: ChatGroupProos) => {
@@ -23,14 +23,19 @@ const ChatGroup = ({ room, lastMessage }: ChatGroupProos) => {
                     <p className="text_normal bold">
                         みんな仲良しグループ({room.participants.length})
                     </p>
-                    <p className={clsx("text_sub", styles.info, styles.subtext)}>
-                        {new Date(lastMessage.created_at).toLocaleTimeString("ja-JP", {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                        })}
-                    </p>
+                    {lastMessage && (
+                        <p className={clsx("text_sub", styles.info, styles.subtext)}>
+                            {new Date(lastMessage.created_at).toLocaleTimeString("ja-JP", {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                            })}
+                        </p>
+                    )}
                 </div>
-                <p className={clsx("text_sub", styles.subtext)}>{lastMessage.content}</p>
+                <p className={clsx("text_sub", styles.subtext)}>
+                    {" "}
+                    {lastMessage ? lastMessage.content : ""}
+                </p>
             </div>
         </Link>
     );
