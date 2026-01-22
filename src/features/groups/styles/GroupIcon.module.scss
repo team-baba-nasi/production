@@ -1,0 +1,22 @@
+.contentWrap {
+    margin-top: 40px;
+    padding: 0 16px;
+    .iconWrap {
+        position: relative;
+        margin: 0 auto;
+        display: flex;
+        justify-content: center;
+
+        .groupIcon {
+            display: block;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .cameraIcon {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+        }
+    }
+}

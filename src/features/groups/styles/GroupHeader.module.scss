@@ -1,0 +1,33 @@
+.headerWrap {
+    padding: 0 16px;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+
+    h2 {
+        text-align: center;
+        grid-column: 2;
+    }
+
+    .iconBox {
+        min-width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &:first-child {
+            justify-content: flex-start;
+        }
+
+        &:last-child {
+            justify-content: flex-end;
+        }
+
+        .headerButton {
+            color: #0054d1;
+            font-weight: 700;
+            font-size: 1.6rem;
+        }
+    }
+}

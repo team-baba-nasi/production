@@ -1,0 +1,60 @@
+.wrap {
+    width: 100%;
+    height: 100vh;
+    position: relative;
+    .map {
+        width: 100%;
+        height: 100%;
+    }
+
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.3);
+        z-index: 999;
+        animation: fadeIn 0.3s ease-out;
+    }
+
+    .overlayClosing {
+        animation: fadeOut 0.3s ease-out;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(0);
+    }
+    to {
+        transform: translateY(100%);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}

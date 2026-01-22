@@ -1,0 +1,92 @@
+.wrap {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 1000;
+    overflow-y: scroll;
+    box-shadow: 0 0 32px 0 rgba(0, 0, 0, 0.25);
+    .pinsList {
+        display: flex;
+        flex-direction: row-reverse;
+        gap: 4px;
+        padding: 0 10px 10px;
+    }
+    .window {
+        min-height: 100%;
+        background: #fff;
+        padding: 16px 16px 30px;
+        animation: slideUp 0.3s ease-out;
+        border-radius: 32px 32px 0 0;
+        box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15);
+        max-height: 60vh;
+        overflow-y: auto;
+        .windowHome {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            .shopPreview {
+                position: relative;
+                margin-top: 20px;
+
+                .restaurantPhoto {
+                    object-fit: cover;
+                }
+                .favoriteBtn {
+                    width: 48px;
+                    height: 48px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 50%;
+                    padding: 11px;
+                    position: absolute;
+                    right: -10px;
+                    top: -20px;
+                    background-color: #a0a0a0;
+                    padding: 0;
+                    line-height: 0;
+                    border-radius: 50%;
+                    .heart {
+                        margin-left: 1px;
+                        margin-top: 1px;
+                    }
+                }
+                .selected {
+                    background-color: #0a1a2f;
+                }
+                .shopTexts {
+                    color: #f5f5f5;
+                    position: absolute;
+                    bottom: 2px;
+                    right: 0;
+                    left: 0;
+                    text-align: center;
+                }
+                img {
+                    max-height: 195px;
+                    border-radius: 34px;
+                }
+            }
+            .windowChangeBtns {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+                align-items: center;
+                .windowChangeBtn {
+                    background-color: #d9d9d9;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    min-height: 96px;
+                    border-radius: 15px;
+                }
+            }
+        }
+    }
+
+    .shopClosing {
+        animation: slideDown 0.3s ease-out;
+    }
+}

@@ -1,0 +1,228 @@
+export type GroupOwner = {
+    id: string | number;
+    username: string;
+};
+
+export type Group = {
+    id: string | number;
+    name: string;
+    description?: string | null;
+    icon_image_url?: string | null;
+    status?: string;
+    created_at: string;
+    owner: GroupOwner;
+    role?: string;
+};
+
+//////////////////////////////////////////////////////////
+// グループ作成
+//////////////////////////////////////////////////////////
+
+export type CreateGroupForm = {
+    name: string;
+    description?: string;
+    icon_image_url?: string;
+};
+
+export type CreateGroupResponse = {
+    group: Group;
+};
+
+export type CreateGroupError = {
+    error: string;
+    details?: { field: string; message: string }[];
+};
+
+//////////////////////////////////////////////////////////
+// グループ一覧
+//////////////////////////////////////////////////////////
+
+export type GroupsResponse = {
+    groups: {
+        role: string;
+        group: {
+            id: number;
+            name: string;
+            description: string | null;
+            icon_image_url: string | null;
+            status: string;
+            created_at: Date;
+            owner: {
+                id: number;
+                username: string;
+            };
+            members: {
+                id: number;
+                role: string;
+                joined_at: Date;
+                user: {
+                    id: number;
+                    username: string;
+                };
+            }[];
+        };
+    }[];
+};
+
+//////////////////////////////////////////////////////////
+// グループ詳細
+//////////////////////////////////////////////////////////
+
+export type GroupsError = {
+    error: string;
+};
+
+export interface GroupResponse {
+    group: {
+        name: string;
+        description: string | null;
+        icon_image_url: string | null;
+        owner_id: number;
+        members: {
+            user_id: number;
+            role: string;
+            user: {
+                profile_image_url: string | null;
+            };
+        }[];
+    };
+    myRole: string;
+}
+
+//////////////////////////////////////////////////////////
+// グループメンバー一覧
+//////////////////////////////////////////////////////////
+
+export type GroupMembersError = {
+    error: string;
+};
+
+export interface GroupMembersResponse {
+    group_name: string;
+    group_icon: string;
+    members: {
+        id: number;
+        role: string;
+        username: string;
+        profile_image_url: string | null;
+    }[];
+    myRole: string;
+    myName: string;
+}
+
+//////////////////////////////////////////////////////////
+// グループ情報アップデート
+//////////////////////////////////////////////////////////
+
+export interface UpdateGroupForm {
+    name?: string;
+    description?: string;
+    icon_image_url?: string;
+}
+
+export interface UpdateGroupResponse {
+    message: string;
+    group: {
+        id: number;
+        name: string;
+        description: string | null;
+        icon_image_url: string | null;
+        updated_at: string;
+    };
+}
+
+export interface UpdateGroupError {
+    error: string;
+}
+
+//////////////////////////////////////////////////////////
+// グループ削除(アーカイブ)
+//////////////////////////////////////////////////////////
+
+export interface ArchiveGroupResponse {
+    message: string;
+    group: {
+        id: number;
+        name: string;
+        status: string;
+        updated_at: string;
+    };
+}
+
+export interface ArchiveGroupError {
+    error: string;
+}
+//////////////////////////////////////////////////////////
+// 招待URL生成
+//////////////////////////////////////////////////////////
+
+export interface CreateInviteTokenForm {
+    groupId: number;
+}
+
+export interface CreateInviteTokenResponse {
+    inviteUrl: string;
+    token: string;
+    expires_at: string;
+}
+
+export interface CreateInviteTokenError {
+    error: string;
+}
+
+//////////////////////////////////////////////////////////
+// 招待グループ
+//////////////////////////////////////////////////////////
+
+export interface InviteGroupResponse {
+    id: number;
+    name: string;
+    icon: string;
+    description: string;
+}
+
+export interface InviteGroupError {
+    error: string;
+}
+
+//////////////////////////////////////////////////////////
+// 招待グループ参加
+//////////////////////////////////////////////////////////
+
+export interface JoinGroupResponse {
+    success: boolean;
+    groupId: number;
+}
+
+export interface JoinGroupError {
+    message: string;
+}
+
+//////////////////////////////////////////////////////////
+// アドミン追加
+//////////////////////////////////////////////////////////
+
+export interface UpdateAdminParams {
+    groupId: number;
+    adminUserIds: number[];
+}
+
+export interface UpdateAdminResponse {
+    success: boolean;
+    updatedCount: number;
+}
+
+export interface UpdateAdminError {
+    error: string;
+}
+
+//////////////////////////////////////////////////////////
+// グループメンバー削除
+//////////////////////////////////////////////////////////
+
+export interface RemoveMemberResponse {
+    message: string;
+}
+export interface RemoveMemberError {
+    error: string;
+}

@@ -1,0 +1,42 @@
+.wrap {
+    .fieldWrap {
+        position: relative;
+        height: 36px;
+        margin-top: 8px;
+        border: var(----25, rgba(35, 35, 35, 0.25)) 1px solid;
+        border-radius: 32px;
+        display: flex;
+        align-items: center;
+
+        .search {
+            margin: 10px 0 10px 10px;
+            width: 18px;
+            height: 18px;
+        }
+        input {
+            margin: 0 8px;
+            font-weight: 600;
+            font-size: 1.6rem;
+            line-height: 150%;
+            border: none;
+            height: 100%;
+            width: 100%;
+            padding-right: 32px;
+        }
+        .close_btn {
+            position: absolute;
+            top: 50%;
+            right: 8px;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #d1d1d1;
+            border-radius: 50%;
+            border: none;
+        }
+    }
+}

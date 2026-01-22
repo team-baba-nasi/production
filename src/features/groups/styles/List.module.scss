@@ -1,0 +1,60 @@
+.groupWrap {
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(----25, rgba(35, 35, 35, 0.25));
+    .details {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        .checkboxWrap {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            gap: 8px;
+
+            input[type="checkbox"] {
+                display: none; // 本体を非表示
+            }
+
+            .customCheckbox {
+                width: 20px;
+                height: 20px;
+                border: 2px solid #1c1b1f;
+                border-radius: 4px;
+                position: relative;
+                transition: all 0.2s ease;
+
+                &::after {
+                    content: "";
+                    width: 6px;
+                    height: 12px;
+                    border-right: 2px solid white;
+                    border-bottom: 2px solid white;
+                    position: absolute;
+                    top: 1px;
+                    left: 6px;
+                    transform: rotate(45deg);
+                    opacity: 0;
+                    transition: opacity 0.2s ease;
+                }
+            }
+
+            input[type="checkbox"]:checked + .customCheckbox {
+                background-color: #1c1b1f;
+                border-color: #1c1b1f;
+
+                &::after {
+                    opacity: 1;
+                }
+            }
+        }
+    }
+    img {
+        border-radius: 50%;
+    }
+    button {
+        color: #d10000;
+    }
+}

@@ -1,0 +1,28 @@
+.btn_wrap {
+    padding: 12px 15px;
+    border: solid var(--blue) 2px;
+    border-radius: 24px;
+    width: fit-content;
+    max-height: 48px;
+    margin: auto auto 0;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    background-color: var(--base);
+    &:hover {
+        background-color: #f2f2f0;
+    }
+}
+.link {
+    padding: 12px 24px;
+}
+
+.btn_wrap.submit {
+    color: var(--base);
+    background-color: var(--blue);
+}
+
+.btn_wrap.submit:hover {
+    background-color: var(--blue);
+}

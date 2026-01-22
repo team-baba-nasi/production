@@ -1,0 +1,12 @@
+.groupSettings {
+    margin: 0 8px;
+    margin-top: auto;
+    padding: 24px 16px;
+    display: flex;
+    flex-direction: column;
+    border-top: rgba($color: #232323, $alpha: 0.25) 1px solid;
+    gap: 24px;
+    .settingText {
+        color: red;
+    }
+}

@@ -1,0 +1,48 @@
+.pageWrap {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding-bottom: 64px;
+
+    .contentWrap {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+
+        .groupName {
+            display: flex;
+            flex-direction: column;
+            .inputWrap {
+                position: relative;
+                padding: 8px;
+                width: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                border: rgba(35, 35, 35, 0.25) solid 1px;
+                border-radius: 8px;
+                .close_btn {
+                    position: absolute;
+                    top: 50%;
+                    right: 8px;
+                    transform: translateY(-50%);
+                    width: 20px;
+                    height: 20px;
+                    cursor: pointer;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    background: #d1d1d1;
+                    border-radius: 50%;
+                }
+                input {
+                    width: 100%;
+                    padding-right: 32px;
+                    &:focus {
+                        border: none;
+                    }
+                }
+            }
+        }
+    }
+}
