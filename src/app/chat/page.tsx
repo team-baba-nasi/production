@@ -39,7 +39,7 @@ const Home = () => {
                 <ul>
                     {data.chatGroups.map((item) => {
                         const room = item.chat_room;
-                        const lastMessage = room.messages[0];
+                        const lastMessage = room.messages?.[0] ?? null;
 
                         return (
                             <li key={room.uuid}>
