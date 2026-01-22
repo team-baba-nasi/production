@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUserFromToken } from "@/features/auth/libs/getUserFromToken";
 
-export async function GET(request: NextRequest, context: { params: Promise<{ uuid: string }> }) {
+export async function GET(request: NextRequest, context: { params: { uuid: string } }) {
     try {
         const { uuid } = await context.params;
 
