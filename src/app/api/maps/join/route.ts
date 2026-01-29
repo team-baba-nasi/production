@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
-import { Prisma } from "@prisma/client";
+import { Prisma, ChatParticipant } from "@prisma/client";
 import { getUserFromToken } from "@/features/auth/libs/getUserFromToken";
 
 const joinScheduleSchema = z.object({
@@ -10,6 +10,10 @@ const joinScheduleSchema = z.object({
     available_dates: z.array(z.string()).optional(),
     comment: z.string().optional(),
 });
+
+type ChatRoomWithParticipants = Prisma.ChatRoomGetPayload<{
+    include: { participants: true };
+}>;
 
 export async function POST(request: NextRequest) {
     try {
@@ -36,13 +40,11 @@ export async function POST(request: NextRequest) {
 
         const { schedule_id, response_type, available_dates, comment } = validation.data;
 
-        // スケジュールの存在確認とピン情報の取得
         const schedule = await prisma.schedule.findUnique({
             where: { id: schedule_id },
             include: {
                 pin: {
                     include: {
-                        user: true,
                         pin_groups: {
                             include: {
                                 group: {
@@ -61,12 +63,8 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: "スケジュールが見つかりません" }, { status: 404 });
         }
 
-        // グループメンバーであるかチェック
-        const isGroupMember = schedule.pin.pin_groups.some(
-            (pg: (typeof schedule.pin.pin_groups)[number]) =>
-                pg.group.members.some(
-                    (member: (typeof pg.group.members)[number]) => member.user_id === user.id
-                )
+        const isGroupMember = schedule.pin.pin_groups.some((pg) =>
+            pg.group.members.some((m) => m.user_id === user.id)
         );
 
         if (!isGroupMember) {
@@ -84,16 +82,17 @@ export async function POST(request: NextRequest) {
             if (!schedule.pin.place_name || !schedule.pin.place_address) {
                 throw new Error("MEETING_PLACE_NOT_SET");
             }
+
             const scheduleResponse = await tx.scheduleResponse.upsert({
                 where: {
                     schedule_id_user_id: {
-                        schedule_id: schedule_id,
+                        schedule_id,
                         user_id: user.id,
                     },
                 },
                 update: {
                     response_type,
-                    available_dates: available_dates ? available_dates : undefined,
+                    available_dates,
                     comment,
                     updated_at: new Date(),
                 },
@@ -101,17 +100,17 @@ export async function POST(request: NextRequest) {
                     schedule_id,
                     user_id: user.id,
                     response_type,
-                    available_dates: available_dates ? available_dates : undefined,
+                    available_dates,
                     comment,
                 },
             });
 
+            let chatRoom: ChatRoomWithParticipants | null = null;
+
             if (response_type === "going" || response_type === "maybe") {
-                let chatRoom = await tx.chatRoom.findUnique({
+                chatRoom = await tx.chatRoom.findUnique({
                     where: { pin_id: schedule.pin_id },
-                    include: {
-                        participants: true,
-                    },
+                    include: { participants: true },
                 });
 
                 if (!chatRoom) {
@@ -122,55 +121,51 @@ export async function POST(request: NextRequest) {
                             participants: {
                                 createMany: {
                                     data: [
-                                        {
-                                            user_id: schedule.pin.user_id,
-                                            is_active: true,
-                                        },
-                                        {
-                                            user_id: user.id,
-                                            is_active: true,
-                                        },
+                                        { user_id: schedule.pin.user_id, is_active: true },
+                                        { user_id: user.id, is_active: true },
                                     ],
                                 },
                             },
                         },
-                        include: {
-                            participants: true,
+                        include: { participants: true },
+                    });
+                }
+
+                // 👇 null 完全排除
+                if (!chatRoom) {
+                    throw new Error("CHAT_ROOM_NOT_FOUND");
+                }
+
+                const isAlreadyParticipant = chatRoom.participants.some(
+                    (p: ChatParticipant) => p.user_id === user.id
+                );
+
+                if (!isAlreadyParticipant) {
+                    await tx.chatParticipant.create({
+                        data: {
+                            chat_room_id: chatRoom.id,
+                            user_id: user.id,
+                            is_active: true,
                         },
                     });
                 } else {
-                    const isAlreadyParticipant = chatRoom.participants.some(
-                        (p) => p.user_id === user.id
+                    const participant = chatRoom.participants.find(
+                        (p: ChatParticipant) => p.user_id === user.id
                     );
 
-                    if (!isAlreadyParticipant) {
-                        await tx.chatParticipant.create({
+                    if (participant && !participant.is_active) {
+                        await tx.chatParticipant.update({
+                            where: { id: participant.id },
                             data: {
-                                chat_room_id: chatRoom.id,
-                                user_id: user.id,
                                 is_active: true,
+                                left_at: null,
                             },
                         });
-                    } else {
-                        const participant = chatRoom.participants.find(
-                            (p) => p.user_id === user.id
-                        );
-                        if (participant && !participant.is_active) {
-                            await tx.chatParticipant.update({
-                                where: { id: participant.id },
-                                data: {
-                                    is_active: true,
-                                    left_at: null,
-                                },
-                            });
-                        }
                     }
                 }
 
-                const confirmedMeeting = await tx.confirmedMeeting.upsert({
-                    where: {
-                        chat_room_id: chatRoom.id,
-                    },
+                await tx.confirmedMeeting.upsert({
+                    where: { chat_room_id: chatRoom.id },
                     update: {
                         meeting_date: schedule.start_at,
                         meeting_end: schedule.end_at,
@@ -186,11 +181,9 @@ export async function POST(request: NextRequest) {
                         status: "confirmed",
                     },
                 });
-
-                return { scheduleResponse, chatRoom, confirmedMeeting };
             }
 
-            return { scheduleResponse, chatRoom: null };
+            return { scheduleResponse, chatRoom };
         });
 
         return NextResponse.json(
@@ -198,10 +191,7 @@ export async function POST(request: NextRequest) {
                 message: "スケジュールに参加しました",
                 scheduleResponse: result.scheduleResponse,
                 chatRoom: result.chatRoom
-                    ? {
-                          id: result.chatRoom.id,
-                          uuid: result.chatRoom.uuid,
-                      }
+                    ? { id: result.chatRoom.id, uuid: result.chatRoom.uuid }
                     : null,
             },
             { status: 200 }
@@ -210,54 +200,6 @@ export async function POST(request: NextRequest) {
         console.error("スケジュール参加エラー:", error);
         return NextResponse.json(
             { error: "スケジュール参加中にエラーが発生しました" },
-            { status: 500 }
-        );
-    }
-}
-
-export async function GET(request: NextRequest) {
-    try {
-        const user = await getUserFromToken(request);
-        if (!user) {
-            return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
-        }
-
-        const { searchParams } = new URL(request.url);
-        const scheduleIdParam = searchParams.get("schedule_id");
-
-        if (!scheduleIdParam) {
-            return NextResponse.json({ error: "schedule_id は必須です" }, { status: 400 });
-        }
-
-        const scheduleId = Number(scheduleIdParam);
-        if (Number.isNaN(scheduleId)) {
-            return NextResponse.json(
-                { error: "schedule_id は数値である必要があります" },
-                { status: 400 }
-            );
-        }
-
-        const responses = await prisma.scheduleResponse.findMany({
-            where: { schedule_id: scheduleId },
-            include: {
-                user: {
-                    select: {
-                        id: true,
-                        username: true,
-                        profile_image_url: true,
-                    },
-                },
-            },
-            orderBy: {
-                created_at: "desc",
-            },
-        });
-
-        return NextResponse.json({ responses }, { status: 200 });
-    } catch (error) {
-        console.error("スケジュール参加状況取得エラー:", error);
-        return NextResponse.json(
-            { error: "スケジュール参加状況取得中にエラーが発生しました" },
             { status: 500 }
         );
     }
