@@ -1,15 +1,17 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUserFromToken } from "@/features/auth/libs/getUserFromToken";
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request, context) {
     try {
+        const { id } = await context.params;
         const user = await getUserFromToken(request);
+
         if (!user) {
             return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
         }
 
-        const groupId = parseInt(params.id, 10);
+        const groupId = parseInt(id, 10);
         if (isNaN(groupId)) {
             return NextResponse.json({ error: "不正なグループIDです" }, { status: 400 });
         }
@@ -54,14 +56,16 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     }
 }
 
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request, context) {
     try {
+        const { id } = await context.params;
         const user = await getUserFromToken(request);
+
         if (!user) {
             return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
         }
 
-        const groupId = parseInt(params.id, 10);
+        const groupId = parseInt(id, 10);
         if (isNaN(groupId)) {
             return NextResponse.json({ error: "不正なグループIDです" }, { status: 400 });
         }
@@ -113,17 +117,20 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
         );
     }
 }
-
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request, context) {
     try {
+        const { id } = await context.params;
         const user = await getUserFromToken(request);
+
         if (!user) {
             return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
         }
-        const groupId = parseInt(params.id, 10);
+
+        const groupId = parseInt(id, 10);
         if (isNaN(groupId)) {
             return NextResponse.json({ error: "不正なグループIDです" }, { status: 400 });
         }
+
         const group = await prisma.group.findUnique({
             where: { id: groupId },
             select: {
@@ -147,11 +154,14 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
                 },
             },
         });
+
         if (!group) {
             return NextResponse.json({ error: "グループが見つかりません" }, { status: 404 });
         }
+
         const myMembership = group.members.find((member) => member.user_id === user.id);
-        const myRole = myMembership?.role || null;
+
+        const myRole = myMembership?.role ?? null;
 
         return NextResponse.json(
             {

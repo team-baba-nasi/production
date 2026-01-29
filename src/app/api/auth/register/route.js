@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { hash } from "bcrypt";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
@@ -23,7 +23,7 @@ const registerSchema = z.object({
         ),
 });
 
-export async function POST(request: NextRequest) {
+export async function POST(request) {
     try {
         const body = await request.json();
 

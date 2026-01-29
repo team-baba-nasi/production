@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUserFromToken } from "@/features/auth/libs/getUserFromToken";
 
-export async function GET(request: NextRequest, context: { params: Promise<{ uuid: string }> }) {
+export async function GET(request, context) {
     try {
         const { uuid } = await context.params;
 
@@ -82,7 +82,7 @@ export async function GET(request: NextRequest, context: { params: Promise<{ uui
     }
 }
 
-export async function POST(request: NextRequest) {
+export async function POST(request) {
     try {
         const user = await getUserFromToken(request);
         if (!user) {

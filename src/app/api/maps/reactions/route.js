@@ -1,14 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { getUserFromToken } from "@/features/auth/libs/getUserFromToken";
 import { prisma } from "@/lib/prisma";
 
-interface ReactionRequestBody {
-    pin_id: number;
-}
-
-export async function POST(request: NextRequest) {
+export async function POST(request) {
     try {
-        const body: ReactionRequestBody = await request.json();
+        const body = await request.json();
 
         if (!body.pin_id) {
             return NextResponse.json({ error: "pin_id が必要です" }, { status: 400 });

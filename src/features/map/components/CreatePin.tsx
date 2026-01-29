@@ -81,70 +81,74 @@ const CreatePin = ({ onSubmit, onClose }: CreatePinProps) => {
             <div className={styles.createPinHeader}>
                 <div className={styles.space}></div>
                 <h3 className="text_normal bold">いきたいピンを指す</h3>
-
                 <button className={styles.close_btn} onClick={onClose}>
                     <IoIosClose size={30} />
                 </button>
             </div>
-            <div className={styles.comment_wrap}>
-                <p className="text_sub">この店のPRをして一緒に行く友達を見つけよう</p>
 
-                <input
-                    type="text"
-                    placeholder="一言入力"
-                    value={commentText}
-                    className="text_sub"
-                    onChange={(e) => setCommentText(e.target.value)}
-                />
-            </div>
-            <div className={styles.selectGroupWrap}>
-                <p className="text_sub">どのグループに表示させる？</p>
-                <div className={styles.selectGroup}>
-                    {groupsData?.groups.map(({ group }) => {
-                        const isSelected = selectedGroupIds.includes(group.id);
+            <div className={styles.createPinContent}>
+                <div className={styles.comment_wrap}>
+                    <p className="text_sub">この店のPRをして一緒に行く友達を見つけよう</p>
+                    <input
+                        type="text"
+                        placeholder="一言入力"
+                        value={commentText}
+                        className="text_sub"
+                        onChange={(e) => setCommentText(e.target.value)}
+                    />
+                </div>
 
-                        return (
-                            <button
-                                key={group.id}
-                                type="button"
-                                onClick={() => toggleGroup(group.id)}
-                                className={styles.groupItem}
-                            >
-                                <div
-                                    className={clsx(
-                                        styles.groupImage,
-                                        isSelected ? styles.selected : ""
-                                    )}
+                <div className={styles.selectGroupWrap}>
+                    <p className="text_sub bold">どのグループに表示させる？</p>
+                    <div className={styles.selectGroup}>
+                        {groupsData?.groups.map(({ group }) => {
+                            const isSelected = selectedGroupIds.includes(group.id);
+
+                            return (
+                                <button
+                                    key={group.id}
+                                    type="button"
+                                    onClick={() => toggleGroup(group.id)}
+                                    className={styles.groupItem}
                                 >
-                                    <Image
-                                        src={
-                                            group.icon_image_url ??
-                                            "/images/common/group_default.png"
-                                        }
-                                        alt={group.name}
-                                        width={58}
-                                        height={58}
-                                    />
-                                </div>
-                                <p className={clsx("text_sub_sub bold", styles.groupName)}>
-                                    {group.name}
-                                </p>
-                            </button>
-                        );
-                    })}
+                                    <div
+                                        className={clsx(
+                                            styles.groupImage,
+                                            isSelected && styles.selected
+                                        )}
+                                    >
+                                        <Image
+                                            src={
+                                                group.icon_image_url ??
+                                                "/images/common/group_default.png"
+                                            }
+                                            alt={group.name}
+                                            width={58}
+                                            height={58}
+                                        />
+                                    </div>
+                                    <p className={clsx("text_sub_sub bold", styles.groupName)}>
+                                        {group.name}
+                                    </p>
+                                </button>
+                            );
+                        })}
+                    </div>
+                </div>
+
+                <div className={styles.scheduleSection}>
+                    <p className="text_sub bold">予定日を設定</p>
+                    <ScheduleButton
+                        selectedDate={selectedDate}
+                        selectedStartTime={selectedStartTime}
+                        selectedEndTime={selectedEndTime}
+                        onClick={() => setShowDatePicker(!showDatePicker)}
+                    />
+                    <p className={clsx("text_sub_sub", styles.caution)}>
+                        ※予定日を過ぎると自動的にピンは削除されます
+                    </p>
                 </div>
             </div>
-            <div className={styles.scheduleButtonWrap}>
-                <ScheduleButton
-                    selectedDate={selectedDate}
-                    selectedStartTime={selectedStartTime}
-                    selectedEndTime={selectedEndTime}
-                    onClick={() => setShowDatePicker(!showDatePicker)}
-                />
-            </div>
-            <p className={clsx("text_sub", styles.caution)}>
-                予定日を過ぎると自動的にピンは削除されます
-            </p>
 
             {showDatePicker && (
                 <div className={styles.datePickerOverlay} onClick={() => setShowDatePicker(false)}>
@@ -153,26 +157,34 @@ const CreatePin = ({ onSubmit, onClose }: CreatePinProps) => {
                         className={styles.datePickerModal}
                         onClick={(e) => e.stopPropagation()}
                     >
-                        <input
-                            type="date"
-                            value={selectedDate}
-                            onChange={(e) => setSelectedDate(e.target.value)}
-                            min={new Date().toISOString().split("T")[0]}
-                        />
-                        <div className={styles.timeRange}>
+                        <h4 className={styles.datePickerTitle}>予定日を選択</h4>
+                        <div className={styles.datePickerContent}>
+                            <label className={styles.inputLabel}>日付</label>
                             <input
-                                type="time"
-                                value={selectedStartTime}
-                                onChange={(e) => setSelectedStartTime(e.target.value)}
-                                placeholder="開始時間"
+                                type="date"
+                                value={selectedDate}
+                                onChange={(e) => setSelectedDate(e.target.value)}
+                                min={new Date().toISOString().split("T")[0]}
+                                className={styles.dateInput}
                             />
-                            <span>~</span>
-                            <input
-                                type="time"
-                                value={selectedEndTime}
-                                onChange={(e) => setSelectedEndTime(e.target.value)}
-                                placeholder="終了時間"
-                            />
+                            <label className={styles.inputLabel}>時間帯</label>
+                            <div className={styles.timeRange}>
+                                <input
+                                    type="time"
+                                    value={selectedStartTime}
+                                    onChange={(e) => setSelectedStartTime(e.target.value)}
+                                    placeholder="開始"
+                                    className={styles.timeInput}
+                                />
+                                <span className={styles.timeSeparator}>〜</span>
+                                <input
+                                    type="time"
+                                    value={selectedEndTime}
+                                    onChange={(e) => setSelectedEndTime(e.target.value)}
+                                    placeholder="終了"
+                                    className={styles.timeInput}
+                                />
+                            </div>
                         </div>
                         <button
                             onClick={() => setShowDatePicker(false)}
@@ -183,6 +195,7 @@ const CreatePin = ({ onSubmit, onClose }: CreatePinProps) => {
                     </div>
                 </div>
             )}
+
             <div className={styles.createPinBtn}>
                 <CreatePinButton onClick={handleCreatePin} />
             </div>

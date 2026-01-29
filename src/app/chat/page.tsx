@@ -10,7 +10,6 @@ import { useState } from "react";
 const Home = () => {
     const { data, isLoading, isError, error } = useChatGroup();
     const [searchGroupName, setSearchGroupName] = useState<string>("");
-    console.log(data);
 
     if (isLoading) {
         return <div>読み込み中...</div>;

@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { verifyRefreshToken, signAccessToken } from "@/lib/jwt";
 import { prisma } from "@/lib/prisma";
 
-export async function POST(request: NextRequest) {
+export async function POST(request) {
     try {
         const refreshToken = request.cookies.get("refreshToken")?.value;
 

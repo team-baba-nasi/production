@@ -43,7 +43,6 @@ const Window: React.FC<WindowProps> = ({ place, isClosing, onCreatePin, normaliz
 
     const matchingPins = normalizedPin?.pins.filter((pin) => pin.place_id === place.place_id) ?? [];
 
-    // このお店が既にお気に入りかチェック
     const isFavorite = matchingPins.length > 0;
     const favoritePin = matchingPins[0];
 
@@ -108,6 +107,7 @@ const Window: React.FC<WindowProps> = ({ place, isClosing, onCreatePin, normaliz
                                         height={250}
                                         className={styles.restaurantPhoto}
                                     />
+                                    <div className={styles.overlay}></div>
                                 </button>
                             )}
                             <div className={styles.shopTexts}>
@@ -123,13 +123,13 @@ const Window: React.FC<WindowProps> = ({ place, isClosing, onCreatePin, normaliz
                         </div>
                         <div className={styles.windowChangeBtns}>
                             <button
-                                className={styles.windowChangeBtn}
+                                className={clsx(styles.windowChangeBtn, styles.detail, "text_sub")}
                                 onClick={() => setWindowMode("detail")}
                             >
                                 <p className="text_sub">お店の詳細を見る</p>
                             </button>
                             <button
-                                className={styles.windowChangeBtn}
+                                className={clsx(styles.windowChangeBtn, styles.pinList, "text_sub")}
                                 onClick={() => setWindowMode("pinList")}
                             >
                                 <p className="text_sub">友達の行きたいピンを見る</p>

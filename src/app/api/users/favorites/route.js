@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { getUserFromToken } from "@/features/auth/libs/getUserFromToken";
@@ -14,7 +14,7 @@ const createFavoriteSchema = z.object({
     longitude: z.number().min(-180).max(180).optional(),
 });
 
-export async function POST(request: NextRequest) {
+export async function POST(request) {
     try {
         const user = await getUserFromToken(request);
         if (!user) {
@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
     }
 }
 
-export async function GET(request: NextRequest) {
+export async function GET(request) {
     try {
         const user = await getUserFromToken(request);
         if (!user) {

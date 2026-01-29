@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { compare } from "bcrypt";
 import { prisma } from "@/lib/prisma";
 import { signAccessToken, signRefreshToken } from "@/lib/jwt";
 
-export async function POST(request: NextRequest) {
+export async function POST(request) {
     try {
         const { email, password } = await request.json();
 

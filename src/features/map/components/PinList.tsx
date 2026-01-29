@@ -25,7 +25,7 @@ const formatTime = (iso: string | null): string | undefined => {
 };
 
 const PinList = ({ onClose, pins }: PinListProps) => {
-    const { data: currentUser, isLoading: isUserLoading } = useCurrentUser();
+    const { data: currentUser } = useCurrentUser();
     const userId = currentUser?.user?.id;
     const queryClient = useQueryClient();
     const router = useRouter();

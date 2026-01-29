@@ -1,15 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import webpush from "web-push";
 
-// VAPID設定
-webpush.setVapidDetails(
-    process.env.VAPID_EMAIL!,
-    process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
-    process.env.VAPID_PRIVATE_KEY!
-);
-
-export async function POST(request: NextRequest) {
+export async function POST(request) {
     try {
         const { title, body, icon, url } = await request.json();
 
@@ -38,16 +31,16 @@ export async function POST(request: NextRequest) {
                         },
                         payload
                     )
-                    .then(() => ({ success: true as const, user_id: sub.user_id }))
+                    .then(() => ({ success: true, user_id: sub.user_id }))
                     .catch((err) => {
                         console.error("Failed to send:", err);
-                        return { success: false as const, user_id: sub.user_id };
+                        return { success: false, user_id: sub.user_id };
                     })
             )
         );
 
         // DBに履歴保存
-        const successfulUserIds: number[] = [];
+        const successfulUserIds = [];
 
         for (const result of results) {
             if (result.status === "fulfilled" && result.value.success && result.value.user_id) {

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { getUserFromToken } from "@/features/auth/libs/getUserFromToken";
@@ -16,7 +16,7 @@ const createGroupSchema = z.object({
     icon_image_url: z.string().url("有効なURLを指定してください").optional(),
 });
 
-export async function GET(request: NextRequest) {
+export async function GET(request) {
     try {
         const user = await getUserFromToken(request);
         if (!user) {
@@ -65,7 +65,7 @@ export async function GET(request: NextRequest) {
     }
 }
 
-export async function POST(request: NextRequest) {
+export async function POST(request) {
     try {
         const body = await request.json();
 

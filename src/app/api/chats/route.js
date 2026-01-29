@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUserFromToken } from "@/features/auth/libs/getUserFromToken";
 
-export async function GET(request: NextRequest) {
+export async function GET(request) {
     try {
         const user = await getUserFromToken(request);
         if (!user) {

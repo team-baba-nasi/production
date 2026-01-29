@@ -1,15 +1,17 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUserFromToken } from "@/features/auth/libs/getUserFromToken";
 
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request, context) {
     try {
+        const { id } = await context.params;
         const user = await getUserFromToken(request);
+
         if (!user) {
             return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
         }
 
-        const groupId = Number(params.id);
+        const groupId = Number(id);
 
         if (isNaN(groupId)) {
             return NextResponse.json({ error: "無効なグループIDです" }, { status: 400 });

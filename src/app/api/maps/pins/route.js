@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { getUserFromToken } from "@/features/auth/libs/getUserFromToken";
@@ -24,7 +24,7 @@ const createPinSchema = z.object({
         .optional(),
 });
 
-export async function GET(request: NextRequest) {
+export async function GET(request) {
     try {
         const user = await getUserFromToken(request);
         if (!user) {
@@ -131,7 +131,7 @@ export async function GET(request: NextRequest) {
     }
 }
 
-export async function POST(request: NextRequest) {
+export async function POST(request) {
     try {
         const user = await getUserFromToken(request);
         if (!user) {

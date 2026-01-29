@@ -29,7 +29,13 @@
             .shopPreview {
                 position: relative;
                 margin-top: 20px;
-
+                border-radius: 34px;
+                .overlay {
+                    border-radius: 34px;
+                    position: absolute;
+                    inset: 0;
+                    background: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.7));
+                }
                 .restaurantPhoto {
                     object-fit: cover;
                 }
@@ -42,19 +48,20 @@
                     border-radius: 50%;
                     padding: 11px;
                     position: absolute;
-                    right: -10px;
-                    top: -20px;
-                    background-color: #a0a0a0;
+                    right: 10px;
+                    top: 10px;
+                    background-color: white;
                     padding: 0;
                     line-height: 0;
                     border-radius: 50%;
+                    z-index: 100;
                     .heart {
                         margin-left: 1px;
                         margin-top: 1px;
                     }
                 }
                 .selected {
-                    background-color: #0a1a2f;
+                    background-color: white;
                 }
                 .shopTexts {
                     color: #f5f5f5;
@@ -63,6 +70,7 @@
                     right: 0;
                     left: 0;
                     text-align: center;
+                    padding-bottom: 10px;
                 }
                 img {
                     max-height: 195px;
@@ -79,8 +87,18 @@
                     display: flex;
                     justify-content: center;
                     align-items: center;
-                    min-height: 96px;
+                    min-height: 86px;
                     border-radius: 15px;
+                    color: white;
+                    font-weight: bold;
+                }
+                .detail {
+                    background: #ffa231;
+                    box-shadow: 0 6px 0 0 #ce7810;
+                }
+                .pinList {
+                    background: #12bf63;
+                    box-shadow: 0 6px 0 0 #1e9757;
                 }
             }
         }
