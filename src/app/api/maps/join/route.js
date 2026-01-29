@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { getUserFromToken } from "@/features/auth/libs/getUserFromToken";
@@ -10,7 +10,7 @@ const joinScheduleSchema = z.object({
     comment: z.string().optional(),
 });
 
-export async function POST(request: NextRequest) {
+export async function POST(request) {
     try {
         const user = await getUserFromToken(request);
         if (!user) {

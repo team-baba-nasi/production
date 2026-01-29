@@ -1,29 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { getUserFromToken } from "@/features/auth/libs/getUserFromToken";
 import { prisma } from "@/lib/prisma";
 
-type RouteParams = {
-    params: Promise<{ id: string }>;
-};
-
-type GroupMemberRow = {
-    role: string;
-    user: {
-        id: number;
-        username: string;
-        profile_image_url: string | null;
-    };
-};
-
-type PatchBody = {
-    user_ids: number[];
-};
-
-type DeleteBody = {
-    user_id: number;
-};
-
-export async function GET(request: NextRequest, context: RouteParams) {
+export async function GET(request, context) {
     try {
         const { id } = await context.params;
         const user = await getUserFromToken(request);
@@ -49,7 +28,7 @@ export async function GET(request: NextRequest, context: RouteParams) {
             return NextResponse.json({ error: "不正なグループIDです" }, { status: 400 });
         }
 
-        const members: GroupMemberRow[] = await prisma.groupMember.findMany({
+        const members = await prisma.groupMember.findMany({
             where: { group_id: groupId },
             select: {
                 role: true,
@@ -91,7 +70,7 @@ export async function GET(request: NextRequest, context: RouteParams) {
     }
 }
 
-export async function PATCH(request: NextRequest, context: RouteParams) {
+export async function PATCH(request, context) {
     try {
         const { id } = await context.params;
         const user = await getUserFromToken(request);
@@ -118,7 +97,7 @@ export async function PATCH(request: NextRequest, context: RouteParams) {
             return NextResponse.json({ error: "管理者権限が必要です" }, { status: 403 });
         }
 
-        const body: PatchBody = await request.json();
+        const body = await request.json();
 
         if (!Array.isArray(body.user_ids) || body.user_ids.length === 0) {
             return NextResponse.json({ error: "user_ids は空ではいけません" }, { status: 400 });
@@ -144,7 +123,7 @@ export async function PATCH(request: NextRequest, context: RouteParams) {
     }
 }
 
-export async function DELETE(request: NextRequest, context: RouteParams) {
+export async function DELETE(request, context) {
     try {
         const { id } = await context.params;
         const user = await getUserFromToken(request);
@@ -158,7 +137,7 @@ export async function DELETE(request: NextRequest, context: RouteParams) {
             return NextResponse.json({ error: "不正なグループIDです" }, { status: 400 });
         }
 
-        const body: DeleteBody = await request.json();
+        const body = await request.json();
         const targetUserId = body.user_id;
 
         if (typeof targetUserId !== "number") {

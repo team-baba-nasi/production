@@ -1,20 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUserFromToken } from "@/features/auth/libs/getUserFromToken";
 
-interface SubscriptionPayload {
-    endpoint: string;
-    keys: {
-        p256dh: string;
-        auth: string;
-    };
-    user_id: number;
-}
-
-export async function POST(request: NextRequest) {
+export async function POST(request) {
     const user = await getUserFromToken(request);
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    const body = (await request.json()) as SubscriptionPayload;
+    const body = await request.json();
 
     if (!body.endpoint || !body.keys) {
         return NextResponse.json({ error: "Invalid subscription data" }, { status: 400 });
@@ -62,12 +53,8 @@ export async function GET() {
     });
 }
 
-interface DeletePayload {
-    endpoint: string;
-}
-
-export async function DELETE(request: NextRequest) {
-    const body = (await request.json()) as DeletePayload;
+export async function DELETE(request) {
+    const body = await request.json();
 
     await prisma.pushSubscription.delete({
         where: { endpoint: body.endpoint },

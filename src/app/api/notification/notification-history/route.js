@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-export async function GET(request: NextRequest) {
+export async function GET(request) {
     try {
         const { searchParams } = new URL(request.url);
         const limit = Number(searchParams.get("limit") ?? "10");

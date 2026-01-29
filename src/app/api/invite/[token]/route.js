@@ -1,11 +1,7 @@
-import { NextResponse, NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-type RouteParams = {
-    params: Promise<{ token: string }>;
-};
-
-export async function GET(request: NextRequest, context: RouteParams) {
+export async function GET(request, context) {
     const { token } = await context.params;
 
     const invite = await prisma.groupInviteToken.findUnique({

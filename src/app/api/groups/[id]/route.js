@@ -1,12 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUserFromToken } from "@/features/auth/libs/getUserFromToken";
 
-type RouteParams = {
-    params: Promise<{ id: string }>;
-};
-
-export async function DELETE(request: NextRequest, context: RouteParams) {
+export async function DELETE(request, context) {
     try {
         const { id } = await context.params;
         const user = await getUserFromToken(request);
@@ -60,7 +56,7 @@ export async function DELETE(request: NextRequest, context: RouteParams) {
     }
 }
 
-export async function PUT(request: NextRequest, context: RouteParams) {
+export async function PUT(request, context) {
     try {
         const { id } = await context.params;
         const user = await getUserFromToken(request);
@@ -121,7 +117,7 @@ export async function PUT(request: NextRequest, context: RouteParams) {
         );
     }
 }
-export async function GET(request: NextRequest, context: RouteParams) {
+export async function GET(request, context) {
     try {
         const { id } = await context.params;
         const user = await getUserFromToken(request);
@@ -163,9 +159,7 @@ export async function GET(request: NextRequest, context: RouteParams) {
             return NextResponse.json({ error: "グループが見つかりません" }, { status: 404 });
         }
 
-        const myMembership = group.members.find(
-            (member: (typeof group.members)[number]) => member.user_id === user.id
-        );
+        const myMembership = group.members.find((member) => member.user_id === user.id);
 
         const myRole = myMembership?.role ?? null;
 

@@ -1,16 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUserFromToken } from "@/features/auth/libs/getUserFromToken";
 
-type Params = {
-    id: string;
-};
-
-type RouteContext<T> = {
-    params: T | Promise<T>;
-};
-
-export async function DELETE(request: NextRequest, context: RouteContext<Params>) {
+export async function DELETE(request, context) {
     try {
         const user = await getUserFromToken(request);
         if (!user) {

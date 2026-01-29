@@ -1,12 +1,8 @@
-import { NextResponse, NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUserFromToken } from "@/features/auth/libs/getUserFromToken";
 
-type RouteParams = {
-    params: Promise<{ token: string }>;
-};
-
-export async function POST(request: NextRequest, context: RouteParams) {
+export async function POST(request, context) {
     const { token } = await context.params;
     const user = await getUserFromToken(request);
 
