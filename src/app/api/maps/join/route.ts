@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 import { getUserFromToken } from "@/features/auth/libs/getUserFromToken";
 
 const joinScheduleSchema = z.object({
@@ -75,7 +76,7 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const result = await prisma.$transaction(async (tx) => {
+        const result = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
             if (!schedule.start_at || !schedule.end_at) {
                 throw new Error("MEETING_DATETIME_NOT_SET");
             }
