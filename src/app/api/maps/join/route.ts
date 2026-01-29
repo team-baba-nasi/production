@@ -15,8 +15,6 @@ type ChatRoomWithParticipants = Prisma.ChatRoomGetPayload<{
     include: { participants: true };
 }>;
 
-type ChatParticipant = ChatRoomWithParticipants["participants"][number];
-
 export async function POST(request: NextRequest) {
     try {
         const user = await getUserFromToken(request);
@@ -74,7 +72,7 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const result = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+        const result = await prisma.$transaction(async (tx) => {
             if (!schedule.start_at || !schedule.end_at) {
                 throw new Error("MEETING_DATETIME_NOT_SET");
             }
@@ -137,11 +135,10 @@ export async function POST(request: NextRequest) {
                     });
                 }
 
-                const isAlreadyParticipant = chatRoom.participants.some(
-                    (p: ChatParticipant) => p.user_id === user.id
-                );
+                // 🔒 ここから下は chatRoom が必ず存在
+                const participant = chatRoom.participants.find((p) => p.user_id === user.id);
 
-                if (!isAlreadyParticipant) {
+                if (!participant) {
                     await tx.chatParticipant.create({
                         data: {
                             chat_room_id: chatRoom.id,
@@ -149,20 +146,14 @@ export async function POST(request: NextRequest) {
                             is_active: true,
                         },
                     });
-                } else {
-                    const participant = chatRoom.participants.find(
-                        (p: ChatParticipant) => p.user_id === user.id
-                    );
-
-                    if (participant && !participant.is_active) {
-                        await tx.chatParticipant.update({
-                            where: { id: participant.id },
-                            data: {
-                                is_active: true,
-                                left_at: null,
-                            },
-                        });
-                    }
+                } else if (!participant.is_active) {
+                    await tx.chatParticipant.update({
+                        where: { id: participant.id },
+                        data: {
+                            is_active: true,
+                            left_at: null,
+                        },
+                    });
                 }
 
                 await tx.confirmedMeeting.upsert({
