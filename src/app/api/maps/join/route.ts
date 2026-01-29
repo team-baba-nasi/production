@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
-import { Prisma } from "@prisma/client";
 import { getUserFromToken } from "@/features/auth/libs/getUserFromToken";
 
 const joinScheduleSchema = z.object({
@@ -10,10 +9,6 @@ const joinScheduleSchema = z.object({
     available_dates: z.array(z.string()).optional(),
     comment: z.string().optional(),
 });
-
-type ChatRoomWithParticipants = Prisma.ChatRoomGetPayload<{
-    include: { participants: true };
-}>;
 
 export async function POST(request: NextRequest) {
     try {
@@ -103,40 +98,23 @@ export async function POST(request: NextRequest) {
                 },
             });
 
-            let chatRoom: ChatRoomWithParticipants | null = null;
-
             if (response_type === "going" || response_type === "maybe") {
-                chatRoom = await tx.chatRoom.findUnique({
-                    where: { pin_id: schedule.pin_id },
-                    include: { participants: true },
-                });
-
-                if (!chatRoom) {
-                    chatRoom = await tx.chatRoom.create({
+                const chatRoom =
+                    (await tx.chatRoom.findUnique({
+                        where: { pin_id: schedule.pin_id },
+                    })) ??
+                    (await tx.chatRoom.create({
                         data: {
                             pin_id: schedule.pin_id,
                             room_type: "pin",
-                            participants: {
-                                createMany: {
-                                    data: [
-                                        {
-                                            user_id: schedule.pin.user_id,
-                                            is_active: true,
-                                        },
-                                        {
-                                            user_id: user.id,
-                                            is_active: true,
-                                        },
-                                    ],
-                                },
-                            },
                         },
-                        include: { participants: true },
-                    });
-                }
+                    }));
 
-                // 🔒 ここから下は chatRoom が必ず存在
-                const participant = chatRoom.participants.find((p) => p.user_id === user.id);
+                const participants = await tx.chatParticipant.findMany({
+                    where: { chat_room_id: chatRoom.id },
+                });
+
+                const participant = participants.find((p) => p.user_id === user.id);
 
                 if (!participant) {
                     await tx.chatParticipant.create({
@@ -173,21 +151,23 @@ export async function POST(request: NextRequest) {
                         status: "confirmed",
                     },
                 });
+
+                return {
+                    scheduleResponse,
+                    chatRoom: {
+                        id: chatRoom.id,
+                        uuid: chatRoom.uuid,
+                    },
+                };
             }
 
-            return { scheduleResponse, chatRoom };
+            return { scheduleResponse, chatRoom: null };
         });
 
         return NextResponse.json(
             {
                 message: "スケジュールに参加しました",
-                scheduleResponse: result.scheduleResponse,
-                chatRoom: result.chatRoom
-                    ? {
-                          id: result.chatRoom.id,
-                          uuid: result.chatRoom.uuid,
-                      }
-                    : null,
+                ...result,
             },
             { status: 200 }
         );
