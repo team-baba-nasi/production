@@ -2,12 +2,18 @@ import { NextResponse, NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUserFromToken } from "@/features/auth/libs/getUserFromToken";
 
-export async function POST(request: NextRequest, { params }: { params: { token: string } }) {
+type RouteParams = {
+    params: Promise<{ token: string }>;
+};
+
+export async function POST(request: NextRequest, context: RouteParams) {
+    const { token } = await context.params;
     const user = await getUserFromToken(request);
+
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const invite = await prisma.groupInviteToken.findUnique({
-        where: { token: params.token },
+        where: { token },
     });
 
     if (!invite) {
