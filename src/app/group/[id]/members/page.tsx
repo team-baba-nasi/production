@@ -12,7 +12,7 @@ import { useUpdateGroupAdmin } from "@/features/groups/hooks/useUpdateGroupAdmin
 import { useState } from "react";
 
 const GroupMembers = () => {
-    const groupId = useGroupId();
+    const groupId = Number(useGroupId());
 
     const { data, isLoading, error } = useGroupMembersFromId(groupId);
 
