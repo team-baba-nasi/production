@@ -6,6 +6,23 @@ type RouteParams = {
     params: Promise<{ id: string }>;
 };
 
+type GroupMemberRow = {
+    role: string;
+    user: {
+        id: number;
+        username: string;
+        profile_image_url: string | null;
+    };
+};
+
+type PatchBody = {
+    user_ids: number[];
+};
+
+type DeleteBody = {
+    user_id: number;
+};
+
 export async function GET(request: NextRequest, context: RouteParams) {
     try {
         const { id } = await context.params;
@@ -15,10 +32,11 @@ export async function GET(request: NextRequest, context: RouteParams) {
             return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
         }
 
-        const groupId = parseInt(id, 10);
-        if (isNaN(groupId)) {
+        const groupId = Number(id);
+        if (Number.isNaN(groupId)) {
             return NextResponse.json({ error: "不正なグループIDです" }, { status: 400 });
         }
+
         const group = await prisma.group.findUnique({
             where: { id: groupId },
             select: {
@@ -31,7 +49,7 @@ export async function GET(request: NextRequest, context: RouteParams) {
             return NextResponse.json({ error: "不正なグループIDです" }, { status: 400 });
         }
 
-        const members = await prisma.groupMember.findMany({
+        const members: GroupMemberRow[] = await prisma.groupMember.findMany({
             where: { group_id: groupId },
             select: {
                 role: true,
@@ -52,17 +70,15 @@ export async function GET(request: NextRequest, context: RouteParams) {
             profile_image_url: m.user.profile_image_url,
         }));
 
-        const myMembership = members.find((m) => m.user.username === user.username);
-        const myRole = myMembership?.role ?? null;
-        const myName = myMembership?.user.username ?? null;
+        const myMembership = members.find((m) => m.user.id === user.id);
 
         return NextResponse.json(
             {
                 group_name: group.name,
                 group_icon: group.icon_image_url,
                 members: groupMembers,
-                myRole,
-                myName,
+                myRole: myMembership?.role ?? null,
+                myName: myMembership?.user.username ?? null,
             },
             { status: 200 }
         );
@@ -84,13 +100,11 @@ export async function PATCH(request: NextRequest, context: RouteParams) {
             return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
         }
 
-        const groupId = parseInt(id, 10);
-
-        if (isNaN(groupId)) {
+        const groupId = Number(id);
+        if (Number.isNaN(groupId)) {
             return NextResponse.json({ error: "不正なグループIDです" }, { status: 400 });
         }
 
-        // 管理者権限チェック -------------------------------------------------------
         const myMembership = await prisma.groupMember.findUnique({
             where: {
                 group_id_user_id: {
@@ -103,19 +117,17 @@ export async function PATCH(request: NextRequest, context: RouteParams) {
         if (!myMembership || myMembership.role !== "admin") {
             return NextResponse.json({ error: "管理者権限が必要です" }, { status: 403 });
         }
-        // -------------------------------------------------------------------------
 
-        const body = await request.json();
-        const userIds: number[] = body.user_ids;
+        const body: PatchBody = await request.json();
 
-        if (!Array.isArray(userIds) || userIds.length === 0) {
+        if (!Array.isArray(body.user_ids) || body.user_ids.length === 0) {
             return NextResponse.json({ error: "user_ids は空ではいけません" }, { status: 400 });
         }
 
         await prisma.groupMember.updateMany({
             where: {
                 group_id: groupId,
-                user_id: { in: userIds },
+                user_id: { in: body.user_ids },
             },
             data: {
                 role: "admin",
@@ -141,16 +153,19 @@ export async function DELETE(request: NextRequest, context: RouteParams) {
             return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
         }
 
-        const groupId = parseInt(id, 10);
-
-        if (isNaN(groupId)) {
+        const groupId = Number(id);
+        if (Number.isNaN(groupId)) {
             return NextResponse.json({ error: "不正なグループIDです" }, { status: 400 });
         }
 
-        const body = await request.json();
+        const body: DeleteBody = await request.json();
         const targetUserId = body.user_id;
 
-        // 退会処理
+        if (typeof targetUserId !== "number") {
+            return NextResponse.json({ error: "user_id が必要です" }, { status: 400 });
+        }
+
+        // 自分が抜ける場合
         if (targetUserId === user.id) {
             const myMembership = await prisma.groupMember.findUnique({
                 where: {
@@ -165,7 +180,6 @@ export async function DELETE(request: NextRequest, context: RouteParams) {
                 return NextResponse.json({ error: "メンバーではありません" }, { status: 400 });
             }
 
-            // 管理者が一人しかいない状態で抜けようとした場合
             const adminCount = await prisma.groupMember.count({
                 where: {
                     group_id: groupId,
@@ -175,7 +189,9 @@ export async function DELETE(request: NextRequest, context: RouteParams) {
 
             if (myMembership.role === "admin" && adminCount === 1) {
                 return NextResponse.json(
-                    { error: "最後の管理者は退会できません。他の管理者を追加してください。" },
+                    {
+                        error: "最後の管理者は退会できません。他の管理者を追加してください。",
+                    },
                     { status: 400 }
                 );
             }
@@ -192,7 +208,7 @@ export async function DELETE(request: NextRequest, context: RouteParams) {
             return NextResponse.json({ message: "グループを退会しました" }, { status: 200 });
         }
 
-        // 管理者権限チェック -------------------------------------------------------
+        // 管理者チェック
         const myMembership = await prisma.groupMember.findUnique({
             where: {
                 group_id_user_id: {
@@ -205,13 +221,7 @@ export async function DELETE(request: NextRequest, context: RouteParams) {
         if (!myMembership || myMembership.role !== "admin") {
             return NextResponse.json({ error: "管理者権限が必要です" }, { status: 403 });
         }
-        // -------------------------------------------------------------------------
 
-        if (!targetUserId || typeof targetUserId !== "number") {
-            return NextResponse.json({ error: "user_id が必要です" }, { status: 400 });
-        }
-
-        // 対象メンバーが存在するか確認
         const member = await prisma.groupMember.findUnique({
             where: {
                 group_id_user_id: {
@@ -225,7 +235,6 @@ export async function DELETE(request: NextRequest, context: RouteParams) {
             return NextResponse.json({ error: "対象メンバーが存在しません" }, { status: 404 });
         }
 
-        // 削除実行
         await prisma.groupMember.delete({
             where: {
                 group_id_user_id: {
