@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
-import { Prisma, ChatParticipant } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { getUserFromToken } from "@/features/auth/libs/getUserFromToken";
 
 const joinScheduleSchema = z.object({
@@ -14,6 +14,8 @@ const joinScheduleSchema = z.object({
 type ChatRoomWithParticipants = Prisma.ChatRoomGetPayload<{
     include: { participants: true };
 }>;
+
+type ChatParticipant = ChatRoomWithParticipants["participants"][number];
 
 export async function POST(request: NextRequest) {
     try {
@@ -48,9 +50,7 @@ export async function POST(request: NextRequest) {
                         pin_groups: {
                             include: {
                                 group: {
-                                    include: {
-                                        members: true,
-                                    },
+                                    include: { members: true },
                                 },
                             },
                         },
@@ -121,19 +121,20 @@ export async function POST(request: NextRequest) {
                             participants: {
                                 createMany: {
                                     data: [
-                                        { user_id: schedule.pin.user_id, is_active: true },
-                                        { user_id: user.id, is_active: true },
+                                        {
+                                            user_id: schedule.pin.user_id,
+                                            is_active: true,
+                                        },
+                                        {
+                                            user_id: user.id,
+                                            is_active: true,
+                                        },
                                     ],
                                 },
                             },
                         },
                         include: { participants: true },
                     });
-                }
-
-                // 👇 null 完全排除
-                if (!chatRoom) {
-                    throw new Error("CHAT_ROOM_NOT_FOUND");
                 }
 
                 const isAlreadyParticipant = chatRoom.participants.some(
@@ -191,7 +192,10 @@ export async function POST(request: NextRequest) {
                 message: "スケジュールに参加しました",
                 scheduleResponse: result.scheduleResponse,
                 chatRoom: result.chatRoom
-                    ? { id: result.chatRoom.id, uuid: result.chatRoom.uuid }
+                    ? {
+                          id: result.chatRoom.id,
+                          uuid: result.chatRoom.uuid,
+                      }
                     : null,
             },
             { status: 200 }
