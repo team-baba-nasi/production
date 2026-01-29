@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUserFromToken } from "@/features/auth/libs/getUserFromToken";
-export async function GET(request: NextRequest, { params }: { params: { uuid: string } }) {
-    const { uuid } = params;
+
+type RouteParams = {
+    params: Promise<{ uuid: string }>;
+};
+
+export async function GET(request: NextRequest, context: RouteParams) {
+    const { uuid } = await context.params;
 
     if (!uuid) {
         return NextResponse.json({ error: "uuid が指定されていません" }, { status: 400 });
