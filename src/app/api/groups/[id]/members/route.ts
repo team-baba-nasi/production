@@ -2,15 +2,20 @@ import { NextRequest, NextResponse } from "next/server";
 import { getUserFromToken } from "@/features/auth/libs/getUserFromToken";
 import { prisma } from "@/lib/prisma";
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+type RouteParams = {
+    params: Promise<{ id: string }>;
+};
+
+export async function GET(request: NextRequest, context: RouteParams) {
     try {
+        const { id } = await context.params;
         const user = await getUserFromToken(request);
 
         if (!user) {
             return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
         }
 
-        const groupId = parseInt(params.id, 10);
+        const groupId = parseInt(id, 10);
         if (isNaN(groupId)) {
             return NextResponse.json({ error: "不正なグループIDです" }, { status: 400 });
         }
@@ -70,15 +75,16 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     }
 }
 
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, context: RouteParams) {
     try {
+        const { id } = await context.params;
         const user = await getUserFromToken(request);
 
         if (!user) {
             return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
         }
 
-        const groupId = parseInt(params.id, 10);
+        const groupId = parseInt(id, 10);
 
         if (isNaN(groupId)) {
             return NextResponse.json({ error: "不正なグループIDです" }, { status: 400 });
@@ -126,15 +132,16 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, context: RouteParams) {
     try {
+        const { id } = await context.params;
         const user = await getUserFromToken(request);
 
         if (!user) {
             return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
         }
 
-        const groupId = parseInt(params.id, 10);
+        const groupId = parseInt(id, 10);
 
         if (isNaN(groupId)) {
             return NextResponse.json({ error: "不正なグループIDです" }, { status: 400 });
