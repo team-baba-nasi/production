@@ -56,7 +56,9 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: "スケジュールが見つかりません" }, { status: 404 });
         }
 
-        const isGroupMember = schedule.pin.pin_groups.some((pg) =>
+        const pinGroups = schedule.pin.pin_groups;
+
+        const isGroupMember = pinGroups.some((pg) =>
             pg.group.members.some((m) => m.user_id === user.id)
         );
 
