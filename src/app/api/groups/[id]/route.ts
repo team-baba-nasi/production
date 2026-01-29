@@ -121,7 +121,6 @@ export async function PUT(request: NextRequest, context: RouteParams) {
         );
     }
 }
-
 export async function GET(request: NextRequest, context: RouteParams) {
     try {
         const { id } = await context.params;
@@ -164,8 +163,11 @@ export async function GET(request: NextRequest, context: RouteParams) {
             return NextResponse.json({ error: "グループが見つかりません" }, { status: 404 });
         }
 
-        const myMembership = group.members.find((member) => member.user_id === user.id);
-        const myRole = myMembership?.role || null;
+        const myMembership = group.members.find(
+            (member: (typeof group.members)[number]) => member.user_id === user.id
+        );
+
+        const myRole = myMembership?.role ?? null;
 
         return NextResponse.json(
             {
