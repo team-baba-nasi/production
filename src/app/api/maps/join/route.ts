@@ -61,8 +61,11 @@ export async function POST(request: NextRequest) {
         }
 
         // グループメンバーであるかチェック
-        const isGroupMember = schedule.pin.pin_groups.some((pg) =>
-            pg.group.members.some((member) => member.user_id === user.id)
+        const isGroupMember = schedule.pin.pin_groups.some(
+            (pg: (typeof schedule.pin.pin_groups)[number]) =>
+                pg.group.members.some(
+                    (member: (typeof pg.group.members)[number]) => member.user_id === user.id
+                )
         );
 
         if (!isGroupMember) {
