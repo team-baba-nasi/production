@@ -20,6 +20,8 @@ body {
     --yellow: #f3ff52;
     --black: #232323;
     --radius: 8px;
+    /* LP */
+    --lp-main: #de7d02;
 }
 
 h2 {

@@ -4,6 +4,8 @@ import { usePathname } from "next/navigation";
 import Navigation from "@/components/ui/Navigation/Navigation";
 
 const shouldHideNavigation = (pathname: string): boolean => {
+    if (pathname === "/") return true;
+
     if (pathname.startsWith("/auth")) return true;
 
     if (pathname.startsWith("/groups/") && pathname !== "/groups") {
