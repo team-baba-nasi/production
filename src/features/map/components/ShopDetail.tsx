@@ -25,54 +25,79 @@ const ShopDetail: React.FC<ShopDetailProps> = ({ place, onClose }) => {
             <div className={styles.info}>
                 {place.rating && (
                     <p className={styles.rating}>
-                        ★{place.rating}（{place.user_ratings_total}）
+                        ★{place.rating}（{place.user_ratings_total}件）
                     </p>
                 )}
 
+                {place.vicinity && <p className={styles.vicinity}>{place.vicinity}</p>}
+
                 {place.opening_hours?.weekday_text && (
                     <div className={styles.hours}>
+                        <p className={styles.hours_title}>営業時間</p>
                         <ul>
-                            <li>営業時間：{place.opening_hours.weekday_text[0]}</li>
+                            {place.opening_hours.weekday_text.map((text, index) => (
+                                <li key={index}>{text}</li>
+                            ))}
                         </ul>
                     </div>
                 )}
-
-                {place.vicinity && <p className={styles.vicinity}>{place.vicinity}</p>}
             </div>
 
-            {place.photos && (
-                <Image
-                    src={place.photos[0].getUrl({ maxWidth: 400 })}
-                    alt={place.name ?? "restaurant photo"}
-                    width={400}
-                    height={250}
-                    className="w-full h-48 object-cover rounded-lg shadow-sm"
-                />
+            {/* 店舗写真 */}
+            {place.photos && place.photos.length > 0 && (
+                <div className={styles.photo_container}>
+                    <Image
+                        src={place.photos[0].getUrl({ maxWidth: 600 })}
+                        alt={place.name ?? "restaurant photo"}
+                        width={600}
+                        height={400}
+                        className={styles.shop_photo}
+                    />
+                </div>
             )}
 
-            {place.rating && (
-                <p className={styles.rating_wrap}>
-                    口コミ {place.user_ratings_total}件<span className={styles.rating_star}>★</span>
-                </p>
-            )}
+            {/* レビューセクション */}
+            {place.reviews && place.reviews.length > 0 && (
+                <div className={styles.reviews_section}>
+                    <h4 className={styles.reviews_title}>
+                        口コミ {place.user_ratings_total}件
+                        {place.rating && (
+                            <span className={styles.rating_star}>★{place.rating}</span>
+                        )}
+                    </h4>
 
-            {place.reviews?.map((review) => (
-                <div key={review.author_name} className={styles.review}>
-                    <div className="flex gap-2">
-                        <Image
-                            src={review.profile_photo_url}
-                            alt={review.author_name}
-                            width={40}
-                            height={40}
-                            className="rounded-full"
-                        />
-                        <p>
-                            {review.author_name}
-                            <span className="ml-2">{review.relative_time_description}</span>
-                        </p>
+                    <div className={styles.reviews_list}>
+                        {place.reviews.map((review, index) => (
+                            <div key={`${review.author_name}-${index}`} className={styles.review}>
+                                <div className={styles.review_header}>
+                                    <Image
+                                        src={review.profile_photo_url}
+                                        alt={review.author_name}
+                                        width={40}
+                                        height={40}
+                                        className={styles.profile_photo}
+                                    />
+                                    <div className={styles.review_meta}>
+                                        <p className={styles.author_name}>{review.author_name}</p>
+                                        <p className={styles.review_time}>
+                                            {review.relative_time_description}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {review.rating && (
+                                    <div className={styles.review_rating}>
+                                        {"★".repeat(review.rating)}
+                                        {"☆".repeat(5 - review.rating)}
+                                    </div>
+                                )}
+
+                                {review.text && <p className={styles.review_text}>{review.text}</p>}
+                            </div>
+                        ))}
                     </div>
                 </div>
-            ))}
+            )}
         </div>
     );
 };

@@ -1,17 +1,25 @@
 .content {
     margin: 13px 0;
+    max-width: 100%;
+
     .shop_header {
         display: flex;
         justify-content: space-between;
+        align-items: flex-start;
         gap: 13px;
+        margin-bottom: 16px;
+
         h3 {
             font-size: 24px;
             font-weight: bold;
             line-height: 150%;
+            flex: 1;
         }
+
         .header_buttons {
             display: flex;
             gap: 8px;
+            flex-shrink: 0;
 
             button {
                 background-color: #d9d9d9;
@@ -22,11 +30,13 @@
                 font-size: 14px;
                 border: none;
                 cursor: pointer;
+                transition: opacity 0.2s;
 
                 &.add_btn {
                     width: 80px;
                     height: 32px;
                     border-radius: 16px;
+
                     span {
                         display: inline-block;
                         width: 24px;
@@ -48,35 +58,131 @@
             }
         }
     }
+
     .info {
-        margin: 8px 0;
+        margin-bottom: 20px;
+
         .rating {
             font-size: 16px;
             font-weight: bold;
+            color: #f59e0b;
+            margin-bottom: 8px;
         }
-        .hours {
-            margin-top: 10px;
-            font-size: 12px;
+
+        .vicinity {
+            font-size: 14px;
             line-height: 150%;
+            color: #666;
+            margin-bottom: 12px;
+        }
+
+        .hours {
+            margin-top: 12px;
+            padding: 12px;
+            background-color: #f9fafb;
+            border-radius: 8px;
+
+            .hours_title {
+                font-size: 14px;
+                font-weight: bold;
+                margin-bottom: 8px;
+            }
+
             ul {
                 list-style: none;
+                padding: 0;
+                margin: 0;
+
+                li {
+                    font-size: 13px;
+                    line-height: 180%;
+                    color: #555;
+                }
             }
         }
-        .vicinity {
-            margin-top: 10px;
-            font-size: 12px;
-            line-height: 150%;
+    }
+
+    .photo_container {
+        margin-bottom: 24px;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+        .shop_photo {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+            display: block;
         }
     }
-}
 
-.rating_wrap {
-    margin-top: 26px;
-    font-size: 20px;
-    .rating_star {
-        margin-left: 16px;
+    .reviews_section {
+        margin-top: 32px;
+
+        .reviews_title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            .rating_star {
+                color: #f59e0b;
+                font-size: 18px;
+            }
+        }
+
+        .reviews_list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .review {
+            padding: 16px;
+            background-color: #f9fafb;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+
+            .review_header {
+                display: flex;
+                gap: 12px;
+                align-items: center;
+                margin-bottom: 12px;
+
+                .profile_photo {
+                    border-radius: 50%;
+                    flex-shrink: 0;
+                }
+
+                .review_meta {
+                    flex: 1;
+
+                    .author_name {
+                        font-size: 14px;
+                        font-weight: bold;
+                        margin-bottom: 4px;
+                    }
+
+                    .review_time {
+                        font-size: 12px;
+                        color: #9ca3af;
+                    }
+                }
+            }
+
+            .review_rating {
+                color: #f59e0b;
+                font-size: 14px;
+                margin-bottom: 8px;
+            }
+
+            .review_text {
+                font-size: 14px;
+                line-height: 160%;
+                color: #374151;
+            }
+        }
     }
-}
-.review {
-    padding: 16px 0 16px 8px;
 }
