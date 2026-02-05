@@ -30,7 +30,7 @@ export function useLogin() {
             return res.data;
         },
         onSuccess: () => {
-            router.push("/");
+            router.push("/map");
         },
     });
 }
