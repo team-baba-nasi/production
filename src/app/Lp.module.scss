@@ -355,20 +355,35 @@ $lg: 1024px;
                     border-radius: 0.8rem;
                     background: var(--base);
                     box-shadow: 0 0 8px 0 rgba(35, 35, 35, 0.25);
-                    @media (min-width: $md) {
-                        flex-direction: row;
-                    }
-                    img {
+                    // @media (min-width: $md) {
+                    //     flex-direction: row;
+                    //     align-items: center;
+                    //     min-height: 18vh;
+                    // }
+                    .featuresImg {
                         width: 100%;
-                        height: auto;
-                        max-width: 100%;
-                        object-fit: cover;
-                        padding: 1.6rem 1.6rem 0;
-                        @media (min-width: $md) {
-                            width: 40%;
-                            height: 100%;
-                            padding: 0 0 0 3.2rem;
+                        height: 100%;
+                        padding: 0 1.6rem;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        img {
+                            width: -100%;
+                            height: -100%;
+                            max-width: 100%;
+                            max-height: 100%;
+                            object-fit: cover;
                         }
+                        // @media (min-width: $md) {
+                        //     width: 40%;
+                        //     height: 100%;
+                        //     padding: 0 0 0 2.4rem;
+                        //     img {
+                        //         width: 100%;
+                        //         height: 100%;
+                        //         object-fit: cover;
+                        //     }
+                        // }
                     }
                     .featureText {
                         width: 100%;
@@ -377,23 +392,23 @@ $lg: 1024px;
                         flex-direction: column;
                         justify-content: center;
                         row-gap: 0.8rem;
-                        @media (min-width: $md) {
-                            width: 60%;
-                            padding: 2.4rem 2.4rem 2.4rem 3.2rem;
-                        }
+                        // @media (min-width: $md) {
+                        //     width: 60%;
+                        //     padding: 2.4rem 2.4rem 2.4rem 3.2rem;
+                        // }
                         h4 {
                             font-size: 1.8rem;
                             font-weight: bolder;
-                            @media (min-width: $md) {
-                                font-size: 2rem;
-                            }
+                            // @media (min-width: $md) {
+                            //     font-size: 2rem;
+                            // }
                         }
                         p {
                             font-size: 1.4rem;
                             font-weight: 600;
-                            @media (min-width: $md) {
-                                font-size: 1.6rem;
-                            }
+                            // @media (min-width: $md) {
+                            //     font-size: 1.6rem;
+                            // }
                         }
                     }
                 }
@@ -460,14 +475,14 @@ $lg: 1024px;
                         margin-top: -2.5vh;
                     }
                 }
-                img {
-                    width: 35%;
+                .howtoImg {
+                    width: 40%;
                     height: auto;
-                    object-fit: cover;
-                    padding: 8% 4%;
-                    @media (min-width: $md) {
-                        width: 40%;
-                        padding: 10% 7vh;
+                    padding: 6vh 3vw;
+                    img {
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
                     }
                 }
                 .howtoText {

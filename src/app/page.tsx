@@ -222,12 +222,14 @@ export default function Home() {
                                 <article className={styles.features}>
                                     <h3 className={styles.featuresTitle}>機能1</h3>
                                     <div className={styles.featuresItem}>
-                                        <Image
-                                            src="/images/lp/features_1.png"
-                                            alt="ピン押した後の画面"
-                                            width={400}
-                                            height={500}
-                                        />
+                                        <div className={styles.featuresImg}>
+                                            <Image
+                                                src="/images/lp/features_1.png"
+                                                alt="ピン押した後の画面"
+                                                width={400}
+                                                height={500}
+                                            />
+                                        </div>
                                         <div className={styles.featureText}>
                                             <h4>行きたい気持ちを逃さない</h4>
                                             <p>
@@ -241,12 +243,14 @@ export default function Home() {
                                 <article className={styles.features}>
                                     <h3 className={styles.featuresTitle}>機能2</h3>
                                     <div className={styles.featuresItem}>
-                                        <Image
-                                            src="/images/lp/features_2.png"
-                                            alt="ピン押した後の画面"
-                                            width={400}
-                                            height={500}
-                                        />
+                                        <div className={styles.featuresImg}>
+                                            <Image
+                                                src="/images/lp/features_2.png"
+                                                alt="ピン押した後の画面"
+                                                width={400}
+                                                height={500}
+                                            />
+                                        </div>
                                         <div className={styles.featureText}>
                                             <h4>迷わず決められる</h4>
                                             <p>
@@ -258,12 +262,14 @@ export default function Home() {
                                 <article className={styles.features}>
                                     <h3 className={styles.featuresTitle}>機能3</h3>
                                     <div className={styles.featuresItem}>
-                                        <Image
-                                            src="/images/lp/features_3.png"
-                                            alt="ピン押した後の画面"
-                                            width={400}
-                                            height={500}
-                                        />
+                                        <div className={styles.featuresImg}>
+                                            <Image
+                                                src="/images/lp/features_3.png"
+                                                alt="ピン押した後の画面"
+                                                width={400}
+                                                height={500}
+                                            />
+                                        </div>
                                         <div className={styles.featureText}>
                                             <h4>行動につなげる</h4>
                                             <p>
@@ -288,48 +294,56 @@ export default function Home() {
                             <h2 className={styles.howtoTitle}>使い方</h2>
                             <ol className={styles.howtoList}>
                                 <li className={styles.howtoItem}>
-                                    <Image
-                                        src="/images/lp/howto/step_1.png"
-                                        alt="検索しているイラスト"
-                                        width={200}
-                                        height={200}
-                                    />
+                                    <div className={styles.howtoImg}>
+                                        <Image
+                                            src="/images/lp/howto/step_1.png"
+                                            alt="検索しているイラスト"
+                                            width={200}
+                                            height={200}
+                                        />
+                                    </div>
                                     <div className={styles.howtoText}>
                                         <h3>STEP1</h3>
                                         <p>気になったお店を検索</p>
                                     </div>
                                 </li>
                                 <li className={styles.howtoItem}>
-                                    <Image
-                                        src="/images/lp/howto/step_2.svg"
-                                        alt="ピンの中身のイラスト"
-                                        width={200}
-                                        height={200}
-                                    />
+                                    <div className={styles.howtoImg}>
+                                        <Image
+                                            src="/images/lp/howto/step_2.svg"
+                                            alt="ピンの中身のイラスト"
+                                            width={200}
+                                            height={200}
+                                        />
+                                    </div>
                                     <div className={styles.howtoText}>
                                         <h3>STEP2</h3>
                                         <p>そのお店とスケジュールと一言をつけた ピンを共有</p>
                                     </div>
                                 </li>
                                 <li className={styles.howtoItem}>
-                                    <Image
-                                        src="/images/lp/howto/step_3.png"
-                                        alt="いいねしているイラスト"
-                                        width={200}
-                                        height={200}
-                                    />
+                                    <div className={styles.howtoImg}>
+                                        <Image
+                                            src="/images/lp/howto/step_3.png"
+                                            alt="いいねしているイラスト"
+                                            width={200}
+                                            height={200}
+                                        />
+                                    </div>
                                     <div className={styles.howtoText}>
                                         <h3>STEP3</h3>
                                         <p>自分が登録したピンに 友人がリアクション</p>
                                     </div>
                                 </li>
                                 <li className={styles.howtoItem}>
-                                    <Image
-                                        src="/images/lp/howto/step_4.png"
-                                        alt="友人と仲良く話しているイラスト"
-                                        width={200}
-                                        height={200}
-                                    />
+                                    <div className={styles.howtoImg}>
+                                        <Image
+                                            src="/images/lp/howto/step_4.png"
+                                            alt="友人と仲良く話しているイラスト"
+                                            width={200}
+                                            height={200}
+                                        />
+                                    </div>
                                     <div className={styles.howtoText}>
                                         <h3>STEP4</h3>
                                         <p>その友人とそのまま予定立ててLets go♪</p>
