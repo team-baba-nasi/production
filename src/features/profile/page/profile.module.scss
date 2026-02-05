@@ -1,0 +1,27 @@
+.wrap {
+    height: 100vh;
+    background-color: #f5a826;
+    padding: 50px 20px 0 20px;
+    .profile {
+        padding: 40px 50px;
+        background-color: #fff;
+        width: 100%;
+        height: 200px;
+        border-radius: 17px;
+        box-shadow: 2px 3px 8px 0 rgba(0, 0, 0, 0.25);
+        display: flex;
+        gap: 40px;
+        align-items: center;
+        img {
+            border-radius: 50%;
+        }
+        h2 {
+            color: #2db2ff;
+            font-family: Roboto;
+            font-size: 3.5rem;
+            font-style: normal;
+            font-weight: 900;
+            line-height: 150%;
+        }
+    }
+}

@@ -9,15 +9,15 @@ import { useMapInitialization } from "../hooks/useMapInitialization";
 import { useMarkerManager } from "../hooks/useMarkerManager";
 import { usePlaceDetails } from "../hooks/usePlaceDetails";
 import { useExistingPins } from "../hooks/useExistingPins";
-import { GetPinsResponse } from "../types/map";
-import { useGroupId } from "@/features/groups/hooks/useGroupId";
+import { GetPinsResponse, GetFavoriteResponse, FavoritePin, Pin } from "../types/map";
+import { convertFavoritePinToPin } from "../utils/ConvertFavoritePinToPin";
+import MapHeader from "./MapHeader";
 
 type GoogleMapProps = {
-    pinsData: GetPinsResponse | undefined;
+    pinsData: GetPinsResponse | GetFavoriteResponse | undefined;
 };
 
 const GoogleMap = ({ pinsData }: GoogleMapProps) => {
-    const groupId = useGroupId();
     const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
     const [selectedPlace, setSelectedPlace] = useState<google.maps.places.PlaceResult | null>(null);
     const [isClosing, setIsClosing] = useState(false);
@@ -25,6 +25,18 @@ const GoogleMap = ({ pinsData }: GoogleMapProps) => {
     const queryClient = useQueryClient();
     const { mutate: createPinMutation } = useCreatePin();
     const { fetchPlaceDetails, isRestaurant } = usePlaceDetails();
+
+    // Pinがお気に入りピンの場合共通の型に変換
+    const normalizedPinsData: GetPinsResponse | undefined = pinsData
+        ? {
+              pins: pinsData.pins.map((pin) => {
+                  if (!("user" in pin)) {
+                      return convertFavoritePinToPin(pin as FavoritePin);
+                  }
+                  return pin as Pin;
+              }),
+          }
+        : undefined;
 
     const handleMapClick = (placeId: string, service: google.maps.places.PlacesService) => {
         fetchPlaceDetails(service, placeId, (placeDetails) => {
@@ -41,8 +53,7 @@ const GoogleMap = ({ pinsData }: GoogleMapProps) => {
     const handleBackgroundClick = () => {
         if (selectedPlaceId) handleClose();
     };
-
-    const { mapRef, mapInstanceRef, placesServiceRef } = useMapInitialization(
+    const { mapRef, mapInstanceRef, placesServiceRef, isMapReady } = useMapInitialization(
         handleMapClick,
         handleBackgroundClick
     );
@@ -108,42 +119,44 @@ const GoogleMap = ({ pinsData }: GoogleMapProps) => {
     );
 
     useExistingPins(
-        pinsData,
+        normalizedPinsData, // GetPinsResponse型を渡す
         placesServiceRef.current,
+        isMapReady,
         clearMarkers,
         addMarker,
         fetchPlaceDetails,
         handlePinClick
     );
 
-    const handleCreatePin = (comment: string) => {
-        if (!selectedPlace?.geometry?.location) {
-            console.error("selectedPlaceにgeometry情報がありません");
-            return;
-        }
+    const handleCreatePin = (payload: {
+        comment: string;
+        groupIds: number[];
+        schedule?: {
+            date: string;
+            startTime?: string;
+            endTime?: string;
+        };
+    }) => {
+        if (!selectedPlace?.geometry?.location) return;
 
         const lat = selectedPlace.geometry.location.lat();
         const lng = selectedPlace.geometry.location.lng();
 
         createPinMutation(
             {
-                group_id: groupId,
                 place_name: selectedPlace.name || "不明な店舗",
                 place_address: selectedPlace.vicinity,
                 latitude: lat,
                 longitude: lng,
-                comment: comment || undefined,
                 place_id: selectedPlace.place_id,
-                status: "open",
+                comment: payload.comment,
+                group_ids: payload.groupIds,
+                schedule: payload.schedule,
             },
             {
                 onSuccess: () => {
                     queryClient.invalidateQueries({ queryKey: ["pins"], exact: false });
                     handleClose();
-                },
-                onError: (error) => {
-                    console.error("ピン作成エラー:", error);
-                    alert("ピンの作成に失敗しました");
                 },
             }
         );
@@ -158,8 +171,21 @@ const GoogleMap = ({ pinsData }: GoogleMapProps) => {
         }, 300);
     };
 
+    const handlePlaceSelect = useCallback((place: google.maps.places.PlaceResult) => {
+        if (place.place_id) {
+            setSelectedPlaceId(place.place_id);
+            setSelectedPlace(place);
+            setIsClosing(false);
+        }
+    }, []);
+
     return (
         <div className={styles.wrap}>
+            <MapHeader
+                onPlaceSelect={handlePlaceSelect}
+                mapInstance={mapInstanceRef.current}
+                key={mapInstanceRef.current ? "map-loaded" : "map-loading"}
+            />
             <div ref={mapRef} className={styles.map} />
 
             {selectedPlace && selectedPlaceId && (
@@ -168,7 +194,7 @@ const GoogleMap = ({ pinsData }: GoogleMapProps) => {
                     isClosing={isClosing}
                     onClose={handleClose}
                     onCreatePin={handleCreatePin}
-                    pinsData={pinsData}
+                    normalizedPin={normalizedPinsData}
                 />
             )}
         </div>

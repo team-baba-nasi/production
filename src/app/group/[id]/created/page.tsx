@@ -10,7 +10,7 @@ import { useGroupFromId } from "@/features/groups/hooks/useGroupFromId";
 import useGroupInviteURL from "@/features/groups/hooks/useGroupInviteURL";
 
 const GroupCreate = () => {
-    const groupId = useGroupId();
+    const groupId = Number(useGroupId());
     const copyURL = useGroupInviteURL();
 
     const { data, isLoading, error } = useGroupFromId(groupId);

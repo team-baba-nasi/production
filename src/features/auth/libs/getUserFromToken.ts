@@ -1,25 +1,28 @@
 import { NextRequest } from "next/server";
-import { verifyJwt } from "@/lib/jwt";
+import { verifyAccessToken } from "@/lib/jwt";
 import { prisma } from "@/lib/prisma";
 
 export async function getUserFromToken(request: NextRequest) {
     try {
-        // Cookieからtokenを取得
-        const token = request.cookies.get("token")?.value;
-        if (!token) return null;
+        const accessToken = request.cookies.get("accessToken")?.value;
 
-        // JWTの検証
-        const decoded = verifyJwt(token);
-        if (!decoded || !decoded.id) return null;
+        if (!accessToken) {
+            console.log("accessToken not found");
+            return null;
+        }
 
-        // DBからユーザー情報を取得
+        const decoded = verifyAccessToken(accessToken);
+        if (!decoded) {
+            console.log("accessToken verification failed");
+            return null;
+        }
+
         const user = await prisma.user.findUnique({
             where: { id: decoded.id },
             select: {
                 id: true,
                 username: true,
                 email: true,
-                role: true,
                 profile_image_url: true,
             },
         });

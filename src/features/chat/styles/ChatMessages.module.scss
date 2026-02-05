@@ -1,0 +1,50 @@
+.messageDate {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+    p {
+        background: #fafaf8;
+        border-radius: 24px;
+        padding: 4px 8px;
+    }
+}
+.mt8 {
+    margin-top: 8px;
+}
+
+.mt24 {
+    margin-top: 24px;
+}
+
+.content {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    .messageWrap {
+        display: flex;
+        align-items: end;
+        gap: 4px;
+        .senderIcon {
+            border-radius: 50%;
+            align-self: flex-start;
+        }
+        .avatarSpacer {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+        }
+        img {
+            align-self: center;
+        }
+        .message {
+            padding: 12px;
+            box-shadow: 0 0 2px 0 rgba(35, 35, 35, 0.25);
+            width: fit-content;
+            border-radius: 16px;
+        }
+        .otherMessage {
+            margin-left: 6px;
+        }
+    }
+}

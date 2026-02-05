@@ -2,7 +2,7 @@ import { useCreateInviteToken } from "./useCreateInviteToken";
 import { useGroupId } from "./useGroupId";
 
 const useGroupInviteURL = () => {
-    const groupId = useGroupId();
+    const groupId = Number(useGroupId());
     const createInvite = useCreateInviteToken();
 
     const copyURL = () => {

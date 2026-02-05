@@ -10,7 +10,11 @@ export type LoginForm = {
 
 export type LoginResponse = {
     message: string;
-    user: { id: string; username: string; email: string };
+    user: {
+        id: number;
+        username: string;
+        email: string;
+    };
 };
 
 export type LoginError = {
@@ -23,9 +27,10 @@ export function useLogin() {
     return useMutation<LoginResponse, AxiosError<LoginError>, LoginForm>({
         mutationFn: async (form) => {
             const res = await axios.post<LoginResponse>("/auth/login", form);
-
-            router.push("/");
             return res.data;
+        },
+        onSuccess: () => {
+            router.push("/");
         },
     });
 }
