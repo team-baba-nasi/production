@@ -7,6 +7,7 @@ import Image from "next/image";
 import buildJapaneseAddress from "../utils/BuildJapaneseAddress";
 import CreatePinButton from "./CreatePinBtn";
 import PinList from "./PinList";
+import LoadingDialog from "@/components/ui/LoadingDialog/LoadingDialog";
 import { useAddFavoritePin } from "../hooks/useAddFavoritePin";
 import { useDeleteFavoritePin } from "../hooks/useDeleteFavoritePin";
 import { useQueryClient } from "@tanstack/react-query";
@@ -38,8 +39,8 @@ const Window: React.FC<WindowProps> = ({ place, isClosing, onCreatePin, normaliz
     const { postalCode, address } = buildJapaneseAddress(place);
 
     const queryClient = useQueryClient();
-    const { mutate: addFavorite } = useAddFavoritePin();
-    const { mutate: deleteFavorite } = useDeleteFavoritePin();
+    const { mutate: addFavorite, isPending: favoridePending } = useAddFavoritePin();
+    const { mutate: deleteFavorite, isPending: deletePending } = useDeleteFavoritePin();
 
     const matchingPins = normalizedPin?.pins.filter((pin) => pin.place_id === place.place_id) ?? [];
 
@@ -78,6 +79,11 @@ const Window: React.FC<WindowProps> = ({ place, isClosing, onCreatePin, normaliz
             );
         }
     };
+
+    if (favoridePending)
+        return <LoadingDialog isOpen={favoridePending} message="お気に入りに追加中" />;
+    if (deletePending)
+        return <LoadingDialog isOpen={deletePending} message="お気に入りから削除中" />;
 
     return (
         <div className={styles.wrap}>

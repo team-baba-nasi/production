@@ -4,6 +4,7 @@ import styles from "@/features/map/styles/MapHeader.module.scss";
 import { HiUserGroup } from "react-icons/hi";
 import { MdOutlineMenu } from "react-icons/md";
 import Image from "next/image";
+import LoadingDialog from "@/components/ui/LoadingDialog/LoadingDialog";
 import { useGroups } from "@/features/groups/hooks/useGroups";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
@@ -173,7 +174,7 @@ const MapHeader = ({ onPlaceSelect, mapInstance }: MapHeaderProps) => {
     };
 
     if (isLoading) {
-        return <p>ロード中</p>;
+        return <LoadingDialog isOpen={isLoading} />;
     }
 
     if (isError || !groups) {

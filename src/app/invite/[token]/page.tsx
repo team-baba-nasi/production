@@ -1,6 +1,7 @@
 "use client";
 
 import GroupDialog from "@/features/groups/components/GroupDialog";
+import LoadingDialog from "@/components/ui/LoadingDialog/LoadingDialog";
 import { useInviteGroup } from "@/features/groups/hooks/useInviteGroup";
 import { useJoinGroup } from "@/features/groups/hooks/useJoinGroup";
 import { useParams, useRouter } from "next/navigation";
@@ -30,7 +31,7 @@ const GroupInvite = () => {
         router.push(`/groups`);
     };
 
-    if (isLoading) return <p>読み込み中...</p>;
+        if (isLoading) return <LoadingDialog isOpen={isLoading} />;
     if (error) return <p>エラー: {error.response?.data.error}</p>;
 
     return (

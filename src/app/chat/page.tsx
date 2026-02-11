@@ -5,6 +5,7 @@ import Navigation from "@/components/ui/Navigation/Navigation";
 import InputField from "@/components/ui/InputField/InputField";
 import styles from "@/features/chat/styles/pages/chatList.module.scss";
 import ChatGroup from "@/features/chat/components/ChatGroup";
+import LoadingDialog from "@/components/ui/LoadingDialog/LoadingDialog";
 import { useState } from "react";
 
 const Home = () => {
@@ -12,7 +13,7 @@ const Home = () => {
     const [searchGroupName, setSearchGroupName] = useState<string>("");
 
     if (isLoading) {
-        return <div>読み込み中...</div>;
+        return <LoadingDialog isOpen={isLoading} message="ロード中"/>;
     }
 
     if (isError) {

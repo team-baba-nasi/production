@@ -5,49 +5,47 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import api from "@/lib/axios";
 
+const getCookie = (name: string): string | undefined => {
+    return document.cookie
+        .split("; ")
+        .find((c) => c.startsWith(`${name}=`))
+        ?.split("=")[1];
+};
+
 export default function LpBtn() {
     const router = useRouter();
 
     const handleClick = async () => {
         try {
-            // アクセストークン確認
-            const accessToken = document.cookie
-                .split("; ")
-                .find((c) => c.startsWith("accessToken="))
-                ?.split("=")[1];
+            const accessToken = getCookie("accessToken");
 
             if (accessToken) {
-                // アクセストークンあれば即リダイレクト
                 router.push("/map");
                 return;
             }
 
-            // アクセストークンがなければ refresh 実行
             await api.post("/auth/refresh");
 
             router.push("/map");
-        } catch (err) {
-            console.error("ログイン/リフレッシュ失敗:", err);
-            alert("ログイン情報の確認に失敗しました。再ログインしてください。");
+        } catch {
             router.push("/auth/login");
         }
     };
 
+
     return (
-        <>
-            <div className={styles.appBtnWrap}>
-                <button onClick={handleClick} className={styles.appBtn}>
-                    <Image
-                        src="/images/lp/character/nav_icon.svg"
-                        alt="たべごろのキャラクター"
-                        width={48}
-                        height={48}
-                        className={styles.appBtnIcon}
-                    />
-                    ログインして始める
-                </button>
-                <p>※Webアプリに移動します</p>
-            </div>
-        </>
+        <div className={styles.appBtnWrap}>
+            <button onClick={handleClick} className={styles.appBtn}>
+                <Image
+                    src="/images/lp/character/nav_icon.svg"
+                    alt="たべごろのキャラクター"
+                    width={48}
+                    height={48}
+                    className={styles.appBtnIcon}
+                />
+                ログインして始める
+            </button>
+            <p>※Webアプリに移動します</p>
+        </div>
     );
 }

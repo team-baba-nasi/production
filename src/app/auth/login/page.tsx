@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useLogin } from "@/features/auth/hooks/useLogin";
+import Image from "next/image";
+import styles from "@/features/auth/styles/Login.module.scss";
 
 export default function LoginPage() {
     const [form, setForm] = useState({
@@ -21,42 +23,57 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6">
-            <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md">
-                <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">ログイン</h1>
+        <div className={styles.container}>
+            <div className={styles.loginCard}>
+                <div className={styles.logoSection}>
+                    <Image
+                        src="/images/logo.svg"
+                        alt="たべごろのロゴ"
+                        width={120}
+                        height={159}
+                        className={styles.logo}
+                    />
+                    <h1 className={styles.title}>ログイン</h1>
+                </div>
 
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleSubmit} className={styles.form}>
                     {/* メールアドレス */}
-                    <div>
-                        <label className="block text-gray-700 mb-1">メールアドレス</label>
+                    <div className={styles.inputGroup}>
+                        <label htmlFor="email" className={styles.label}>
+                            メールアドレス
+                        </label>
                         <input
                             type="email"
+                            id="email"
                             name="email"
                             value={form.email}
                             onChange={handleChange}
                             required
-                            className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300"
+                            className={styles.input}
                             placeholder="例: example@mail.com"
                         />
                     </div>
 
                     {/* パスワード */}
-                    <div>
-                        <label className="block text-gray-700 mb-1">パスワード</label>
+                    <div className={styles.inputGroup}>
+                        <label htmlFor="password" className={styles.label}>
+                            パスワード
+                        </label>
                         <input
                             type="password"
+                            id="password"
                             name="password"
                             value={form.password}
                             onChange={handleChange}
                             required
-                            className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300"
+                            className={styles.input}
                             placeholder="パスワードを入力"
                         />
                     </div>
 
                     {/* エラーメッセージ */}
                     {isError && error?.response?.data && (
-                        <div className="text-red-600 text-sm space-y-1">
+                        <div className={styles.errorMessage}>
                             <p>{error.response.data.error}</p>
                         </div>
                     )}
@@ -65,15 +82,17 @@ export default function LoginPage() {
                     <button
                         type="submit"
                         disabled={isPending}
-                        className={`w-full py-2 rounded-lg text-white font-semibold ${
-                            isPending
-                                ? "bg-gray-400 cursor-not-allowed"
-                                : "bg-blue-600 hover:bg-blue-700 transition"
-                        }`}
+                        className={`${styles.submitButton} ${isPending ? styles.disabled : ""}`}
                     >
                         {isPending ? "ログイン中..." : "ログインする"}
                     </button>
                 </form>
+                <div className={styles.linkSection}>
+                    <p className={styles.linkText}>アカウントをお持ちでない方</p>
+                    <a href="/auth/register" className={styles.link}>
+                        新規登録はこちら
+                    </a>
+                </div>
             </div>
         </div>
     );
