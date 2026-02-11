@@ -5,6 +5,7 @@ import Label from "@/components/ui/Label/Label";
 import List from "@/features/groups/components/List";
 import styles from "@/features/groups/styles/pages/GroupMembersPage.module.scss";
 import clsx from "clsx";
+import LoadingDialog from "@/components/ui/LoadingDialog/LoadingDialog";
 import SubmitBtn from "@/components/ui/SubmitBtn/SubmitBtn";
 import { useGroupId } from "@/features/groups/hooks/useGroupId";
 import { useGroupMembersFromId } from "@/features/groups/hooks/useGroupMembersFromId";
@@ -47,7 +48,7 @@ const GroupMembers = () => {
         setSelectedAddHost([]);
     };
 
-    if (isLoading) return <p>読み込み中...</p>;
+        if (isLoading) return <LoadingDialog isOpen={isLoading} />;
     if (error) return <p>エラー: {error.response?.data.error}</p>;
 
     return (

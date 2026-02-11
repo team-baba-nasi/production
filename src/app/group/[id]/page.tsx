@@ -11,6 +11,7 @@ import GroupMembers from "@/features/groups/components/GroupMembers";
 import styles from "@/features/groups/styles/pages/GroupDetailsPage.module.scss";
 import SubmitBtn from "@/components/ui/SubmitBtn/SubmitBtn";
 import useGroupInviteURL from "@/features/groups/hooks/useGroupInviteURL";
+import LoadingDialog from "@/components/ui/LoadingDialog/LoadingDialog";
 import { notFound } from "next/navigation";
 
 const GroupDetails = () => {
@@ -19,7 +20,7 @@ const GroupDetails = () => {
     const copyURL = useGroupInviteURL();
     const { data, error, isLoading } = useGroupFromId(groupId);
 
-    if (isLoading) return <p>読み込み中...</p>;
+    if (isLoading) return <LoadingDialog isOpen={isLoading} />;
     if (error) return <p>エラー: {error.response?.data.error}</p>;
 
     if (Number.isNaN(groupId)) {

@@ -4,6 +4,7 @@ import GroupHeader from "@/features/groups/components/GroupHeader";
 import GroupIcon from "@/features/groups/components/GroupIcon";
 import SubmitBtn from "@/components/ui/SubmitBtn/SubmitBtn";
 import clsx from "clsx";
+import LoadingDialog from "@/components/ui/LoadingDialog/LoadingDialog";
 import styles from "@/features/groups/styles/pages/GroupCreatedPage.module.scss";
 import { useGroupId } from "@/features/groups/hooks/useGroupId";
 import { useGroupFromId } from "@/features/groups/hooks/useGroupFromId";
@@ -15,7 +16,7 @@ const GroupCreate = () => {
 
     const { data, isLoading, error } = useGroupFromId(groupId);
 
-    if (isLoading) return <p>読み込み中...</p>;
+        if (isLoading) return <LoadingDialog isOpen={isLoading} />;
     if (error) return <p>エラー: {error.response?.data.error}</p>;
 
     return (

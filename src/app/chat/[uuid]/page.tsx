@@ -11,6 +11,7 @@ import { useChatMessages } from "@/features/chat/hooks/useChatMessages";
 import ChatMessages from "@/features/chat/components/ChatMessages";
 import { useSendMessage } from "@/features/chat/hooks/useSendMessage";
 import { useConfirmedMeeting } from "@/features/chat/hooks/useConfirmedMeeting";
+import LoadingDialog from "@/components/ui/LoadingDialog/LoadingDialog";
 import { ConfirmedMeeting } from "@/features/chat/types/chat";
 
 const Chat = () => {
@@ -44,7 +45,7 @@ const Chat = () => {
     };
 
     if (isLoading || isUserLoading || isMeetingLoading) {
-        return <div className={styles.wrap}>Loading...</div>;
+        return <LoadingDialog isOpen={isLoading || isUserLoading || isMeetingLoading} />
     }
 
     if (error || !data || !currentUser || meetingError) {

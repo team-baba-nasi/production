@@ -5,6 +5,7 @@ import GroupMembers from "@/features/groups/components/GroupMembers";
 import GroupIcon from "@/features/groups/components/GroupIcon";
 import styles from "@/features/groups/styles/pages/GroupEditPage.module.scss";
 import InputField from "@/components/ui/InputField/InputField";
+import LoadingDialog from "@/components/ui/LoadingDialog/LoadingDialog";
 import GroupSettings from "@/features/groups/components/GroupSettings";
 import { useUpdateGroup } from "@/features/groups/hooks/useUpdateGroup";
 import clsx from "clsx";
@@ -52,7 +53,7 @@ const GroupEdit = () => {
         );
     };
 
-    if (isLoading) return <p>読み込み中...</p>;
+        if (isLoading) return <LoadingDialog isOpen={isLoading} />;
     if (error) return <p>エラー: {error.response?.data.error}</p>;
 
     return (

@@ -6,6 +6,7 @@ import InputField from "@/components/ui/InputField/InputField";
 import Link from "next/link";
 import clsx from "clsx";
 import List from "@/features/groups/components/List";
+import LoadingDialog from "@/components/ui/LoadingDialog/LoadingDialog";
 import { useGroups } from "@/features/groups/hooks/useGroups";
 import { useState } from "react";
 
@@ -13,7 +14,7 @@ const GroupList = () => {
     const [search, setSearchText] = useState<string>("");
     const { data, error, isLoading } = useGroups();
 
-    if (isLoading) return <p>読み込み中...</p>;
+    if (isLoading) return <LoadingDialog isOpen={isLoading} />;
     if (error) return <p>エラー: {error.response?.data.error}</p>;
 
     return (
