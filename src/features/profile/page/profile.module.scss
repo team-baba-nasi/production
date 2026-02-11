@@ -1,27 +1,352 @@
+$md: 768px;
+$lg: 1024px;
+
 .wrap {
-    height: 100vh;
-    background-color: #f5a826;
-    padding: 50px 20px 0 20px;
-    .profile {
-        padding: 40px 50px;
-        background-color: #fff;
+    min-height: 100vh;
+    background-color: #f5f5dc;
+    padding: 5rem 2rem 10rem;
+
+    @media (min-width: $md) {
+        padding: 5rem 4rem 10rem;
+    }
+}
+
+.profileCard {
+    background-color: #fff;
+    border-radius: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 1rem 1.8rem;
+    margin-bottom: 2rem;
+
+    @media (min-width: $md) {
+        padding: 4rem 3.2rem;
+    }
+}
+
+.profileHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.editButton {
+    background: none;
+    border: none;
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #333;
+    cursor: pointer;
+    transition: color 0.3s ease;
+
+    &:hover {
+        color: #2db2ff;
+    }
+}
+
+.profileInfo {
+    display: flex;
+    align-items: center;
+    gap: 2.4rem;
+    padding: 1.2rem 3rem 2.2rem;
+    border-bottom: 1px dashed #ddd;
+}
+
+.profileImage {
+    width: 10rem;
+    height: 10rem;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #2db2ff;
+
+    @media (min-width: $md) {
+        width: 12rem;
+        height: 12rem;
+    }
+}
+
+.profileText {
+    flex: 1;
+}
+
+.username {
+    font-size: 2.4rem;
+    font-weight: bold;
+    color: #333;
+    margin: 0 0 0.8rem 0;
+
+    @media (min-width: $md) {
+        font-size: 2.8rem;
+    }
+}
+
+.userId {
+    font-size: 1.6rem;
+    color: #666;
+    margin: 0;
+}
+
+.stats {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.statItem {
+    flex: 1;
+    text-align: center;
+}
+
+.statLabel {
+    font-size: 1.4rem;
+    color: #666;
+}
+
+.groupCard {
+    background-color: #fff;
+    border-radius: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 2rem 2.4rem;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.3rem;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+
+    &:hover {
+        transform: translateY(-2px);
+    }
+}
+
+.groupIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #12bf63;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.groupTitle {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.groupList {
+    font-size: 1.4rem;
+    color: #666;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.groupCount {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #999;
+    margin-right: 0.8rem;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.groupArrow {
+    flex-shrink: 0;
+}
+
+.tabSection {
+    margin-bottom: 2rem;
+}
+
+.tabs {
+    display: flex;
+    gap: 1.6rem;
+    margin-bottom: 2rem;
+}
+
+.tab {
+    flex: 1;
+    padding: 1.2rem 2rem;
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: #333;
+    background-color: #fff;
+    border: none;
+    border-radius: 3rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    @media (min-width: $md) {
+        font-size: 1.8rem;
+        padding: 1.4rem 2.4rem;
+    }
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    &.active {
+        background-color: #2db2ff;
+        color: #fff;
+    }
+}
+
+.shopList {
+    display: flex;
+    flex-direction: column;
+    gap: 1.6rem;
+}
+
+.shopCard {
+    background-color: #fff;
+    border-radius: 2rem;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+
+    &:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+}
+
+.shopCardMain {
+    cursor: pointer;
+}
+
+.shopImageWrapper {
+    width: 100%;
+    height: 20rem;
+    position: relative;
+    overflow: hidden;
+
+    @media (min-width: $md) {
+        height: 24rem;
+    }
+}
+
+.shopImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.shopInfo {
+    padding: 1.6rem 2rem;
+
+    @media (min-width: $md) {
+        padding: 2rem 2.4rem;
+    }
+}
+
+.shopName {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #333;
+    margin: 0 0 0.8rem 0;
+
+    @media (min-width: $md) {
+        font-size: 2rem;
+    }
+}
+
+.shopAddress {
+    font-size: 1.4rem;
+    color: #666;
+    margin: 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.4rem;
+
+    @media (min-width: $md) {
+        font-size: 1.5rem;
+    }
+}
+
+.locationIcon {
+    flex-shrink: 0;
+    margin-top: 0.2rem;
+}
+
+.shopDetails {
+    padding: 2rem 2rem 2.4rem;
+    background-color: #f9f9f9;
+    border-top: 1px solid #e5e5e5;
+
+    @media (min-width: $md) {
+        padding: 2.4rem 2.4rem 3rem;
+    }
+}
+
+.visitDate {
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: #333;
+    margin: 0 0 1.2rem 0;
+
+    @media (min-width: $md) {
+        font-size: 1.8rem;
+    }
+}
+
+.visitInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.groupNameText {
+    font-size: 1.4rem;
+    color: #333;
+    margin: 0;
+
+    @media (min-width: $md) {
+        font-size: 1.6rem;
+    }
+}
+
+.membersRow {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+}
+
+.memberAvatars {
+    display: flex;
+    margin-left: -0.4rem;
+}
+
+.memberAvatar {
+    width: 3.2rem;
+    height: 3.2rem;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    overflow: hidden;
+    margin-left: -0.8rem;
+
+    &:first-child {
+        margin-left: 0;
+    }
+
+    img {
         width: 100%;
-        height: 200px;
-        border-radius: 17px;
-        box-shadow: 2px 3px 8px 0 rgba(0, 0, 0, 0.25);
-        display: flex;
-        gap: 40px;
-        align-items: center;
-        img {
-            border-radius: 50%;
-        }
-        h2 {
-            color: #2db2ff;
-            font-family: Roboto;
-            font-size: 3.5rem;
-            font-style: normal;
-            font-weight: 900;
-            line-height: 150%;
-        }
+        height: 100%;
+        object-fit: cover;
+    }
+}
+
+.visitText {
+    font-size: 1.4rem;
+    color: #333;
+    margin: 0;
+
+    @media (min-width: $md) {
+        font-size: 1.6rem;
     }
 }
